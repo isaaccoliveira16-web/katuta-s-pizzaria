@@ -1,0 +1,128 @@
+{
+    "name": "Analisador de Extrato PDF",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "analisar-extrato",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "webhook-upload",
+            "name": "Webhook Upload PDF",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                200,
+                300
+            ],
+            "webhookId": "extrato-pdf"
+        },
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "={{ $binary.file.data }}",
+                "options": {
+                    "systemMessage": "Você é um especialista em extrair transações bancárias de extratos em PDF.\n\nAnalise o conteúdo do arquivo e extraia TODAS as transações financeiras.\n\nPara CADA transação encontrada, identifique:\n- data: formato DD/MM/AAAA\n- descricao: nome da transação/empresa/pessoa\n- valor: número negativo para saídas, positivo para entradas\n- tipo: PIX, TED, Débito, Crédito, ou Boleto\n- categoria: escolha entre Alimentação, Mercado, Transporte, Combustível, Farmácia, Saúde, Entretenimento, Moradia, Educação, Compras, Transferência Pessoal, Salário, ou Outros\n\nRetorne APENAS um JSON válido neste formato exato:\n{\n  \"transacoes\": [\n    {\"data\": \"01/02/2024\", \"descricao\": \"IFOOD\", \"valor\": -45.90, \"tipo\": \"Débito\", \"categoria\": \"Alimentação\"}\n  ]\n}\n\nNÃO inclua explicações, apenas o JSON."
+                }
+            },
+            "id": "ai-extract",
+            "name": "AI Extrair Transações",
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 1.7,
+            "position": [
+                400,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "model": "gpt-4o",
+                "options": {
+                    "temperature": 0
+                }
+            },
+            "id": "openai",
+            "name": "OpenAI GPT-4o",
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "typeVersion": 1,
+            "position": [
+                400,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Processar resposta da AI e gerar dashboard\nconst input = $input.first();\nlet text = input.json.output || input.json.text || JSON.stringify(input.json);\n\n// Encontrar JSON na resposta\nconst jsonMatch = text.match(/\\{[\\s\\S]*\\}/);\nif (!jsonMatch) {\n  return [{\n    json: {\n      resumo: { total_entrada: '0.00', total_saida: '0.00', saldo: '0.00' },\n      por_tipo: {},\n      por_categoria: {},\n      transacoes: []\n    }\n  }];\n}\n\ntry {\n  const data = JSON.parse(jsonMatch[0]);\n  const transacoes = data.transacoes || [];\n  \n  let totalEntrada = 0;\n  let totalSaida = 0;\n  const porTipo = {};\n  const porCategoria = {};\n  \n  for (const t of transacoes) {\n    const valor = parseFloat(t.valor) || 0;\n    const tipo = t.tipo || 'Outros';\n    const categoria = t.categoria || 'Outros';\n    \n    if (valor >= 0) totalEntrada += valor;\n    else totalSaida += Math.abs(valor);\n    \n    if (!porTipo[tipo]) porTipo[tipo] = { qtd: 0, valor: 0 };\n    porTipo[tipo].qtd++;\n    porTipo[tipo].valor += Math.abs(valor);\n    \n    if (!porCategoria[categoria]) porCategoria[categoria] = 0;\n    porCategoria[categoria] += Math.abs(valor);\n  }\n  \n  return [{\n    json: {\n      resumo: {\n        total_entrada: totalEntrada.toFixed(2),\n        total_saida: totalSaida.toFixed(2),\n        saldo: (totalEntrada - totalSaida).toFixed(2)\n      },\n      por_tipo: porTipo,\n      por_categoria: porCategoria,\n      transacoes: transacoes\n    }\n  }];\n} catch (e) {\n  return [{\n    json: {\n      error: 'Erro ao processar: ' + e.message,\n      raw: text\n    }\n  }];\n}"
+            },
+            "id": "gerar-dashboard",
+            "name": "Gerar Dashboard",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                600,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "options": {}
+            },
+            "id": "respond",
+            "name": "Responder",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1.1,
+            "position": [
+                800,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook Upload PDF": {
+            "main": [
+                [
+                    {
+                        "node": "AI Extrair Transações",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "OpenAI GPT-4o": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "AI Extrair Transações",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "AI Extrair Transações": {
+            "main": [
+                [
+                    {
+                        "node": "Gerar Dashboard",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Gerar Dashboard": {
+            "main": [
+                [
+                    {
+                        "node": "Responder",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {}
+}

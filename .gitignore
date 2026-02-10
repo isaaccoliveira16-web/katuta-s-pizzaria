@@ -1,0 +1,5 @@
+node_modules
+.env
+.n8n
+*.log
+*.tmp

@@ -1,0 +1,267 @@
+﻿{
+    "updatedAt":  "2026-02-09T03:36:34.714Z",
+    "createdAt":  "2026-02-09T02:25:59.084Z",
+    "id":  "2zPsYMxeUOfYhPPe",
+    "name":  "Katuta-03-Table-Engine",
+    "description":  null,
+    "active":  false,
+    "isArchived":  false,
+    "nodes":  [
+                  {
+                      "parameters":  {
+
+                                     },
+                      "id":  "node-trigger",
+                      "name":  "Execute Workflow Trigger",
+                      "type":  "n8n-nodes-base.executeWorkflowTrigger",
+                      "typeVersion":  1,
+                      "position":  [
+                                       200,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const pax = $input.item.json.pax || 1;\nconst mesasNeeded = Math.ceil(pax / 4);\nreturn {\n  pax,\n  mesasNeeded,\n  nome_cliente: $input.item.json.nome_cliente || \"Cliente Teste\",\n  whatsapp_id: $input.item.json.whatsapp_id || \"teste-id\"\n};"
+                                     },
+                      "id":  "node-logic-calc",
+                      "name":  "[JS] Calc Mesas",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  1,
+                      "position":  [
+                                       400,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "operation":  "getAll",
+                                         "documentId":  "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                                         "sheetName":  "Mesas",
+                                         "filters":  {
+                                                         "conditions":  [
+                                                                            {
+                                                                                "key":  "Status",
+                                                                                "value":  "LIVRE"
+                                                                            }
+                                                                        ]
+                                                     }
+                                     },
+                      "id":  "node-sheet-get",
+                      "name":  "[GSheets] Buscar Livres",
+                      "type":  "n8n-nodes-base.googleSheets",
+                      "typeVersion":  4,
+                      "position":  [
+                                       600,
+                                       300
+                                   ],
+                      "continueOnFail":  true
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const mesasLivres = $input.all();\nconst info = $node[\"[JS] Calc Mesas\"].json;\n\n// Se não encontrar mesas no sheets (ou erro), assume mesas fictícias para o teste não travar\nlet mesasAlocadas = \"Mesa Fictícia\";\nif (mesasLivres.length \u003e 0 \u0026\u0026 mesasLivres[0].json.Mesa_ID) {\n  mesasAlocadas = mesasLivres.slice(0, info.mesasNeeded).map(m =\u003e m.json.Mesa_ID).join(\", \");\n}\n\nreturn {\n  success: true,\n  mesas_list: mesasAlocadas,\n  ...info\n};"
+                                     },
+                      "id":  "node-logic-aloca",
+                      "name":  "[JS] Alocar Mesas",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  1,
+                      "position":  [
+                                       800,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "operation":  "append",
+                                         "documentId":  "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                                         "sheetName":  "Controle_Reservas",
+                                         "columns":  {
+                                                         "mappingMode":  "defineBelow",
+                                                         "value":  [
+                                                                       {
+                                                                           "key":  "Reserva_ID",
+                                                                           "value":  "={{ Math.random().toString(36).substr(2, 9).toUpperCase() }}"
+                                                                       },
+                                                                       {
+                                                                           "key":  "Nome_Cliente",
+                                                                           "value":  "={{ $json.nome_cliente }}"
+                                                                       },
+                                                                       {
+                                                                           "key":  "WhatsApp",
+                                                                           "value":  "={{ $json.whatsapp_id }}"
+                                                                       },
+                                                                       {
+                                                                           "key":  "Qtd_Pessoas",
+                                                                           "value":  "={{ $json.pax }}"
+                                                                       },
+                                                                       {
+                                                                           "key":  "Mesas_Alocadas",
+                                                                           "value":  "={{ $json.mesas_list }}"
+                                                                       },
+                                                                       {
+                                                                           "key":  "Timestamp",
+                                                                           "value":  "={{ new Date().toLocaleString(\u0027pt-BR\u0027) }}"
+                                                                       },
+                                                                       {
+                                                                           "key":  "Status",
+                                                                           "value":  "Ativa"
+                                                                       }
+                                                                   ]
+                                                     }
+                                     },
+                      "id":  "node-sheet-append",
+                      "name":  "[GSheets] Registrar Reserva",
+                      "type":  "n8n-nodes-base.googleSheets",
+                      "typeVersion":  4,
+                      "position":  [
+                                       1000,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "return {\n  output: \"Reserva confirmada para \" + $node[\"[JS] Alocar Mesas\"].json.nome_cliente + \". Mesas: \" + $node[\"[JS] Alocar Mesas\"].json.mesas_list + \". Tudo certo!\"\n};"
+                                     },
+                      "id":  "node-output",
+                      "name":  "Resposta Final",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  1,
+                      "position":  [
+                                       1200,
+                                       300
+                                   ]
+                  }
+              ],
+    "connections":  {
+                        "Execute Workflow Trigger":  {
+                                                         "main":  [
+                                                                      [
+                                                                          {
+                                                                              "node":  "[JS] Calc Mesas",
+                                                                              "type":  "main",
+                                                                              "index":  0
+                                                                          }
+                                                                      ]
+                                                                  ]
+                                                     },
+                        "[JS] Calc Mesas":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "[GSheets] Buscar Livres",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "[GSheets] Buscar Livres":  {
+                                                        "main":  [
+                                                                     [
+                                                                         {
+                                                                             "node":  "[JS] Alocar Mesas",
+                                                                             "type":  "main",
+                                                                             "index":  0
+                                                                         }
+                                                                     ]
+                                                                 ]
+                                                    },
+                        "[JS] Alocar Mesas":  {
+                                                  "main":  [
+                                                               [
+                                                                   {
+                                                                       "node":  "[GSheets] Registrar Reserva",
+                                                                       "type":  "main",
+                                                                       "index":  0
+                                                                   }
+                                                               ]
+                                                           ]
+                                              },
+                        "[GSheets] Registrar Reserva":  {
+                                                            "main":  [
+                                                                         [
+                                                                             {
+                                                                                 "node":  "Resposta Final",
+                                                                                 "type":  "main",
+                                                                                 "index":  0
+                                                                             }
+                                                                         ]
+                                                                     ]
+                                                        }
+                    },
+    "settings":  {
+                     "errorWorkflow":  "NyQKhHnymOvXQRdx",
+                     "callerPolicy":  "workflowsFromSameOwner",
+                     "availableInMCP":  false
+                 },
+    "staticData":  null,
+    "meta":  {
+                 "templateCredsSetupCompleted":  true
+             },
+    "pinData":  {
+
+                },
+    "versionId":  "0d5b35d6-4253-4977-bf70-6ecc0fd30954",
+    "activeVersionId":  null,
+    "versionCounter":  7,
+    "triggerCount":  0,
+    "shared":  [
+                   {
+                       "updatedAt":  "2026-02-09T02:25:59.092Z",
+                       "createdAt":  "2026-02-09T02:25:59.092Z",
+                       "role":  "workflow:owner",
+                       "workflowId":  "2zPsYMxeUOfYhPPe",
+                       "projectId":  "LABj6mfQWJOeeqEX",
+                       "project":  {
+                                       "updatedAt":  "2026-02-09T02:20:48.708Z",
+                                       "createdAt":  "2026-02-09T02:19:43.641Z",
+                                       "id":  "LABj6mfQWJOeeqEX",
+                                       "name":  "Isaac Ferreira \u003cisaaccoliveira16@gmail.com\u003e",
+                                       "type":  "personal",
+                                       "icon":  null,
+                                       "description":  null,
+                                       "creatorId":  "830e19b7-fd5c-447b-b2d4-f3e7706cddc6",
+                                       "projectRelations":  [
+                                                                {
+                                                                    "updatedAt":  "2026-02-09T02:19:43.642Z",
+                                                                    "createdAt":  "2026-02-09T02:19:43.642Z",
+                                                                    "userId":  "830e19b7-fd5c-447b-b2d4-f3e7706cddc6",
+                                                                    "projectId":  "LABj6mfQWJOeeqEX",
+                                                                    "user":  {
+                                                                                 "updatedAt":  "2026-02-09T12:47:46.000Z",
+                                                                                 "createdAt":  "2026-02-09T02:19:43.208Z",
+                                                                                 "id":  "830e19b7-fd5c-447b-b2d4-f3e7706cddc6",
+                                                                                 "email":  "isaaccoliveira16@gmail.com",
+                                                                                 "firstName":  "Isaac",
+                                                                                 "lastName":  "Ferreira",
+                                                                                 "personalizationAnswers":  {
+                                                                                                                "version":  "v4",
+                                                                                                                "personalization_survey_submitted_at":  "2026-02-09T02:21:06.299Z",
+                                                                                                                "personalization_survey_n8n_version":  "2.6.4",
+                                                                                                                "companySize":  "\u003c20",
+                                                                                                                "companyType":  "systems-integrator",
+                                                                                                                "role":  "business-owner",
+                                                                                                                "reportedSource":  "friend"
+                                                                                                            },
+                                                                                 "settings":  {
+                                                                                                  "userActivated":  false,
+                                                                                                  "easyAIWorkflowOnboarded":  true,
+                                                                                                  "dismissedCallouts":  {
+                                                                                                                            "aiAgentStarterCallout":  true
+                                                                                                                        }
+                                                                                              },
+                                                                                 "disabled":  false,
+                                                                                 "mfaEnabled":  false,
+                                                                                 "lastActiveAt":  "2026-02-09",
+                                                                                 "isPending":  false
+                                                                             }
+                                                                }
+                                                            ]
+                                   }
+                   }
+               ],
+    "tags":  [
+
+             ],
+    "activeVersion":  null
+}

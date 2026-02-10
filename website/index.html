@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva Online | Katuta's Pizzaria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <nav class="container" style="justify-content: center;">
+            <div class="logo-area">
+                <img src="logo.jpg" alt="Katuta's Logo" id="logo">
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero">
+            <div class="container hero-content">
+                <div class="hero-text">
+                    <h1>A Verdadeira Pizza Artesanal</h1>
+                    <p>Rodízio Completo: Sabores tradicionais, especiais e doces.</p>
+                    <a href="#reserva" class="btn-primary">Reservar Minha Mesa</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="precos" class="container">
+            <div class="price-grid">
+                <div class="price-card glass-panel">
+                    <h3>Adulto</h3>
+                    <p class="price">R$ 89,90</p>
+                    <span>Rodízio Completo</span>
+                </div>
+                <div class="price-card glass-panel highlight">
+                    <h3>Crianças</h3>
+                    <p class="price">R$ 44,95</p>
+                    <span>5 a 10 anos (Meia)</span>
+                </div>
+                <div class="price-card glass-panel">
+                    <h3>Pequenos</h3>
+                    <p class="price">Grátis</p>
+                    <span>0 a 4 anos</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="reserva" class="container">
+            <div class="form-container glass-panel">
+                <h2>Faça sua Reserva</h2>
+                <form id="reserva-form">
+                    <div class="input-group">
+                        <label for="nome_cliente">Seu Nome</label>
+                        <input type="text" id="nome_cliente" name="nome_cliente" placeholder="Ex: Isaac Ferreira"
+                            required>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-group">
+                            <label for="pax">Total de Pessoas</label>
+                            <input type="number" id="pax" name="pax" min="1" max="50" value="4" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="kids">Crianças (5-10 anos)</label>
+                            <input type="number" id="kids" name="kids" min="0" max="20" value="0" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-group">
+                            <label for="whatsapp">WhatsApp (com DDD)</label>
+                            <input type="tel" id="whatsapp" name="whatsapp" placeholder="Ex: 48999999999" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="hora">Horário</label>
+                            <input type="time" id="hora" name="hora" min="18:00" max="19:00" value="19:00" required>
+                        </div>
+                    </div>
+
+                    <p class="warning">⚠️ Reservas online válidas apenas até às 19:00h.</p>
+
+                    <button type="submit" class="btn-primary" id="btn-submit">Confirmar Reserva</button>
+                </form>
+                <div id="status-message"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p><strong>Katuta's Pizzaria</strong></p>
+            <p>Rua Pref. Valter Belinzoni, 260, Araranguá/SC</p>
+            <p style="margin-top: 10px; font-size: 0.8rem; color: var(--text-muted)">&copy; 2026 Todos os direitos
+                reservados.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

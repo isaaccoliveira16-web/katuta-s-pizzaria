@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐷 Meu Porquinho Inteligente - Dashboard Financeiro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --accent-green: #00ff88;
+            --accent-red: #ff4466;
+            --accent-blue: #4488ff;
+            --accent-purple: #8844ff;
+            --accent-pink: #ff66b2;
+            --text-primary: #ffffff;
+            --text-secondary: #888899;
+            --border-color: #2a2a3a;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+        }
+
+        .share-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .share-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: opacity 0.2s;
+            text-decoration: none;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .share-whatsapp {
+            background: #25D366;
+        }
+
+        .share-twitter {
+            background: #1DA1F2;
+        }
+
+        .share-btn:hover {
+            opacity: 0.9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .upload-section {
+            background: var(--bg-card);
+            border: 2px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-section:hover {
+            border-color: var(--accent-green);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-section p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 3rem;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--accent-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading p {
+            margin-top: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .card-icon.green {
+            background: rgba(0, 255, 136, 0.15);
+        }
+
+        .card-icon.red {
+            background: rgba(255, 68, 102, 0.15);
+        }
+
+        .card-icon.blue {
+            background: rgba(68, 136, 255, 0.15);
+        }
+
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .card-value.positive {
+            color: var(--accent-green);
+        }
+
+        .card-value.negative {
+            color: var(--accent-red);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-container {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .transactions-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        td {
+            font-size: 0.9rem;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: rgba(68, 136, 255, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .tips-card {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(68, 136, 255, 0.1));
+            border: 1px solid var(--accent-green);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tips-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .tips-list {
+            list-style: none;
+        }
+
+        .tips-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .tips-list li:last-child {
+            border-bottom: none;
+        }
+
+        .balance-row {
+            background: rgba(68, 136, 255, 0.05);
+            font-weight: 500;
+        }
+
+        .balance-badge {
+            background: rgba(68, 136, 255, 0.1);
+            color: var(--accent-blue);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">🐷</div>
+                <h1>Meu Porquinho Inteligente</h1>
+            </div>
+            <span id="dateDisplay"></span>
+        </header>
+
+        <section class="upload-section" id="uploadSection">
+            <div class="upload-icon">📁</div>
+            <h2>Arraste seu extrato bancário aqui</h2>
+            <p>PDF ou CSV - Processamento 100% local e seguro</p>
+            <input type="file" id="fileInput" accept=".pdf,.csv">
+
+            <div style="margin-top: 2rem;">
+                <span class="share-label">猪 Indique para um amigo:</span>
+                <div class="share-buttons">
+                    <a href="#" id="shareWhatsApp" class="share-btn share-whatsapp">
+                        WhatsApp
+                    </a>
+                    <a href="#" id="shareTwitter" class="share-btn share-twitter">
+                        X / Twitter
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="loading" id="loadingSection">
+            <div class="spinner"></div>
+            <p id="loadingText">Extraindo texto do PDF...</p>
+        </section>
+
+        <section class="dashboard" id="dashboard">
+            <div class="summary-cards">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Saldo Anterior</span>
+                        <div class="card-icon blue">🏦</div>
+                    </div>
+                    <div class="card-value" id="saldoAnterior">R$ 0,00</div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Total Entradas</span>
+                        <div class="card-icon green">📈</div>
+                    </div>
+                    <div class="card-value positive" id="totalEntradas">R$ 0,00</div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Total Saídas</span>
+                        <div class="card-icon red">📉</div>
+                    </div>
+                    <div class="card-value negative" id="totalSaidas">R$ 0,00</div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Saldo Atual</span>
+                        <div class="card-icon pink">🐷</div>
+                    </div>
+                    <div class="card-value" id="saldoAtual">R$ 0,00</div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3 class="chart-title">📊 Gastos por Categoria</h3>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 class="chart-title">💳 Gastos por Tipo de Transação</h3>
+                    <canvas id="typeChart"></canvas>
+                </div>
+            </div>
+
+            <div class="transactions-card">
+                <h3 class="chart-title">📋 Transações Categorizadas</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsBody"></tbody>
+                </table>
+            </div>
+
+            <div class="tips-card">
+                <h3 class="tips-title">💡 Dicas para Melhorar suas Finanças</h3>
+                <ul class="tips-list" id="tipsList"></ul>
+
+                <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                    <span class="share-label">📊 Compartilhar meus resultados:</span>
+                    <div class="share-buttons">
+                        <a href="#" id="shareWhatsAppRes" class="share-btn share-whatsapp">
+                            📲 WhatsApp
+                        </a>
+                        <a href="#" id="shareTwitterRes" class="share-btn share-twitter">
+                            X / Twitter
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="debugSection"
+                style="display: none; margin-top: 2rem; background: #1a1a24; border: 1px solid #ffce56; border-radius: 16px; padding: 1.5rem;">
+                <h3 style="color: #ffce56; margin-bottom: 1rem;">⚠️ Opa! Não conseguimos ler este extrato...</h3>
+                <p style="font-size: 0.9rem; color: #888; margin-bottom: 1rem;">
+                    Nosso porquinho ainda está aprendendo a ler extratos de todos os bancos.
+                    Se você quiser nos ajudar, mande o texto abaixo para o desenvolvedor:
+                </p>
+                <textarea id="rawTextContent" readonly
+                    style="width: 100%; height: 200px; background: #0a0a0f; color: #00ff88; border: 1px solid #2a2a3a; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem;"></textarea>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        const uploadSection = document.getElementById('uploadSection');
+        const loadingSection = document.getElementById('loadingSection');
+        const dashboard = document.getElementById('dashboard');
+
+        // Exibir data de hoje
+        document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+        const fileInput = document.getElementById('fileInput');
+        const loadingText = document.getElementById('loadingText');
+
+        document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('pt-BR', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        // Initial Share links (Invite)
+        const inviteText = "🐷 Conheça o Meu Porquinho Inteligente! Organize suas finanças de forma simples e segura com este analisador de PDF local!";
+        const currentUrl = window.location.href; // Note: if local file, this might not work as a link
+        document.getElementById('shareWhatsApp').href = `https://wa.me/?text=${encodeURIComponent(inviteText)}`;
+        document.getElementById('shareTwitter').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(inviteText)}`;
+
+        uploadSection.addEventListener('click', () => fileInput.click());
+        uploadSection.addEventListener('dragover', (e) => { e.preventDefault(); uploadSection.style.borderColor = 'var(--accent-green)'; });
+        uploadSection.addEventListener('dragleave', () => { uploadSection.style.borderColor = ''; });
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.style.borderColor = '';
+            if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', (e) => { if (e.target.files[0]) processFile(e.target.files[0]); });
+
+        async function processFile(file) {
+            uploadSection.style.display = 'none';
+            loadingSection.classList.add('active');
+            document.getElementById('debugSection').style.display = 'none';
+
+            let text = '';
+
+            if (file.name.endsWith('.pdf')) {
+                loadingText.textContent = 'Extraindo texto do PDF...';
+                text = await extractTextFromPDF(file);
+            } else {
+                loadingText.textContent = 'Lendo arquivo CSV...';
+                text = await file.text();
+            }
+
+            loadingText.textContent = 'Analisando transações...';
+            // Salvar texto bruto para debug
+            document.getElementById('rawTextContent').value = text;
+
+            const transactions = parseTransactions(text);
+
+            if (transactions.length === 0) {
+                loadingSection.classList.remove('active');
+                dashboard.classList.add('active');
+                document.getElementById('debugSection').style.display = 'block';
+                // Reset dashboard values to zero
+                renderDashboard({
+                    resumo: { saldo_anterior: '0.00', total_entrada: '0.00', total_saida: '0.00', saldo_atual: '0.00' },
+                    por_tipo: {}, por_categoria: {}, transacoes: []
+                });
+            } else {
+                loadingText.textContent = 'Gerando dashboard...';
+                setTimeout(() => {
+                    const data = generateDashboardData(transactions);
+                    renderDashboard(data);
+                }, 500);
+            }
+        }
+
+        async function extractTextFromPDF(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            let fullText = '';
+
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                const pageText = content.items.map(item => item.str).join(' ');
+                fullText += pageText + '\n';
+            }
+
+            return fullText;
+        }
+
+        function parseTransactions(text) {
+            const transactions = [];
+
+            // Regexes
+            const monthNames = 'janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro';
+            const datePattern = new RegExp(`(\\d{1,2}\\/\\d{2}(?:\\/\\d{2,4})?|\\d{1,2}\\s+de\\s+(?:${monthNames})\\s+de\\s+\\d{4})`, 'i');
+            // Regex atualizada: agora captura opcionalmente o sufixo C ou D do Sicoob logo após o valor
+            const moneyPattern = /(?:-?\s*R\$\s*)?(\d{1,3}(?:\.\d{3})*,\d{2})(?![%,\d])\s*([CD])?/gi;
+            const signalPattern = /\b([CD])\b/i;
+
+            const entradaKeywords = [
+                'RECEB', 'CREDITO', 'CRÉDITO', 'CRÉD.', 'CRÉD', 'SALARIO', 'SALÁRIO', 'SALÁ', 'DEP', 'TED RECEB',
+                'PIX RECEB', 'PIX RECEBIDO', 'INVEST', 'ESTORNO', 'RESGATE', 'TRANSF. RECEB', 'TRANSF RECEB'
+            ];
+            const saldoKeywords = ['SALDO ANTERIOR', 'SALDO DO DIA', 'SALDO ATUAL', 'SALDO FINAL', 'SALDO EM CONTA', 'SALDO DISPONIVEL', 'SALDO TOTAL'];
+            const blockSplitKeywords = ['PIX ENVIADO', 'PIX RECEBIDO', 'PAGAMENTO', 'COMPRA', 'TRANSFERÊNCIA', 'TRANSF.', 'DEB.', 'SALDO DO DIA', 'SALDO ANTERIOR'];
+
+            // Quebrar o texto em "possíveis blocos"
+            let currentText = text;
+            currentText = currentText.replace(new RegExp(datePattern.source, 'gi'), '\n$1');
+            blockSplitKeywords.forEach(kw => {
+                currentText = currentText.replace(new RegExp(`(${kw})`, 'gi'), '\n$1');
+            });
+
+            const lines = currentText.split('\n');
+            let lastDate = null;
+
+            for (let line of lines) {
+                line = line.trim();
+                const upLine = line.toUpperCase();
+
+                // Filtros de metadados
+                const ignorarKeywords = ['CHEQUE ESPECIAL CONTRATADO', 'JUROS VENCIDOS', 'TARIFAS VENCIDAS', 'SALDO BLOQUEADO', 'ENCARGOS VENCIDOS', 'ENCARGOS A VENCER', 'OUTRAS INFORMAÇÕES', 'LIMITES DE CREDITO', 'EXTRATOS EMITIDOS ATÉ', 'VENCIMENTO CHEQUE', 'TAXA CHEQUE ESPECIAL', 'CUSTO EFETIVO TOTAL', 'CRÉDITO PESSOAL:', 'PARCELA MÁXIMA'];
+                if (ignorarKeywords.some(k => upLine.includes(k))) continue;
+
+                const dateMatch = line.match(datePattern);
+                if (dateMatch) lastDate = dateMatch[1];
+                if (!lastDate) continue;
+
+                // Usamos RegExp.exec para capturar os grupos separadamente
+                let moneyMatch;
+                const matches = [];
+                moneyPattern.lastIndex = 0; // Reset
+                while ((moneyMatch = moneyPattern.exec(line)) !== null) {
+                    matches.push({
+                        full: moneyMatch[0],
+                        value: moneyMatch[1],
+                        suffix: moneyMatch[2]
+                    });
+                }
+
+                if (matches.length > 0) {
+                    matches.forEach((m, idx) => {
+                        const numericValueStr = m.value.replace(/[^\d,.-]/g, '');
+                        let value = parseFloat(numericValueStr.replace(/\./g, '').replace(',', '.'));
+                        if (isNaN(value)) return;
+
+                        const upFull = m.full.toUpperCase();
+                        const isBalanceLine = saldoKeywords.some(k => upLine.includes(k));
+
+                        // Determinar se este valor específico é um SALDO
+                        const saldoIndex = upLine.indexOf('SALDO');
+                        const valueIndex = upLine.indexOf(upFull);
+                        const isThisValueBalance = isBalanceLine &&
+                            (matches.length === 1 || (saldoIndex !== -1 && Math.abs(saldoIndex - valueIndex) < 25));
+
+                        if (isThisValueBalance) {
+                            // Mesmo o saldo pode ter sufixo C/D no Sicoob
+                            let isNegativeBalance = false;
+                            if (m.suffix) isNegativeBalance = (m.suffix.toUpperCase() === 'D');
+                            else if (m.full.includes('-')) isNegativeBalance = true;
+
+                            transactions.push({
+                                data: lastDate,
+                                descricao: line.substring(0, 100).toUpperCase().trim(),
+                                valor: isNegativeBalance ? -Math.abs(value) : Math.abs(value),
+                                tipo: 'SALDO',
+                                categoria: 'SALDO'
+                            });
+                        } else {
+                            // É uma transação (entrada/saída)
+                            let isExpense = true;
+
+                            // 1. Prio Sicoob: Sufixo colado (C=Crédito/Receita, D=Débito/Gasto)
+                            if (m.suffix) {
+                                isExpense = (m.suffix.toUpperCase() === 'D');
+                            }
+                            // 2. Sinal negativo literal
+                            else if (m.full.includes('-')) {
+                                isExpense = true;
+                            }
+                            // 3. Sinal C/D isolado na linha ou palavras-chave
+                            else {
+                                const signalMatch = line.match(signalPattern);
+                                if (signalMatch) {
+                                    isExpense = (signalMatch[1].toUpperCase() === 'D');
+                                } else if (entradaKeywords.some(k => upLine.includes(k))) {
+                                    isExpense = false;
+                                }
+                            }
+
+                            value = isExpense ? -Math.abs(value) : Math.abs(value);
+
+                            transactions.push({
+                                data: lastDate,
+                                descricao: line.replace(lastDate, '').replace(m.full, '').replace(/\s+/g, ' ').trim() || 'Transação',
+                                valor: value,
+                                tipo: detectType(upLine),
+                                categoria: categorizeTransaction(upLine)
+                            });
+                        }
+                    });
+                }
+            }
+            return transactions;
+        }
+
+
+        function detectType(desc) {
+            const d = desc.toUpperCase();
+            if (d.includes('PIX')) return 'PIX';
+            if (d.includes('TED') || d.includes('DOC')) return 'TED';
+            if (d.includes('CREDITO') || d.includes('CRÉDITO')) return 'Crédito';
+            if (d.includes('DEBITO') || d.includes('DÉBITO')) return 'Débito';
+            return 'Outros';
+        }
+
+        function categorizeTransaction(desc) {
+            const d = desc.toUpperCase();
+            const categories = {
+                'Alimentação': ['IFOOD', 'RAPPI', 'UBER EATS', 'RESTAURANTE', 'LANCHONETE', 'PIZZARIA', 'MCDONALD', 'BURGER', 'SUBWAY', 'STARBUCKS', 'PADARIA'],
+                'Mercado': ['SUPERMERCADO', 'MERCADO', 'ATACADAO', 'CARREFOUR', 'EXTRA', 'PAO DE ACUCAR', 'ASSAI', 'BIG', 'MART'],
+                'Transporte': ['UBER', '99', 'CABIFY', 'TAXI', 'ONIBUS', 'METRO', 'VLT', 'BILHETE', 'ESTACIONAMENTO'],
+                'Combustível': ['POSTO', 'SHELL', 'IPIRANGA', 'PETROBRAS', 'BR DISTRIBUIDORA', 'GASOLINA', 'COMBUSTIVEL'],
+                'Farmácia': ['FARMACIA', 'DROGASIL', 'DROGARIA', 'RAIA', 'PACHECO', 'PAGUE MENOS', 'DROGA'],
+                'Entretenimento': ['NETFLIX', 'SPOTIFY', 'AMAZON PRIME', 'DISNEY', 'HBO', 'CINEMA', 'INGRESSO', 'STEAM', 'PLAYSTATION', 'XBOX', 'YOUTUBE'],
+                'Moradia': ['ALUGUEL', 'CONDOMINIO', 'IPTU', 'AGUA', 'LUZ', 'ENERGIA', 'GAS', 'ELETROPAULO', 'ENEL', 'SABESP', 'COMGAS'],
+                'Transferência Pessoal': ['PIX PARA', 'TRANSF PARA', 'TED PARA'],
+                'Salário': ['SALARIO', 'PAGAMENTO', 'REMUNERACAO', 'FOLHA', 'SALÁ', 'CRÉD.']
+            };
+            for (const [cat, keywords] of Object.entries(categories)) { if (keywords.some(k => d.includes(k))) return cat; }
+            return 'Outros';
+        }
+
+        function generateDashboardData(transactions) {
+            let totalEntrada = 0, totalSaida = 0;
+            const porTipo = {}, porCategoria = {};
+            const transacoesFiltradas = [];
+            const saldos = transactions.filter(t => t.tipo === 'SALDO');
+
+            let saldoAnterior = 0, saldoAtual = 0;
+
+            if (saldos.length > 0) {
+                // PRIORIDADE 1: Lógica de palavras-chave
+                const anteriorMatch = saldos.find(s => s.descricao.includes('ANTERIOR'));
+                saldoAnterior = anteriorMatch ? anteriorMatch.valor : saldos[0].valor;
+
+                const atualKeywords = ['ATUAL', 'FINAL', 'DIA', 'DISPONIVEL', 'EM CONTA', 'TOTAL'];
+                const atualMatch = [...saldos].reverse().find(s => atualKeywords.some(kw => s.descricao.includes(kw)));
+                saldoAtual = atualMatch ? atualMatch.valor : saldos[saldos.length - 1].valor;
+            }
+
+            for (const t of transactions) {
+                if (t.tipo === 'SALDO') {
+                    transacoesFiltradas.push(t);
+                    continue;
+                }
+
+                transacoesFiltradas.push(t);
+                if (t.valor >= 0) totalEntrada += t.valor;
+                else totalSaida += Math.abs(t.valor);
+
+                porTipo[t.tipo] = porTipo[t.tipo] || { qtd: 0, valor: 0 };
+                porTipo[t.tipo].qtd++;
+                porTipo[t.tipo].valor += Math.abs(t.valor);
+                porCategoria[t.categoria] = (porCategoria[t.categoria] || 0) + Math.abs(t.valor);
+            }
+
+            return {
+                resumo: {
+                    saldo_anterior: saldoAnterior.toFixed(2),
+                    total_entrada: totalEntrada.toFixed(2),
+                    total_saida: totalSaida.toFixed(2),
+                    saldo_atual: saldoAtual.toFixed(2)
+                },
+                por_tipo: porTipo,
+                por_categoria: porCategoria,
+                transacoes: transacoesFiltradas
+            };
+        }
+
+
+        let categoryChart = null;
+        let typeChart = null;
+
+        function renderDashboard(data) {
+            loadingSection.classList.remove('active');
+            dashboard.classList.add('active');
+
+            // Atualizar cards de resumo
+            document.getElementById('saldoAnterior').textContent = formatCurrency(data.resumo.saldo_anterior);
+            document.getElementById('totalEntradas').textContent = formatCurrency(data.resumo.total_entrada);
+            document.getElementById('totalSaidas').textContent = formatCurrency(data.resumo.total_saida);
+            const saldoAtualEl = document.getElementById('saldoAtual');
+            const saldoAtualVal = parseFloat(data.resumo.saldo_atual);
+            saldoAtualEl.textContent = formatCurrency(saldoAtualVal);
+            saldoAtualEl.className = 'card-value ' + (saldoAtualVal >= 0 ? 'positive' : 'negative');
+
+            // Destruir gráficos anteriores para evitar bugs de hover e memória
+            if (categoryChart) categoryChart.destroy();
+            if (typeChart) typeChart.destroy();
+
+            // Category Chart
+            categoryChart = new Chart(document.getElementById('categoryChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(data.por_categoria),
+                    datasets: [{
+                        data: Object.values(data.por_categoria),
+                        backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff', '#ff9f40', '#00ff88', '#ff4466'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'right', labels: { color: '#fff' } } } }
+            });
+
+            // Type Chart
+            typeChart = new Chart(document.getElementById('typeChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(data.por_tipo),
+                    datasets: [{
+                        label: 'Valor (R$)',
+                        data: Object.keys(data.por_tipo).map(k => data.por_tipo[k].valor),
+                        backgroundColor: ['#4488ff', '#00ff88', '#ff4466', '#ffce56'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { ticks: { color: '#888' }, grid: { display: false } }, y: { ticks: { color: '#888' }, grid: { color: '#2a2a3a' } } }
+                }
+            });
+
+            // Transactions Table
+            document.getElementById('transactionsBody').innerHTML = data.transacoes.map(t => `
+                <tr class="${t.tipo === 'SALDO' ? 'balance-row' : ''}">
+                    <td>${t.data}</td>
+                    <td>${t.descricao}</td>
+                    <td>${t.tipo === 'SALDO' ? '<span class="balance-badge">SALDO</span>' : `<span class="category-badge">${t.categoria}</span>`}</td>
+                    <td>${t.tipo}</td>
+                    <td style="color: ${t.tipo === 'SALDO' ? 'var(--accent-blue)' : (t.valor >= 0 ? 'var(--accent-green)' : 'var(--accent-red)')}">
+                        ${formatCurrency(Math.abs(t.valor))}
+                    </td>
+                </tr>
+            `).join('');
+
+            // Tips
+            generateTips(data);
+        }
+
+        function generateTips(data) {
+            const tips = [];
+            const totalSaida = parseFloat(data.resumo.total_saida);
+            const totalEntrada = parseFloat(data.resumo.total_entrada);
+            const saldoFinal = parseFloat(data.resumo.saldo_atual);
+            const cats = data.por_categoria;
+
+            if (totalSaida > 0) {
+                if (cats['Alimentação'] > totalSaida * 0.15) tips.push({ icon: '🍔', text: `Alimentação representa ${((cats['Alimentação'] / totalSaida) * 100).toFixed(0)}% dos gastos. Cozinhar em casa pode economizar até 50%!` });
+                if (cats['Entretenimento'] > totalSaida * 0.1) tips.push({ icon: '🎬', text: `Revise suas assinaturas de streaming - cancele as que não usa.` });
+            }
+
+            if (totalEntrada > 0) {
+                const percPoupado = (saldoFinal / totalEntrada) * 100;
+                if (percPoupado < 10) {
+                    tips.push({ icon: '💡', text: `Você guardou apenas ${percPoupado.toFixed(0)}% da renda. Tente reservar pelo menos 10% para emergências.` });
+                } else {
+                    tips.push({ icon: '🎉', text: `Ótimo! Você está com um saldo positivo de ${percPoupado.toFixed(0)}% da sua renda mensal!` });
+                }
+            }
+
+            tips.push({ icon: '📊', text: 'Dica: Use o Porquinho toda semana para não perder o controle!' });
+
+            document.getElementById('tipsList').innerHTML = tips.map(t => `<li><span>${t.icon}</span><span>${t.text}</span></li>`).join('');
+
+            // Configurar botões de compartilhamento (Resultados)
+            const shareResultText = `💰 Acabei de organizar minhas finanças com o Meu Porquinho Inteligente! 📊\nEntradas: ${formatCurrency(data.resumo.total_entrada)}\nSaídas: ${formatCurrency(data.resumo.total_saida)}\nSaldo Final: ${formatCurrency(data.resumo.saldo_atual)}`;
+
+            const shareLinks = [
+                { wa: 'shareWhatsApp', tw: 'shareTwitter' },
+                { wa: 'shareWhatsAppRes', tw: 'shareTwitterRes' }
+            ];
+
+            shareLinks.forEach(ids => {
+                const wa = document.getElementById(ids.wa);
+                const tw = document.getElementById(ids.tw);
+                if (wa) wa.href = `https://wa.me/?text=${encodeURIComponent(shareResultText)}`;
+                if (tw) tw.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareResultText)}`;
+            });
+        }
+
+        function formatCurrency(val) {
+            return parseFloat(val).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+    </script>
+</body>
+
+</html>

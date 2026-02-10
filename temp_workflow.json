@@ -1,0 +1,53 @@
+{
+  "name": "Antigravity Teste Ola Mundo",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger-node",
+      "name": "Ao clicar em Executar",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        820,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "mensagem",
+              "value": "Olá! O servidor MCP Antigravity está conectado e criando workflows com sucesso."
+            },
+            {
+              "name": "data_teste",
+              "value": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "id": "set-node",
+      "name": "Mensagem de Sucesso",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        360
+      ]
+    }
+  ],
+  "connections": {
+    "Ao clicar em Executar": {
+      "main": [
+        [
+          {
+            "node": "Mensagem de Sucesso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

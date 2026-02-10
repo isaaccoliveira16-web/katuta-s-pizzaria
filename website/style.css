@@ -1,0 +1,252 @@
+:root {
+    /* Cores Premium Katuta's */
+    --primary: #460E11;
+    /* Cor extraída diretamente da logo para fusão perfeita */
+    --primary-light: #7A2227;
+    --secondary: #D4AF37;
+    /* Ouro */
+    --white: #FFFFFF;
+    --bg-dark: #121212;
+    --text-main: #F5F5F5;
+    --text-muted: #B0B0B0;
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+
+    /* Tipografia */
+    --font-title: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Glassmorphism Utility */
+.glass-panel {
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+}
+
+/* Buttons */
+.btn-primary {
+    background: var(--primary);
+    color: var(--white);
+    padding: 12px 30px;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(92, 25, 29, 0.4);
+}
+
+header {
+    background: var(--primary);
+    /* Cor Vinho da Logo */
+    padding: 30px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+header nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#logo {
+    height: 100px;
+    display: block;
+    /* Técnica de Fusão Total: Esmaece os cantos do quadrado da imagem */
+    mask-image: radial-gradient(circle, black 30%, transparent 85%);
+    -webkit-mask-image: radial-gradient(circle, black 30%, transparent 85%);
+    transition: transform 0.3s ease;
+}
+
+#logo:hover {
+    transform: scale(1.05);
+    /* Micro-animação de luxo */
+}
+
+#hero {
+    height: 70vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../interior_pizzaria_blur.png');
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: var(--white);
+    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    color: var(--text-muted);
+}
+
+#precos {
+    padding: 100px 0;
+}
+
+.price-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.price-card {
+    padding: 40px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.price-card:hover {
+    transform: translateY(-10px);
+}
+
+.price-card.highlight {
+    border-color: var(--secondary);
+}
+
+.price-card h3 {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+}
+
+.price-card .price {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 10px;
+    font-family: var(--font-title);
+}
+
+.price-card span {
+    color: var(--secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+#reserva {
+    padding: 100px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+}
+
+.form-container h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: var(--secondary);
+    text-align: center;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+input {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--white);
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--secondary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.warning {
+    font-size: 0.8rem;
+    color: var(--secondary);
+    margin-bottom: 25px;
+    font-style: italic;
+}
+
+#btn-submit {
+    width: 100%;
+}
+
+.success-msg {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(0, 255, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+}
+
+footer {
+    padding: 50px 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+
+    .row {
+        grid-template-columns: 1fr;
+    }
+}

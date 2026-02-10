@@ -1,0 +1,535 @@
+{
+    "data":  [
+                 {
+                     "id":  "36",
+                     "finished":  true,
+                     "mode":  "manual",
+                     "retryOf":  null,
+                     "retrySuccessId":  null,
+                     "status":  "success",
+                     "startedAt":  "2026-02-09T12:53:38.277Z",
+                     "stoppedAt":  "2026-02-09T12:53:43.853Z",
+                     "workflowId":  "BVr8U25654fBzy6N",
+                     "waitTill":  null,
+                     "data":  {
+                                  "version":  1,
+                                  "startData":  {
+
+                                                },
+                                  "resultData":  {
+                                                     "runData":  {
+                                                                     "Bate-papo Antigravidade":  [
+                                                                                                     {
+                                                                                                         "startTime":  1770641618296,
+                                                                                                         "executionIndex":  0,
+                                                                                                         "source":  [
+
+                                                                                                                    ],
+                                                                                                         "hints":  [
+
+                                                                                                                   ],
+                                                                                                         "executionTime":  3,
+                                                                                                         "executionStatus":  "success",
+                                                                                                         "data":  {
+                                                                                                                      "main":  [
+                                                                                                                                   [
+                                                                                                                                       "@{json=; pairedItem=}"
+                                                                                                                                   ]
+                                                                                                                               ]
+                                                                                                                  }
+                                                                                                     }
+                                                                                                 ],
+                                                                     "Mem?ria de IA":  [
+                                                                                           {
+                                                                                               "startTime":  1770641618316,
+                                                                                               "executionTime":  3,
+                                                                                               "executionIndex":  2,
+                                                                                               "executionStatus":  "success",
+                                                                                               "source":  [
+                                                                                                              {
+                                                                                                                  "previousNode":  "Agente Katutinha",
+                                                                                                                  "previousNodeRun":  0
+                                                                                                              }
+                                                                                                          ],
+                                                                                               "data":  {
+                                                                                                            "ai_memory":  [
+                                                                                                                              [
+                                                                                                                                  "@{json=}"
+                                                                                                                              ]
+                                                                                                                          ]
+                                                                                                        },
+                                                                                               "inputOverride":  {
+                                                                                                                     "ai_memory":  [
+                                                                                                                                       [
+                                                                                                                                           "@{json=}"
+                                                                                                                                       ]
+                                                                                                                                   ]
+                                                                                                                 },
+                                                                                               "metadata":  {
+                                                                                                                "subRun":  [
+                                                                                                                               {
+                                                                                                                                   "node":  "Mem?ria de IA",
+                                                                                                                                   "runIndex":  0
+                                                                                                                               }
+                                                                                                                           ]
+                                                                                                            }
+                                                                                           },
+                                                                                           {
+                                                                                               "startTime":  1770641623843,
+                                                                                               "executionTime":  5,
+                                                                                               "executionIndex":  6,
+                                                                                               "executionStatus":  "success",
+                                                                                               "source":  [
+                                                                                                              {
+                                                                                                                  "previousNode":  "Agente Katutinha",
+                                                                                                                  "previousNodeRun":  0
+                                                                                                              }
+                                                                                                          ],
+                                                                                               "data":  {
+                                                                                                            "ai_memory":  [
+                                                                                                                              [
+                                                                                                                                  "@{json=}"
+                                                                                                                              ]
+                                                                                                                          ]
+                                                                                                        },
+                                                                                               "inputOverride":  {
+                                                                                                                     "ai_memory":  [
+                                                                                                                                       [
+                                                                                                                                           "@{json=}"
+                                                                                                                                       ]
+                                                                                                                                   ]
+                                                                                                                 },
+                                                                                               "metadata":  {
+                                                                                                                "subRun":  [
+                                                                                                                               {
+                                                                                                                                   "node":  "Mem?ria de IA",
+                                                                                                                                   "runIndex":  1
+                                                                                                                               }
+                                                                                                                           ]
+                                                                                                            }
+                                                                                           }
+                                                                                       ],
+                                                                     "Modelo Google Gemini":  [
+                                                                                                  {
+                                                                                                      "startTime":  1770641618338,
+                                                                                                      "executionTime":  1785,
+                                                                                                      "executionIndex":  3,
+                                                                                                      "executionStatus":  "success",
+                                                                                                      "source":  [
+                                                                                                                     {
+                                                                                                                         "previousNode":  "Agente Katutinha",
+                                                                                                                         "previousNodeRun":  0
+                                                                                                                     }
+                                                                                                                 ],
+                                                                                                      "data":  {
+                                                                                                                   "ai_languageModel":  [
+                                                                                                                                            [
+                                                                                                                                                "@{json=}"
+                                                                                                                                            ]
+                                                                                                                                        ]
+                                                                                                               },
+                                                                                                      "inputOverride":  {
+                                                                                                                            "ai_languageModel":  [
+                                                                                                                                                     [
+                                                                                                                                                         "@{json=}"
+                                                                                                                                                     ]
+                                                                                                                                                 ]
+                                                                                                                        },
+                                                                                                      "metadata":  {
+                                                                                                                       "subRun":  [
+                                                                                                                                      {
+                                                                                                                                          "node":  "Modelo Google Gemini",
+                                                                                                                                          "runIndex":  0
+                                                                                                                                      }
+                                                                                                                                  ]
+                                                                                                                   }
+                                                                                                  },
+                                                                                                  {
+                                                                                                      "startTime":  1770641620150,
+                                                                                                      "executionTime":  3688,
+                                                                                                      "executionIndex":  5,
+                                                                                                      "executionStatus":  "success",
+                                                                                                      "source":  [
+                                                                                                                     {
+                                                                                                                         "previousNode":  "Agente Katutinha",
+                                                                                                                         "previousNodeRun":  0
+                                                                                                                     }
+                                                                                                                 ],
+                                                                                                      "data":  {
+                                                                                                                   "ai_languageModel":  [
+                                                                                                                                            [
+                                                                                                                                                "@{json=}"
+                                                                                                                                            ]
+                                                                                                                                        ]
+                                                                                                               },
+                                                                                                      "inputOverride":  {
+                                                                                                                            "ai_languageModel":  [
+                                                                                                                                                     [
+                                                                                                                                                         "@{json=}"
+                                                                                                                                                     ]
+                                                                                                                                                 ]
+                                                                                                                        },
+                                                                                                      "metadata":  {
+                                                                                                                       "subRun":  [
+                                                                                                                                      {
+                                                                                                                                          "node":  "Modelo Google Gemini",
+                                                                                                                                          "runIndex":  1
+                                                                                                                                      }
+                                                                                                                                  ]
+                                                                                                                   }
+                                                                                                  }
+                                                                                              ],
+                                                                     "Ferramenta de Mesas":  [
+                                                                                                 {
+                                                                                                     "startTime":  1770641620127,
+                                                                                                     "executionTime":  5,
+                                                                                                     "executionIndex":  4,
+                                                                                                     "executionStatus":  "error",
+                                                                                                     "source":  [
+                                                                                                                    {
+                                                                                                                        "previousNode":  "Agente Katutinha",
+                                                                                                                        "previousNodeRun":  0
+                                                                                                                    }
+                                                                                                                ],
+                                                                                                     "data":  {
+                                                                                                                  "ai_tool":  [
+                                                                                                                                  [
+                                                                                                                                      "@{json=}"
+                                                                                                                                  ]
+                                                                                                                              ]
+                                                                                                              },
+                                                                                                     "inputOverride":  {
+                                                                                                                           "ai_tool":  [
+                                                                                                                                           [
+                                                                                                                                               "@{json=}"
+                                                                                                                                           ]
+                                                                                                                                       ]
+                                                                                                                       },
+                                                                                                     "metadata":  {
+                                                                                                                      "subRun":  [
+                                                                                                                                     {
+                                                                                                                                         "node":  "Ferramenta de Mesas",
+                                                                                                                                         "runIndex":  0
+                                                                                                                                     }
+                                                                                                                                 ]
+                                                                                                                  },
+                                                                                                     "error":  {
+                                                                                                                   "message":  "No information about the workflow to execute found. Please provide either the \"id\" or \"code\"!",
+                                                                                                                   "timestamp":  1770641620130,
+                                                                                                                   "name":  "NodeOperationError",
+                                                                                                                   "context":  {
+
+                                                                                                                               }
+                                                                                                               }
+                                                                                                 }
+                                                                                             ],
+                                                                     "Agente Katutinha":  [
+                                                                                              {
+                                                                                                  "startTime":  1770641618300,
+                                                                                                  "executionIndex":  1,
+                                                                                                  "source":  [
+                                                                                                                 {
+                                                                                                                     "previousNode":  "Bate-papo Antigravidade",
+                                                                                                                     "previousNodeOutput":  0,
+                                                                                                                     "previousNodeRun":  0
+                                                                                                                 }
+                                                                                                             ],
+                                                                                                  "hints":  [
+
+                                                                                                            ],
+                                                                                                  "executionTime":  5548,
+                                                                                                  "executionStatus":  "success",
+                                                                                                  "data":  {
+                                                                                                               "main":  [
+                                                                                                                            [
+                                                                                                                                "@{json=; pairedItem=}"
+                                                                                                                            ]
+                                                                                                                        ]
+                                                                                                           }
+                                                                                              }
+                                                                                          ]
+                                                                 },
+                                                     "pinData":  {
+
+                                                                 },
+                                                     "lastNodeExecuted":  "Agente Katutinha"
+                                                 },
+                                  "executionData":  {
+                                                        "contextData":  {
+
+                                                                        },
+                                                        "nodeExecutionStack":  [
+
+                                                                               ],
+                                                        "metadata":  {
+                                                                         "Mem?ria de IA":  [
+                                                                                               {
+                                                                                                   "subRun":  [
+                                                                                                                  {
+                                                                                                                      "node":  "Mem?ria de IA",
+                                                                                                                      "runIndex":  0
+                                                                                                                  }
+                                                                                                              ]
+                                                                                               },
+                                                                                               {
+                                                                                                   "subRun":  [
+                                                                                                                  {
+                                                                                                                      "node":  "Mem?ria de IA",
+                                                                                                                      "runIndex":  1
+                                                                                                                  }
+                                                                                                              ]
+                                                                                               }
+                                                                                           ],
+                                                                         "Modelo Google Gemini":  [
+                                                                                                      {
+                                                                                                          "subRun":  [
+                                                                                                                         {
+                                                                                                                             "node":  "Modelo Google Gemini",
+                                                                                                                             "runIndex":  0
+                                                                                                                         }
+                                                                                                                     ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "subRun":  [
+                                                                                                                         {
+                                                                                                                             "node":  "Modelo Google Gemini",
+                                                                                                                             "runIndex":  1
+                                                                                                                         }
+                                                                                                                     ]
+                                                                                                      }
+                                                                                                  ],
+                                                                         "Ferramenta de Mesas":  [
+                                                                                                     {
+                                                                                                         "subRun":  [
+                                                                                                                        {
+                                                                                                                            "node":  "Ferramenta de Mesas",
+                                                                                                                            "runIndex":  0
+                                                                                                                        }
+                                                                                                                    ]
+                                                                                                     }
+                                                                                                 ]
+                                                                     },
+                                                        "waitingExecution":  {
+
+                                                                             },
+                                                        "waitingExecutionSource":  {
+
+                                                                                   },
+                                                        "runtimeData":  {
+                                                                            "version":  1,
+                                                                            "establishedAt":  1770641618294,
+                                                                            "source":  "manual",
+                                                                            "triggerNode":  {
+                                                                                                "name":  "Bate-papo Antigravidade",
+                                                                                                "type":  "@n8n/n8n-nodes-langchain.chatTrigger"
+                                                                                            }
+                                                                        }
+                                                    }
+                              },
+                     "workflowData":  {
+                                          "id":  "BVr8U25654fBzy6N",
+                                          "name":  "Katuta-02-AI-Brain",
+                                          "active":  false,
+                                          "activeVersionId":  null,
+                                          "nodes":  [
+                                                        {
+                                                            "parameters":  {
+                                                                               "multipleMethods":  false,
+                                                                               "httpMethod":  "GET",
+                                                                               "path":  "56627b0e-6b65-4c2e-a0f1-db1b5ba65dbf",
+                                                                               "authentication":  "none",
+                                                                               "responseMode":  "onReceived",
+                                                                               "responseCode":  200,
+                                                                               "contentTypeNotice":  "",
+                                                                               "options":  {
+
+                                                                                           }
+                                                                           },
+                                                            "id":  "b1",
+                                                            "name":  "Executar entrada",
+                                                            "type":  "n8n-nodes-base.webhook",
+                                                            "typeVersion":  1,
+                                                            "position":  [
+                                                                             208,
+                                                                             304
+                                                                         ],
+                                                            "webhookId":  "56627b0e-6b65-4c2e-a0f1-db1b5ba65dbf"
+                                                        },
+                                                        {
+                                                            "parameters":  {
+                                                                               "public":  false,
+                                                                               "availableInChat":  false,
+                                                                               "options":  {
+
+                                                                                           }
+                                                                           },
+                                                            "id":  "ct1",
+                                                            "name":  "Bate-papo Antigravidade",
+                                                            "type":  "@n8n/n8n-nodes-langchain.chatTrigger",
+                                                            "typeVersion":  1,
+                                                            "position":  [
+                                                                             208,
+                                                                             112
+                                                                         ],
+                                                            "webhookId":  "e5e087d0-b181-4bb3-82c5-acf504a15b97"
+                                                        },
+                                                        {
+                                                            "parameters":  {
+                                                                               "aiAgentStarterCallout":  "",
+                                                                               "agent":  "toolsAgent",
+                                                                               "promptType":  "auto",
+                                                                               "text":  "={{ $json.chatInput }}",
+                                                                               "hasOutputParser":  false,
+                                                                               "options":  {
+                                                                                               "systemMessage":  "Voc? ? o Katutinha (masculino), atendente da Katuta\u0027s Pizzaria. \n\nREGRAS DE OURO:\n1. Persona: Simp?tico e prestativo.\n2. Pre?os: \u003e11 anos R$ 89,90 | 5-10 anos R$ 44,95 | \u003c5 anos Gr?tis | Aniversariante Gr?tis (com documento).\n3. Fluxo: S? pergunte o Nome e o n?mero de pessoas (pax) quando o cliente pedir reserva ou agradecer ap?s tirar d?vidas.\n4. EXECU??O: Assim que tiver NOME e QUANTIDADE TOTAL de pessoas, chame a ferramenta \u0027reserva_motor\u0027 imediatamente.\n5. Hor?rio: Reservas apenas at? as 19:00h. Se for depois das 19h, informe que ? ordem de chegada.\n6. Grupos Grandes: Se o grupo for maior que 4 pessoas, avise que vai unir mesas."
+                                                                                           },
+                                                                               "credentials":  ""
+                                                                           },
+                                                            "id":  "b2",
+                                                            "name":  "Agente Katutinha",
+                                                            "type":  "@n8n/n8n-nodes-langchain.agent",
+                                                            "typeVersion":  1.7,
+                                                            "position":  [
+                                                                             608,
+                                                                             304
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "parameters":  {
+                                                                               "notice":  "",
+                                                                               "modelName":  "models/gemini-flash-latest",
+                                                                               "options":  {
+                                                                                               "temperature":  0.7
+                                                                                           }
+                                                                           },
+                                                            "id":  "b3",
+                                                            "name":  "Modelo Google Gemini",
+                                                            "type":  "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+                                                            "typeVersion":  1,
+                                                            "position":  [
+                                                                             512,
+                                                                             560
+                                                                         ],
+                                                            "credentials":  {
+                                                                                "googlePalmApi":  {
+                                                                                                      "id":  "lGTwBhVPGUnJ6RPP",
+                                                                                                      "name":  "Google Gemini(PaLM) Api account"
+                                                                                                  }
+                                                                            }
+                                                        },
+                                                        {
+                                                            "parameters":  {
+                                                                               "notice":  "",
+                                                                               "scalingNotice":  "",
+                                                                               "sessionIdType":  "fromInput",
+                                                                               "sessionKey":  "={{ $json.sessionId }}",
+                                                                               "contextWindowLength":  5
+                                                                           },
+                                                            "id":  "b4",
+                                                            "name":  "Mem?ria de IA",
+                                                            "type":  "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+                                                            "typeVersion":  1.3,
+                                                            "position":  [
+                                                                             656,
+                                                                             560
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "parameters":  {
+                                                                               "notice":  "",
+                                                                               "noticeTemplateExample":  "",
+                                                                               "name":  "reserva_motor",
+                                                                               "description":  "Ferramenta para registrar reservas. Forne?a o n?mero total de pessoas (pax) e o nome do cliente.",
+                                                                               "executeNotice":  "",
+                                                                               "source":  "database",
+                                                                               "workflowId":  "2zPsYMxeUOfYhPPe",
+                                                                               "responsePropertyName":  "response",
+                                                                               "fields":  {
+
+                                                                                          },
+                                                                               "specifyInputSchema":  false,
+                                                                               "jsonSchemaExample":  "{\n\t\"some_input\": \"some_value\"\n}"
+                                                                           },
+                                                            "id":  "b5",
+                                                            "name":  "Ferramenta de Mesas",
+                                                            "type":  "@n8n/n8n-nodes-langchain.toolWorkflow",
+                                                            "typeVersion":  1.2,
+                                                            "position":  [
+                                                                             800,
+                                                                             560
+                                                                         ]
+                                                        }
+                                                    ],
+                                          "connections":  {
+                                                              "Executar entrada":  {
+                                                                                       "main":  [
+                                                                                                    [
+                                                                                                        {
+                                                                                                            "node":  "Agente Katutinha",
+                                                                                                            "type":  "main",
+                                                                                                            "index":  0
+                                                                                                        }
+                                                                                                    ]
+                                                                                                ]
+                                                                                   },
+                                                              "Bate-papo Antigravidade":  {
+                                                                                              "main":  [
+                                                                                                           [
+                                                                                                               {
+                                                                                                                   "node":  "Agente Katutinha",
+                                                                                                                   "type":  "main",
+                                                                                                                   "index":  0
+                                                                                                               }
+                                                                                                           ]
+                                                                                                       ]
+                                                                                          },
+                                                              "Modelo Google Gemini":  {
+                                                                                           "ai_languageModel":  [
+                                                                                                                    [
+                                                                                                                        {
+                                                                                                                            "node":  "Agente Katutinha",
+                                                                                                                            "type":  "ai_languageModel",
+                                                                                                                            "index":  0
+                                                                                                                        }
+                                                                                                                    ]
+                                                                                                                ]
+                                                                                       },
+                                                              "Mem?ria de IA":  {
+                                                                                    "ai_memory":  [
+                                                                                                      [
+                                                                                                          {
+                                                                                                              "node":  "Agente Katutinha",
+                                                                                                              "type":  "ai_memory",
+                                                                                                              "index":  0
+                                                                                                          }
+                                                                                                      ]
+                                                                                                  ]
+                                                                                },
+                                                              "Ferramenta de Mesas":  {
+                                                                                          "ai_tool":  [
+                                                                                                          [
+                                                                                                              {
+                                                                                                                  "node":  "Agente Katutinha",
+                                                                                                                  "type":  "ai_tool",
+                                                                                                                  "index":  0
+                                                                                                              }
+                                                                                                          ]
+                                                                                                      ]
+                                                                                      }
+                                                          },
+                                          "settings":  {
+                                                           "errorWorkflow":  "NyQKhHnymOvXQRdx",
+                                                           "callerPolicy":  "workflowsFromSameOwner",
+                                                           "availableInMCP":  false
+                                                       },
+                                          "pinData":  {
+
+                                                      }
+                                      },
+                     "customData":  {
+
+                                    }
+                 }
+             ],
+    "nextCursor":  "eyJsYXN0SWQiOiIzNiIsImxpbWl0IjoxfQ=="
+}

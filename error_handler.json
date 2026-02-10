@@ -1,0 +1,118 @@
+{
+    "updatedAt":  "2026-02-09T02:26:01.076Z",
+    "createdAt":  "2026-02-09T02:26:01.076Z",
+    "id":  "NyQKhHnymOvXQRdx",
+    "name":  "Katuta-99-Global-Error-Handler",
+    "description":  null,
+    "active":  false,
+    "isArchived":  false,
+    "nodes":  [
+                  {
+                      "parameters":  {
+
+                                     },
+                      "id":  "e1",
+                      "name":  "Error Trigger",
+                      "type":  "n8n-nodes-base.errorTrigger",
+                      "typeVersion":  1,
+                      "position":  [
+                                       200,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const error = $input.item.json;\nreturn {\n  workflow_name: error.workflow.name,\n  node_name: error.node.name,\n  error_message: error.execution.error.message,\n  execution_id: error.execution.id,\n  timestamp: new Date().toISOString()\n};"
+                                     },
+                      "id":  "e2",
+                      "name":  "[JS] Format Error Log",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  1,
+                      "position":  [
+                                       400,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "chatId":  "ID_DO_SEU_CHAT_DE_ERRO",
+                                         "text":  "=?Ys? **ERRO NO SISTEMA KATUTA\u0027S** ?Ys?\n\n**Workflow**: {{ $json.workflow_name }}\n**Nó**: {{ $json.node_name }}\n**Mensagem**: {{ $json.error_message }}\n**ID Execução**: {{ $json.execution_id }}\n"
+                                     },
+                      "id":  "e3",
+                      "name":  "[Telegram/WhatsApp] Notify Dev",
+                      "type":  "n8n-nodes-base.telegram",
+                      "typeVersion":  1,
+                      "position":  [
+                                       600,
+                                       300
+                                   ]
+                  }
+              ],
+    "connections":  {
+                        "Error Trigger":  {
+                                              "main":  [
+                                                           [
+                                                               {
+                                                                   "node":  "[JS] Format Error Log",
+                                                                   "type":  "main",
+                                                                   "index":  0
+                                                               }
+                                                           ]
+                                                       ]
+                                          },
+                        "[JS] Format Error Log":  {
+                                                      "main":  [
+                                                                   [
+                                                                       {
+                                                                           "node":  "[Telegram/WhatsApp] Notify Dev",
+                                                                           "type":  "main",
+                                                                           "index":  0
+                                                                       }
+                                                                   ]
+                                                               ]
+                                                  }
+                    },
+    "settings":  {
+                     "callerPolicy":  "workflowsFromSameOwner",
+                     "availableInMCP":  false
+                 },
+    "staticData":  null,
+    "meta":  null,
+    "pinData":  null,
+    "versionId":  "e3172997-b205-42bf-8189-56516789401b",
+    "activeVersionId":  null,
+    "versionCounter":  1,
+    "triggerCount":  0,
+    "shared":  [
+                   {
+                       "updatedAt":  "2026-02-09T02:26:01.083Z",
+                       "createdAt":  "2026-02-09T02:26:01.083Z",
+                       "role":  "workflow:owner",
+                       "workflowId":  "NyQKhHnymOvXQRdx",
+                       "projectId":  "LABj6mfQWJOeeqEX",
+                       "project":  {
+                                       "updatedAt":  "2026-02-09T02:20:48.708Z",
+                                       "createdAt":  "2026-02-09T02:19:43.641Z",
+                                       "id":  "LABj6mfQWJOeeqEX",
+                                       "name":  "Isaac Ferreira \u003cisaaccoliveira16@gmail.com\u003e",
+                                       "type":  "personal",
+                                       "icon":  null,
+                                       "description":  null,
+                                       "creatorId":  "830e19b7-fd5c-447b-b2d4-f3e7706cddc6",
+                                       "projectRelations":  [
+                                                                {
+                                                                    "updatedAt":  "2026-02-09T02:19:43.642Z",
+                                                                    "createdAt":  "2026-02-09T02:19:43.642Z",
+                                                                    "userId":  "830e19b7-fd5c-447b-b2d4-f3e7706cddc6",
+                                                                    "projectId":  "LABj6mfQWJOeeqEX",
+                                                                    "user":  "@{updatedAt=2026-02-09T12:47:46.000Z; createdAt=2026-02-09T02:19:43.208Z; id=830e19b7-fd5c-447b-b2d4-f3e7706cddc6; email=isaaccoliveira16@gmail.com; firstName=Isaac; lastName=Ferreira; personalizationAnswers=; settings=; disabled=False; mfaEnabled=False; lastActiveAt=2026-02-09; isPending=False}"
+                                                                }
+                                                            ]
+                                   }
+                   }
+               ],
+    "tags":  [
+
+             ],
+    "activeVersion":  null
+}

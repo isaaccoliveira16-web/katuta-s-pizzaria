@@ -1,0 +1,68 @@
+{
+    "name": "Katuta-99-Global-Error-Handler",
+    "settings": {},
+    "nodes": [
+        {
+            "parameters": {},
+            "id": "e1",
+            "name": "Error Trigger",
+            "type": "n8n-nodes-base.errorTrigger",
+            "typeVersion": 1,
+            "position": [
+                200,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const error = $input.item.json;\nreturn {\n  workflow_name: error.workflow.name,\n  node_name: error.node.name,\n  error_message: error.execution.error.message,\n  execution_id: error.execution.id,\n  timestamp: new Date().toISOString()\n};"
+            },
+            "id": "e2",
+            "name": "[JS] Format Error Log",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                400,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "chatId": "ID_DO_SEU_CHAT_DE_ERRO",
+                "text": "=🚨 **ERRO NO SISTEMA KATUTA'S** 🚨\n\n**Workflow**: {{ $json.workflow_name }}\n**Nó**: {{ $json.node_name }}\n**Mensagem**: {{ $json.error_message }}\n**ID Execução**: {{ $json.execution_id }}\n"
+            },
+            "id": "e3",
+            "name": "[Telegram/WhatsApp] Notify Dev",
+            "type": "n8n-nodes-base.telegram",
+            "typeVersion": 1,
+            "position": [
+                600,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Error Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Format Error Log",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Format Error Log": {
+            "main": [
+                [
+                    {
+                        "node": "[Telegram/WhatsApp] Notify Dev",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

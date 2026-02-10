@@ -1,0 +1,427 @@
+{
+    "name": "Analisador de Extrato Bancário (PDF)",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "analisar-extrato",
+                "responseMode": "responseNode",
+                "options": {
+                    "binaryData": true
+                }
+            },
+            "id": "webhook-upload",
+            "name": "Webhook Upload PDF",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                200,
+                300
+            ],
+            "webhookId": "extrato-webhook"
+        },
+        {
+            "parameters": {
+                "operation": "pdf",
+                "options": {}
+            },
+            "id": "extract-pdf",
+            "name": "Extrair Texto do PDF",
+            "type": "n8n-nodes-base.extractFromFile",
+            "typeVersion": 1,
+            "position": [
+                400,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "options": {
+                    "systemMessage": "Você é um especialista em extrair transações de extratos bancários.\n\nVocê receberá o texto extraído de um PDF de extrato bancário.\nSua tarefa é identificar TODAS as transações e retornar um JSON válido.\n\nPara cada transação, extraia:\n- data: no formato DD/MM/AAAA\n- descricao: nome da transação/empresa\n- valor: número (negativo para saídas, positivo para entradas)\n- tipo: PIX, TED, Débito, Crédito ou Outros\n\nRetorne APENAS um JSON válido no formato:\n{\n  \"transacoes\": [\n    {\"data\": \"...\", \"descricao\": \"...\", \"valor\": -00.00, \"tipo\": \"...\"},\n    ...\n  ]\n}\n\nNÃO inclua nenhum texto antes ou depois do JSON."
+                }
+            },
+            "id": "ai-extractor",
+            "name": "AI Extrator de Transações",
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 1.6,
+            "position": [
+                600,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "model": "gpt-4o",
+                "options": {
+                    "temperature": 0
+                }
+            },
+            "id": "openai-model-extract",
+            "name": "OpenAI GPT-4o",
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "typeVersion": 1,
+            "position": [
+                600,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Parsear JSON das transações extraídas\nconst input = $input.first();\nlet text = input.json.output || input.json.text || '';\n\n// Limpar e encontrar o JSON\nconst jsonMatch = text.match(/\\{[\\s\\S]*\\}/);\nif (!jsonMatch) {\n  return [{ json: { error: 'Não foi possível extrair transações do PDF' } }];\n}\n\ntry {\n  const data = JSON.parse(jsonMatch[0]);\n  return data.transacoes.map(t => ({ json: t }));\n} catch (e) {\n  return [{ json: { error: 'Erro ao parsear JSON: ' + e.message } }];\n}"
+            },
+            "id": "parse-json",
+            "name": "Parsear Transações",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                800,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "batchSize": 5,
+                "options": {}
+            },
+            "id": "split-batches",
+            "name": "Processar em Lotes",
+            "type": "n8n-nodes-base.splitInBatches",
+            "typeVersion": 3,
+            "position": [
+                1000,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Detectar se é pessoa física ou empresa\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const descricao = item.json.descricao || '';\n  const valor = parseFloat(item.json.valor) || 0;\n  const data = item.json.data || '';\n  const tipo = item.json.tipo || 'Outros';\n  \n  // Regex para detectar nomes de pessoas (ex: 'João Silva', 'Maria A. Santos')\n  const regexPessoa = /^[A-ZÀ-Ú][a-zà-ú]+\\s+[A-ZÀ-Ú][a-zà-ú]+/;\n  const isPessoaFisica = regexPessoa.test(descricao.trim());\n  \n  results.push({\n    json: {\n      data: data,\n      descricao: descricao,\n      valor: valor,\n      tipo: tipo,\n      isPessoaFisica: isPessoaFisica,\n      categoria: isPessoaFisica ? 'Transferência Pessoal' : null\n    }\n  });\n}\n\nreturn results;"
+            },
+            "id": "detect-person",
+            "name": "Detectar Pessoa Física",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1200,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{ $json.isPessoaFisica }}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "id": "if-pessoa",
+            "name": "É Pessoa Física?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [
+                1400,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "options": {
+                    "systemMessage": "Você é um categorizador de transações bancárias.\n\nDada a descrição de uma transação, pesquise na internet o que é essa empresa/serviço e retorne APENAS o nome da categoria.\n\nCategorias disponíveis:\n- Alimentação (restaurantes, delivery, iFood)\n- Mercado (supermercados, atacadões)\n- Transporte (Uber, 99, táxi)\n- Combustível (postos de gasolina)\n- Farmácia (drogarias)\n- Saúde (hospitais, clínicas, planos)\n- Entretenimento (streaming, cinema, jogos)\n- Moradia (aluguel, condomínio, luz, água, gás)\n- Educação (escolas, cursos, faculdades)\n- Compras (lojas, e-commerce)\n- Serviços Bancários (tarifas, IOF, taxas)\n- Outros (não identificado)\n\nResponda SOMENTE com o nome da categoria, nada mais."
+                }
+            },
+            "id": "ai-categorizer",
+            "name": "AI Categorizador",
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 1.6,
+            "position": [
+                1600,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "model": "gpt-4o",
+                "options": {
+                    "temperature": 0
+                }
+            },
+            "id": "openai-model",
+            "name": "OpenAI Categorizer",
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "typeVersion": 1,
+            "position": [
+                1600,
+                600
+            ]
+        },
+        {
+            "parameters": {},
+            "id": "serp-tool",
+            "name": "SerpAPI Tool",
+            "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+            "typeVersion": 1,
+            "position": [
+                1800,
+                600
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Adicionar categoria do AI ao item\nconst input = $input.first();\nconst categoriaAI = input.json.output || input.json.text || 'Outros';\n\n// Limpar resposta (remover espaços extras)\nconst categoriaLimpa = categoriaAI.trim();\n\nreturn [{\n  json: {\n    ...input.json,\n    categoria: categoriaLimpa\n  }\n}];"
+            },
+            "id": "set-categoria",
+            "name": "Definir Categoria",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1800,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "mode": "combine",
+                "mergeByFields": {
+                    "values": []
+                },
+                "options": {}
+            },
+            "id": "merge-results",
+            "name": "Juntar Resultados",
+            "type": "n8n-nodes-base.merge",
+            "typeVersion": 3,
+            "position": [
+                2000,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "amount": 1
+            },
+            "id": "delay",
+            "name": "Delay 1s",
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1.1,
+            "position": [
+                2200,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Agregar todos os resultados e gerar dashboard\nconst items = $input.all();\n\nlet totalEntrada = 0;\nlet totalSaida = 0;\nconst porTipo = {};\nconst porCategoria = {};\nconst transacoes = [];\n\nfor (const item of items) {\n  const valor = parseFloat(item.json.valor) || 0;\n  const tipo = item.json.tipo || 'Outros';\n  const categoria = item.json.categoria || 'Outros';\n  \n  // Somar entrada/saída\n  if (valor >= 0) {\n    totalEntrada += valor;\n  } else {\n    totalSaida += Math.abs(valor);\n  }\n  \n  // Agrupar por tipo\n  if (!porTipo[tipo]) {\n    porTipo[tipo] = { qtd: 0, valor: 0 };\n  }\n  porTipo[tipo].qtd++;\n  porTipo[tipo].valor += Math.abs(valor);\n  \n  // Agrupar por categoria\n  if (!porCategoria[categoria]) {\n    porCategoria[categoria] = 0;\n  }\n  porCategoria[categoria] += Math.abs(valor);\n  \n  transacoes.push(item.json);\n}\n\nreturn [{\n  json: {\n    resumo: {\n      total_entrada: totalEntrada.toFixed(2),\n      total_saida: totalSaida.toFixed(2),\n      saldo: (totalEntrada - totalSaida).toFixed(2)\n    },\n    por_tipo: porTipo,\n    por_categoria: porCategoria,\n    transacoes: transacoes\n  }\n}];"
+            },
+            "id": "aggregate",
+            "name": "Gerar Dashboard",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                2400,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "options": {}
+            },
+            "id": "respond",
+            "name": "Responder Webhook",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1.1,
+            "position": [
+                2600,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook Upload PDF": {
+            "main": [
+                [
+                    {
+                        "node": "Extrair Texto do PDF",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extrair Texto do PDF": {
+            "main": [
+                [
+                    {
+                        "node": "AI Extrator de Transações",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "OpenAI GPT-4o": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "AI Extrator de Transações",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "AI Extrator de Transações": {
+            "main": [
+                [
+                    {
+                        "node": "Parsear Transações",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Parsear Transações": {
+            "main": [
+                [
+                    {
+                        "node": "Processar em Lotes",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Processar em Lotes": {
+            "main": [
+                [
+                    {
+                        "node": "Detectar Pessoa Física",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Detectar Pessoa Física": {
+            "main": [
+                [
+                    {
+                        "node": "É Pessoa Física?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "É Pessoa Física?": {
+            "main": [
+                [
+                    {
+                        "node": "Juntar Resultados",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "AI Categorizador",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "OpenAI Categorizer": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "AI Categorizador",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "SerpAPI Tool": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "AI Categorizador",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "AI Categorizador": {
+            "main": [
+                [
+                    {
+                        "node": "Definir Categoria",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Definir Categoria": {
+            "main": [
+                [
+                    {
+                        "node": "Juntar Resultados",
+                        "type": "main",
+                        "index": 1
+                    }
+                ]
+            ]
+        },
+        "Juntar Resultados": {
+            "main": [
+                [
+                    {
+                        "node": "Delay 1s",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Delay 1s": {
+            "main": [
+                [
+                    {
+                        "node": "Processar em Lotes",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Processar em Lotes": {
+            "main": [
+                null,
+                [
+                    {
+                        "node": "Gerar Dashboard",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Gerar Dashboard": {
+            "main": [
+                [
+                    {
+                        "node": "Responder Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {}
+}

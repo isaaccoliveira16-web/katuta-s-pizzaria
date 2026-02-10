@@ -1,0 +1,244 @@
+{
+    "name": "Katuta-03-Table-Engine",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "reserva-motor-webhook",
+                "responseMode": "lastNode",
+                "options": {}
+            },
+            "id": "node-trigger",
+            "name": "Webhook Trigger",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                300
+            ],
+            "webhookId": "reserva-motor-id"
+        },
+        {
+            "parameters": {
+                "jsCode": "const body = $input.item.json.body || $input.item.json;\nconst pax = parseInt(body.pax) || 1;\nconst kids = parseInt(body.kids) || 0;\nconst nome_cliente = body.nome_cliente || \"Cliente Web\";\nconst whatsapp_id = body.whatsapp_id || \"Não informado\";\nconst mesasNeeded = Math.ceil(pax / 4);\n\nreturn {\n  pax,\n  kids,\n  mesasNeeded,\n  nome_cliente,\n  whatsapp_id\n};"
+            },
+            "id": "node-logic-calc",
+            "name": "[JS] Calc Mesas",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                400,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "read",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": "Mesas",
+                "filters": {
+                    "conditions": [
+                        {
+                            "key": "Status",
+                            "value": "LIVRE"
+                        }
+                    ]
+                }
+            },
+            "id": "node-sheet-get",
+            "name": "[GSheets] Buscar Livres",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "position": [
+                600,
+                300
+            ],
+            "continueOnFail": true
+        },
+        {
+            "parameters": {
+                "jsCode": "const mesasLivres = $input.all();\nconst info = $node[\"[JS] Calc Mesas\"].json;\n\nconst generateID = () => Math.random().toString(36).substr(2, 9).toUpperCase();\nconst timestamp = new Date().toLocaleString('pt-BR');\n\n// Lógica de Alocação\nlet mesasAlocadas = \"Mesa Fictícia\";\nlet idsToUpdate = [];\n\nif (mesasLivres.length > 0 && mesasLivres[0].json.Mesa_ID) {\n  const selected = mesasLivres.slice(0, info.mesasNeeded);\n  mesasAlocadas = selected.map(m => m.json.Mesa_ID).join(\", \");\n  idsToUpdate = selected.map(m => m.json.Mesa_ID);\n}\n\nreturn {\n  Reserva_ID: generateID(),\n  Nome_Cliente: info.nome_cliente,\n  WhatsApp: info.whatsapp_id,\n  Qtd_Pessoas: info.pax,\n  Mesas_Alocadas: mesasAlocadas,\n  Timestamp: timestamp,\n  Status: \"Website\",\n  whatsapp_original: info.whatsapp_id,\n  idsToUpdate // Passando lista para atualização\n};"
+            },
+            "id": "node-logic-aloca",
+            "name": "[JS] Gerar Objeto Reserva",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                800,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "append",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": "Controle_Reservas",
+                "columns": {
+                    "mappingMode": "autoMapInputData",
+                    "value": {}
+                }
+            },
+            "id": "node-sheet-append",
+            "name": "[GSheets] Registrar Reserva",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "position": [
+                1000,
+                300
+            ],
+            "continueOnFail": true
+        },
+        {
+            "parameters": {
+                "phoneNumberId": "SUA_PHONE_NUMBER_ID_AQUI",
+                "recipientPhoneNumber": "={{ $json[\"WhatsApp\"] }}",
+                "text": "={{ \"Olá \" + $json[\"Nome_Cliente\"] + \"! Sua reserva na Katuta\\'s está confirmada. \\n\\n📍 Endereço: Rua Pref. Valter Belinzoni, 260, Araranguá/SC. \\n\\nAgradecemos a preferência! 🍕🕺\" }}"
+            },
+            "continueOnFail": true,
+            "id": "node-whatsapp-confirm",
+            "name": "[WA] Confirmação Automática (Opcional)",
+            "type": "n8n-nodes-base.whatsApp",
+            "typeVersion": 1,
+            "position": [
+                1200,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const reserva = $node[\"[JS] Gerar Objeto Reserva\"].json;\nreturn {\n  output: \"Reserva confirmada para \" + reserva.Nome_Cliente + \". Mesas: \" + reserva.Mesas_Alocadas + \".\"\n};"
+            },
+            "id": "node-output",
+            "name": "Resposta Final",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                1400,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const ids = $input.first().json.idsToUpdate || [];\nreturn ids.map(id => ({\n  json: {\n    Mesa_ID: id,\n    Status: \"OCUPADA\"\n  }\n}));"
+            },
+            "id": "node-js-split",
+            "name": "[JS] Separar Mesas",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                1000,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "update",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": "Mesas",
+                "columns": {
+                    "mappingMode": "autoMapInputData",
+                    "value": {},
+                    "matchingColumns": [
+                        "Mesa_ID"
+                    ]
+                }
+            },
+            "id": "node-sheet-update",
+            "name": "[GSheets] Atualizar Status",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "position": [
+                1200,
+                500
+            ],
+            "continueOnFail": true
+        }
+    ],
+    "connections": {
+        "Webhook Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Calc Mesas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Calc Mesas": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Buscar Livres",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[GSheets] Buscar Livres": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Gerar Objeto Reserva",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Gerar Objeto Reserva": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Registrar Reserva",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "[JS] Separar Mesas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[GSheets] Registrar Reserva": {
+            "main": [
+                [
+                    {
+                        "node": "[WA] Confirmação Automática (Opcional)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[WA] Confirmação Automática (Opcional)": {
+            "main": [
+                [
+                    {
+                        "node": "Resposta Final",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Separar Mesas": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Atualizar Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "errorWorkflow": "NyQKhHnymOvXQRdx"
+    }
+}

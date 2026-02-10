@@ -1,0 +1,18 @@
+PRODUTO,VALOR,CATEGORIA,CONTEUDO
+X-SALADA,20.00,LANCHE,"pao, ovo, presunto, queijo, maionese, alface, tomate, milho, ervilha, hamburguer"
+X-BACON,22.00,LANCHE,"pao, ovo, presunto, queijo, maionese, alface, tomate, milho, ervilha, hamburguer"
+X-CALABRESA,22.00,LANCHE,"pao, ovo, presunto, queijo, maionese, alface, tomate, milho, ervilha, hamburguer"
+X-TUDO,28.00,LANCHE,"pao, ovo, presunto, queijo, maionese, alface, tomate, milho, ervilha, hamburguer"
+X-CAMARÃO,30.00,LANCHE,"pao, ovo, presunto, queijo, maionese, alface, tomate, milho, ervilha, hamburguer"
+COCA COLA 2 LITROS,15.00,BEBIDA,
+COCA COLA ZERO 2 LITROS,15.00,BEBIDA,
+GUARANÁ 2 LITROS,14.00,BEBIDA,
+PIZZA GRANDE,75.00,PIZZA,calabresa
+PIZZA MÉDIA,68.00,PIZZA,frango
+GUARANÁ 1 LITRO,0.00,BEBIDA,
+SPRITE / REFRI DE LIMÃO 2 LITROS,0.00,BEBIDA,
+PEPSI 2 LITROS,0.00,BEBIDA,
+PEPSI 1 LITRO,0.00,BEBIDA,
+BATATA FRITA PEQUENA,8.00,ACOMPANHAMENTO,
+BATATA FRITA GRANDE,14.00,ACOMPANHAMENTO,
+BATATA FRITA MÉDIA,12.00,ACOMPANHAMENTO,

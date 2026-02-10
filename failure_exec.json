@@ -1,0 +1,958 @@
+{
+    "data":  [
+                 {
+                     "id":  "39",
+                     "finished":  true,
+                     "mode":  "manual",
+                     "retryOf":  null,
+                     "retrySuccessId":  null,
+                     "status":  "success",
+                     "startedAt":  "2026-02-09T13:09:11.706Z",
+                     "stoppedAt":  "2026-02-09T13:09:14.100Z",
+                     "workflowId":  "BVr8U25654fBzy6N",
+                     "waitTill":  null,
+                     "data":  {
+                                  "version":  1,
+                                  "startData":  {
+
+                                                },
+                                  "resultData":  {
+                                                     "runData":  {
+                                                                     "Bate-papo Antigravidade":  [
+                                                                                                     {
+                                                                                                         "startTime":  1770642551724,
+                                                                                                         "executionIndex":  0,
+                                                                                                         "source":  [
+
+                                                                                                                    ],
+                                                                                                         "hints":  [
+
+                                                                                                                   ],
+                                                                                                         "executionTime":  2,
+                                                                                                         "executionStatus":  "success",
+                                                                                                         "data":  {
+                                                                                                                      "main":  [
+                                                                                                                                   [
+                                                                                                                                       {
+                                                                                                                                           "json":  {
+                                                                                                                                                        "sessionId":  "eea25b3537a04a9f915bb9dc48d04d39",
+                                                                                                                                                        "action":  "sendMessage",
+                                                                                                                                                        "chatInput":  "Isaac, 4 pessoas"
+                                                                                                                                                    },
+                                                                                                                                           "pairedItem":  {
+                                                                                                                                                              "item":  0
+                                                                                                                                                          }
+                                                                                                                                       }
+                                                                                                                                   ]
+                                                                                                                               ]
+                                                                                                                  }
+                                                                                                     }
+                                                                                                 ],
+                                                                     "Mem?ria de IA":  [
+                                                                                           {
+                                                                                               "startTime":  1770642551743,
+                                                                                               "executionTime":  3,
+                                                                                               "executionIndex":  2,
+                                                                                               "executionStatus":  "success",
+                                                                                               "source":  [
+                                                                                                              {
+                                                                                                                  "previousNode":  "Agente Katutinha",
+                                                                                                                  "previousNodeRun":  0
+                                                                                                              }
+                                                                                                          ],
+                                                                                               "data":  {
+                                                                                                            "ai_memory":  [
+                                                                                                                              [
+                                                                                                                                  {
+                                                                                                                                      "json":  {
+                                                                                                                                                   "action":  "loadMemoryVariables",
+                                                                                                                                                   "chatHistory":  [
+                                                                                                                                                                       {
+                                                                                                                                                                           "lc":  1,
+                                                                                                                                                                           "type":  "constructor",
+                                                                                                                                                                           "id":  [
+                                                                                                                                                                                      "langchain_core",
+                                                                                                                                                                                      "messages",
+                                                                                                                                                                                      "HumanMessage"
+                                                                                                                                                                                  ],
+                                                                                                                                                                           "kwargs":  {
+                                                                                                                                                                                          "content":  "boa noite",
+                                                                                                                                                                                          "additional_kwargs":  {
+
+                                                                                                                                                                                                                },
+                                                                                                                                                                                          "response_metadata":  {
+
+                                                                                                                                                                                                                }
+                                                                                                                                                                                      }
+                                                                                                                                                                       },
+                                                                                                                                                                       {
+                                                                                                                                                                           "lc":  1,
+                                                                                                                                                                           "type":  "constructor",
+                                                                                                                                                                           "id":  [
+                                                                                                                                                                                      "langchain_core",
+                                                                                                                                                                                      "messages",
+                                                                                                                                                                                      "AIMessage"
+                                                                                                                                                                                  ],
+                                                                                                                                                                           "kwargs":  {
+                                                                                                                                                                                          "content":  "Boa noite! Eu sou o Katutinha, da Katuta\u0027s Pizzaria. Seja muito bem-vindo!\n\nComo posso te ajudar hoje?",
+                                                                                                                                                                                          "tool_calls":  [
+
+                                                                                                                                                                                                         ],
+                                                                                                                                                                                          "invalid_tool_calls":  [
+
+                                                                                                                                                                                                                 ],
+                                                                                                                                                                                          "additional_kwargs":  {
+
+                                                                                                                                                                                                                },
+                                                                                                                                                                                          "response_metadata":  {
+
+                                                                                                                                                                                                                }
+                                                                                                                                                                                      }
+                                                                                                                                                                       },
+                                                                                                                                                                       {
+                                                                                                                                                                           "lc":  1,
+                                                                                                                                                                           "type":  "constructor",
+                                                                                                                                                                           "id":  [
+                                                                                                                                                                                      "langchain_core",
+                                                                                                                                                                                      "messages",
+                                                                                                                                                                                      "HumanMessage"
+                                                                                                                                                                                  ],
+                                                                                                                                                                           "kwargs":  {
+                                                                                                                                                                                          "content":  "queria fazer uma reserva",
+                                                                                                                                                                                          "additional_kwargs":  {
+
+                                                                                                                                                                                                                },
+                                                                                                                                                                                          "response_metadata":  {
+
+                                                                                                                                                                                                                }
+                                                                                                                                                                                      }
+                                                                                                                                                                       },
+                                                                                                                                                                       {
+                                                                                                                                                                           "lc":  1,
+                                                                                                                                                                           "type":  "constructor",
+                                                                                                                                                                           "id":  [
+                                                                                                                                                                                      "langchain_core",
+                                                                                                                                                                                      "messages",
+                                                                                                                                                                                      "AIMessage"
+                                                                                                                                                                                  ],
+                                                                                                                                                                           "kwargs":  {
+                                                                                                                                                                                          "content":  "Que ótimo! Fico feliz em te atender.\n\nPara eu registrar sua reserva, preciso de duas informações:\n\n1. **Qual o nome** que devo colocar na reserva?\n2. **Quantas pessoas** no total (o número de *pax*)?\n\nLembrando que fazemos reservas até as 19h. Se for depois, é por ordem de chegada! ??",
+                                                                                                                                                                                          "tool_calls":  [
+
+                                                                                                                                                                                                         ],
+                                                                                                                                                                                          "invalid_tool_calls":  [
+
+                                                                                                                                                                                                                 ],
+                                                                                                                                                                                          "additional_kwargs":  {
+
+                                                                                                                                                                                                                },
+                                                                                                                                                                                          "response_metadata":  {
+
+                                                                                                                                                                                                                }
+                                                                                                                                                                                      }
+                                                                                                                                                                       }
+                                                                                                                                                                   ]
+                                                                                                                                               }
+                                                                                                                                  }
+                                                                                                                              ]
+                                                                                                                          ]
+                                                                                                        },
+                                                                                               "inputOverride":  {
+                                                                                                                     "ai_memory":  [
+                                                                                                                                       [
+                                                                                                                                           {
+                                                                                                                                               "json":  {
+                                                                                                                                                            "action":  "loadMemoryVariables",
+                                                                                                                                                            "values":  {
+                                                                                                                                                                           "input":  "Isaac, 4 pessoas",
+                                                                                                                                                                           "system_message":  "Voc? ? o Katutinha (masculino), atendente da Katuta\u0027s Pizzaria. \n\nREGRAS DE OURO:\n1. Persona: Simp?tico e prestativo.\n2. Timing: S? inicie a reserva se o cliente pedir ou ap?s ele tirar todas as d?vidas.\n3. EXECU??O: Assim que tiver NOME e QUANTIDADE TOTAL (pax), chame a ferramenta \u0027reserva_motor\u0027 imediatamente.\n4. Hor?rio: Reservas at? as 19:00h. Se for depois, informe que ? ordem de chegada.\n5. Paci?ncia: Se houver atraso ou limite de cota, pe?a para o cliente aguardar 30 segundos e tentar novamente.",
+                                                                                                                                                                           "formatting_instructions":  "IMPORTANT: For your response to user, you MUST use the `format_final_json_response` tool with your complete answer formatted according to the required schema. Do not attempt to format the JSON manually - always use this tool. Your response will be rejected if it is not properly formatted through this tool. Only use this tool once you are ready to provide your final answer."
+                                                                                                                                                                       }
+                                                                                                                                                        }
+                                                                                                                                           }
+                                                                                                                                       ]
+                                                                                                                                   ]
+                                                                                                                 },
+                                                                                               "metadata":  {
+                                                                                                                "subRun":  [
+                                                                                                                               {
+                                                                                                                                   "node":  "Mem?ria de IA",
+                                                                                                                                   "runIndex":  0
+                                                                                                                               }
+                                                                                                                           ]
+                                                                                                            }
+                                                                                           },
+                                                                                           {
+                                                                                               "startTime":  1770642554092,
+                                                                                               "executionTime":  4,
+                                                                                               "executionIndex":  6,
+                                                                                               "executionStatus":  "success",
+                                                                                               "source":  [
+                                                                                                              {
+                                                                                                                  "previousNode":  "Agente Katutinha",
+                                                                                                                  "previousNodeRun":  0
+                                                                                                              }
+                                                                                                          ],
+                                                                                               "data":  {
+                                                                                                            "ai_memory":  [
+                                                                                                                              [
+                                                                                                                                  {
+                                                                                                                                      "json":  {
+                                                                                                                                                   "action":  "saveContext",
+                                                                                                                                                   "chatHistory":  [
+                                                                                                                                                                       {
+                                                                                                                                                                           "lc":  1,
+                                                                                                                                                                           "type":  "constructor",
+                                                                                                                                                                           "id":  [
+                                                                                                                                                                                      "langchain_core",
+                                                                                                                                                                                      "messages",
+                                                                                                                                                                                      "HumanMessage"
+                                                                                                                                                                                  ],
+                                                                                                                                                                           "kwargs":  {
+                                                                                                                                                                                          "content":  "boa noite",
+                                                                                                                                                                                          "additional_kwargs":  {
+
+                                                                                                                                                                                                                },
+                                                                                                                                                                                          "response_metadata":  {
+
+                                                                                                                                                                                                                }
+                                                                                                                                                                                      }
+                                                                                                                                                                       },
+                                                                                                                                                                       {
+                                                                                                                                                                           "lc":  1,
+                                                                                                                                                                           "type":  "constructor",
+                                                                                                                                                                           "id":  [
+                                                                                                                                                                                      "langchain_core",
+                                                                                                                                                                                      "messages",
+                                                                                                                                                                                      "AIMessage"
+                                                                                                                                                                                  ],
+                                                                                                                                                                           "kwargs":  {
+                                                                                                                                                                                          "content":  "Boa noite! Eu sou o Katutinha, da Katuta\u0027s Pizzaria. Seja muito bem-vindo!\n\nComo posso te ajudar hoje?",
+                                                                                                                                                                                          "tool_calls":  [
+
+                                                                                                                                                                                                         ],
+                                                                                                                                                                                          "invalid_tool_calls":  [
+
+                                                                                                                                                                                                                 ],
+                                                                                                                                                                                          "additional_kwargs":  {
+
+                                                                                                                                                                                                                },
+                                                                                                                                                                                          "response_metadata":  {
+
+                                                                                                                                                                                                                }
+                                                                                                                                                                                      }
+                                                                                                                                                                       },
+                                                                                                                                                                       {
+                                                                                                                                                                           "lc":  1,
+                                                                                                                                                                           "type":  "constructor",
+                                                                                                                                                                           "id":  [
+                                                                                                                                                                                      "langchain_core",
+                                                                                                                                                                                      "messages",
+                                                                                                                                                                                      "HumanMessage"
+                                                                                                                                                                                  ],
+                                                                                                                                                                           "kwargs":  {
+                                                                                                                                                                                          "content":  "queria fazer uma reserva",
+                                                                                                                                                                                          "additional_kwargs":  {
+
+                                                                                                                                                                                                                },
+                                                                                                                                                                                          "response_metadata":  {
+
+                                                                                                                                                                                                                }
+                                                                                                                                                                                      }
+                                                                                                                                                                       },
+                                                                                                                                                                       {
+                                                                                                                                                                           "lc":  1,
+                                                                                                                                                                           "type":  "constructor",
+                                                                                                                                                                           "id":  [
+                                                                                                                                                                                      "langchain_core",
+                                                                                                                                                                                      "messages",
+                                                                                                                                                                                      "AIMessage"
+                                                                                                                                                                                  ],
+                                                                                                                                                                           "kwargs":  {
+                                                                                                                                                                                          "content":  "Que ótimo! Fico feliz em te atender.\n\nPara eu registrar sua reserva, preciso de duas informações:\n\n1. **Qual o nome** que devo colocar na reserva?\n2. **Quantas pessoas** no total (o número de *pax*)?\n\nLembrando que fazemos reservas até as 19h. Se for depois, é por ordem de chegada! ??",
+                                                                                                                                                                                          "tool_calls":  [
+
+                                                                                                                                                                                                         ],
+                                                                                                                                                                                          "invalid_tool_calls":  [
+
+                                                                                                                                                                                                                 ],
+                                                                                                                                                                                          "additional_kwargs":  {
+
+                                                                                                                                                                                                                },
+                                                                                                                                                                                          "response_metadata":  {
+
+                                                                                                                                                                                                                }
+                                                                                                                                                                                      }
+                                                                                                                                                                       },
+                                                                                                                                                                       {
+                                                                                                                                                                           "lc":  1,
+                                                                                                                                                                           "type":  "constructor",
+                                                                                                                                                                           "id":  [
+                                                                                                                                                                                      "langchain_core",
+                                                                                                                                                                                      "messages",
+                                                                                                                                                                                      "HumanMessage"
+                                                                                                                                                                                  ],
+                                                                                                                                                                           "kwargs":  {
+                                                                                                                                                                                          "content":  "Isaac, 4 pessoas",
+                                                                                                                                                                                          "additional_kwargs":  {
+
+                                                                                                                                                                                                                },
+                                                                                                                                                                                          "response_metadata":  {
+
+                                                                                                                                                                                                                }
+                                                                                                                                                                                      }
+                                                                                                                                                                       },
+                                                                                                                                                                       {
+                                                                                                                                                                           "lc":  1,
+                                                                                                                                                                           "type":  "constructor",
+                                                                                                                                                                           "id":  [
+                                                                                                                                                                                      "langchain_core",
+                                                                                                                                                                                      "messages",
+                                                                                                                                                                                      "AIMessage"
+                                                                                                                                                                                  ],
+                                                                                                                                                                           "kwargs":  {
+                                                                                                                                                                                          "content":  "Ah, poxa! Parece que tivemos um pequeno erro técnico na hora de registrar aqui.\n\nVocê se importaria de aguardar só 30 segundos para eu tentar novamente? Peço desculpas pelo inconveniente, Isaac!",
+                                                                                                                                                                                          "tool_calls":  [
+
+                                                                                                                                                                                                         ],
+                                                                                                                                                                                          "invalid_tool_calls":  [
+
+                                                                                                                                                                                                                 ],
+                                                                                                                                                                                          "additional_kwargs":  {
+
+                                                                                                                                                                                                                },
+                                                                                                                                                                                          "response_metadata":  {
+
+                                                                                                                                                                                                                }
+                                                                                                                                                                                      }
+                                                                                                                                                                       }
+                                                                                                                                                                   ]
+                                                                                                                                               }
+                                                                                                                                  }
+                                                                                                                              ]
+                                                                                                                          ]
+                                                                                                        },
+                                                                                               "inputOverride":  {
+                                                                                                                     "ai_memory":  [
+                                                                                                                                       [
+                                                                                                                                           {
+                                                                                                                                               "json":  {
+                                                                                                                                                            "action":  "saveContext",
+                                                                                                                                                            "input":  {
+                                                                                                                                                                          "input":  "Isaac, 4 pessoas",
+                                                                                                                                                                          "system_message":  "Voc? ? o Katutinha (masculino), atendente da Katuta\u0027s Pizzaria. \n\nREGRAS DE OURO:\n1. Persona: Simp?tico e prestativo.\n2. Timing: S? inicie a reserva se o cliente pedir ou ap?s ele tirar todas as d?vidas.\n3. EXECU??O: Assim que tiver NOME e QUANTIDADE TOTAL (pax), chame a ferramenta \u0027reserva_motor\u0027 imediatamente.\n4. Hor?rio: Reservas at? as 19:00h. Se for depois, informe que ? ordem de chegada.\n5. Paci?ncia: Se houver atraso ou limite de cota, pe?a para o cliente aguardar 30 segundos e tentar novamente.",
+                                                                                                                                                                          "formatting_instructions":  "IMPORTANT: For your response to user, you MUST use the `format_final_json_response` tool with your complete answer formatted according to the required schema. Do not attempt to format the JSON manually - always use this tool. Your response will be rejected if it is not properly formatted through this tool. Only use this tool once you are ready to provide your final answer."
+                                                                                                                                                                      },
+                                                                                                                                                            "output":  {
+                                                                                                                                                                           "input":  "Isaac, 4 pessoas",
+                                                                                                                                                                           "system_message":  "Voc? ? o Katutinha (masculino), atendente da Katuta\u0027s Pizzaria. \n\nREGRAS DE OURO:\n1. Persona: Simp?tico e prestativo.\n2. Timing: S? inicie a reserva se o cliente pedir ou ap?s ele tirar todas as d?vidas.\n3. EXECU??O: Assim que tiver NOME e QUANTIDADE TOTAL (pax), chame a ferramenta \u0027reserva_motor\u0027 imediatamente.\n4. Hor?rio: Reservas at? as 19:00h. Se for depois, informe que ? ordem de chegada.\n5. Paci?ncia: Se houver atraso ou limite de cota, pe?a para o cliente aguardar 30 segundos e tentar novamente.",
+                                                                                                                                                                           "formatting_instructions":  "IMPORTANT: For your response to user, you MUST use the `format_final_json_response` tool with your complete answer formatted according to the required schema. Do not attempt to format the JSON manually - always use this tool. Your response will be rejected if it is not properly formatted through this tool. Only use this tool once you are ready to provide your final answer.",
+                                                                                                                                                                           "chat_history":  [
+                                                                                                                                                                                                {
+                                                                                                                                                                                                    "lc":  1,
+                                                                                                                                                                                                    "type":  "constructor",
+                                                                                                                                                                                                    "id":  [
+                                                                                                                                                                                                               "langchain_core",
+                                                                                                                                                                                                               "messages",
+                                                                                                                                                                                                               "HumanMessage"
+                                                                                                                                                                                                           ],
+                                                                                                                                                                                                    "kwargs":  {
+                                                                                                                                                                                                                   "content":  "boa noite",
+                                                                                                                                                                                                                   "additional_kwargs":  {
+
+                                                                                                                                                                                                                                         },
+                                                                                                                                                                                                                   "response_metadata":  {
+
+                                                                                                                                                                                                                                         }
+                                                                                                                                                                                                               }
+                                                                                                                                                                                                },
+                                                                                                                                                                                                {
+                                                                                                                                                                                                    "lc":  1,
+                                                                                                                                                                                                    "type":  "constructor",
+                                                                                                                                                                                                    "id":  [
+                                                                                                                                                                                                               "langchain_core",
+                                                                                                                                                                                                               "messages",
+                                                                                                                                                                                                               "AIMessage"
+                                                                                                                                                                                                           ],
+                                                                                                                                                                                                    "kwargs":  {
+                                                                                                                                                                                                                   "content":  "Boa noite! Eu sou o Katutinha, da Katuta\u0027s Pizzaria. Seja muito bem-vindo!\n\nComo posso te ajudar hoje?",
+                                                                                                                                                                                                                   "tool_calls":  [
+
+                                                                                                                                                                                                                                  ],
+                                                                                                                                                                                                                   "invalid_tool_calls":  [
+
+                                                                                                                                                                                                                                          ],
+                                                                                                                                                                                                                   "additional_kwargs":  {
+
+                                                                                                                                                                                                                                         },
+                                                                                                                                                                                                                   "response_metadata":  {
+
+                                                                                                                                                                                                                                         }
+                                                                                                                                                                                                               }
+                                                                                                                                                                                                },
+                                                                                                                                                                                                {
+                                                                                                                                                                                                    "lc":  1,
+                                                                                                                                                                                                    "type":  "constructor",
+                                                                                                                                                                                                    "id":  [
+                                                                                                                                                                                                               "langchain_core",
+                                                                                                                                                                                                               "messages",
+                                                                                                                                                                                                               "HumanMessage"
+                                                                                                                                                                                                           ],
+                                                                                                                                                                                                    "kwargs":  {
+                                                                                                                                                                                                                   "content":  "queria fazer uma reserva",
+                                                                                                                                                                                                                   "additional_kwargs":  {
+
+                                                                                                                                                                                                                                         },
+                                                                                                                                                                                                                   "response_metadata":  {
+
+                                                                                                                                                                                                                                         }
+                                                                                                                                                                                                               }
+                                                                                                                                                                                                },
+                                                                                                                                                                                                {
+                                                                                                                                                                                                    "lc":  1,
+                                                                                                                                                                                                    "type":  "constructor",
+                                                                                                                                                                                                    "id":  [
+                                                                                                                                                                                                               "langchain_core",
+                                                                                                                                                                                                               "messages",
+                                                                                                                                                                                                               "AIMessage"
+                                                                                                                                                                                                           ],
+                                                                                                                                                                                                    "kwargs":  {
+                                                                                                                                                                                                                   "content":  "Que ótimo! Fico feliz em te atender.\n\nPara eu registrar sua reserva, preciso de duas informações:\n\n1. **Qual o nome** que devo colocar na reserva?\n2. **Quantas pessoas** no total (o número de *pax*)?\n\nLembrando que fazemos reservas até as 19h. Se for depois, é por ordem de chegada! ??",
+                                                                                                                                                                                                                   "tool_calls":  [
+
+                                                                                                                                                                                                                                  ],
+                                                                                                                                                                                                                   "invalid_tool_calls":  [
+
+                                                                                                                                                                                                                                          ],
+                                                                                                                                                                                                                   "additional_kwargs":  {
+
+                                                                                                                                                                                                                                         },
+                                                                                                                                                                                                                   "response_metadata":  {
+
+                                                                                                                                                                                                                                         }
+                                                                                                                                                                                                               }
+                                                                                                                                                                                                }
+                                                                                                                                                                                            ],
+                                                                                                                                                                           "output":  "Ah, poxa! Parece que tivemos um pequeno erro técnico na hora de registrar aqui.\n\nVocê se importaria de aguardar só 30 segundos para eu tentar novamente? Peço desculpas pelo inconveniente, Isaac!"
+                                                                                                                                                                       }
+                                                                                                                                                        }
+                                                                                                                                           }
+                                                                                                                                       ]
+                                                                                                                                   ]
+                                                                                                                 },
+                                                                                               "metadata":  {
+                                                                                                                "subRun":  [
+                                                                                                                               {
+                                                                                                                                   "node":  "Mem?ria de IA",
+                                                                                                                                   "runIndex":  1
+                                                                                                                               }
+                                                                                                                           ]
+                                                                                                            }
+                                                                                           }
+                                                                                       ],
+                                                                     "Modelo Google Gemini":  [
+                                                                                                  {
+                                                                                                      "startTime":  1770642551765,
+                                                                                                      "executionTime":  859,
+                                                                                                      "executionIndex":  3,
+                                                                                                      "executionStatus":  "success",
+                                                                                                      "source":  [
+                                                                                                                     {
+                                                                                                                         "previousNode":  "Agente Katutinha",
+                                                                                                                         "previousNodeRun":  0
+                                                                                                                     }
+                                                                                                                 ],
+                                                                                                      "data":  {
+                                                                                                                   "ai_languageModel":  [
+                                                                                                                                            [
+                                                                                                                                                {
+                                                                                                                                                    "json":  {
+                                                                                                                                                                 "response":  {
+                                                                                                                                                                                  "generations":  [
+                                                                                                                                                                                                      [
+                                                                                                                                                                                                          {
+                                                                                                                                                                                                              "text":  "",
+                                                                                                                                                                                                              "generationInfo":  {
+                                                                                                                                                                                                                                     "finishReason":  "STOP",
+                                                                                                                                                                                                                                     "index":  0,
+                                                                                                                                                                                                                                     "finishMessage":  "Model generated function call(s)."
+                                                                                                                                                                                                                                 }
+                                                                                                                                                                                                          }
+                                                                                                                                                                                                      ]
+                                                                                                                                                                                                  ]
+                                                                                                                                                                              },
+                                                                                                                                                                 "tokenUsage":  {
+                                                                                                                                                                                    "completionTokens":  30,
+                                                                                                                                                                                    "promptTokens":  365,
+                                                                                                                                                                                    "totalTokens":  395
+                                                                                                                                                                                }
+                                                                                                                                                             }
+                                                                                                                                                }
+                                                                                                                                            ]
+                                                                                                                                        ]
+                                                                                                               },
+                                                                                                      "inputOverride":  {
+                                                                                                                            "ai_languageModel":  [
+                                                                                                                                                     [
+                                                                                                                                                         {
+                                                                                                                                                             "json":  {
+                                                                                                                                                                          "messages":  [
+                                                                                                                                                                                           "System: Voc? ? o Katutinha (masculino), atendente da Katuta\u0027s Pizzaria. \n\nREGRAS DE OURO:\n1. Persona: Simp?tico e prestativo.\n2. Timing: S? inicie a reserva se o cliente pedir ou ap?s ele tirar todas as d?vidas.\n3. EXECU??O: Assim que tiver NOME e QUANTIDADE TOTAL (pax), chame a ferramenta \u0027reserva_motor\u0027 imediatamente.\n4. Hor?rio: Reservas at? as 19:00h. Se for depois, informe que ? ordem de chegada.\n5. Paci?ncia: Se houver atraso ou limite de cota, pe?a para o cliente aguardar 30 segundos e tentar novamente.\nHuman: boa noite\nAI: Boa noite! Eu sou o Katutinha, da Katuta\u0027s Pizzaria. Seja muito bem-vindo!\n\nComo posso te ajudar hoje?\nHuman: queria fazer uma reserva\nAI: Que ótimo! Fico feliz em te atender.\n\nPara eu registrar sua reserva, preciso de duas informações:\n\n1. **Qual o nome** que devo colocar na reserva?\n2. **Quantas pessoas** no total (o número de *pax*)?\n\nLembrando que fazemos reservas até as 19h. Se for depois, é por ordem de chegada! ??\nHuman: Isaac, 4 pessoas"
+                                                                                                                                                                                       ],
+                                                                                                                                                                          "estimatedTokens":  288,
+                                                                                                                                                                          "options":  {
+                                                                                                                                                                                          "google_api_key":  {
+                                                                                                                                                                                                                 "lc":  1,
+                                                                                                                                                                                                                 "type":  "secret",
+                                                                                                                                                                                                                 "id":  [
+                                                                                                                                                                                                                            "GOOGLE_API_KEY"
+                                                                                                                                                                                                                        ]
+                                                                                                                                                                                                             },
+                                                                                                                                                                                          "base_url":  "https://generativelanguage.googleapis.com",
+                                                                                                                                                                                          "model":  "gemini-flash-latest",
+                                                                                                                                                                                          "temperature":  0.7
+                                                                                                                                                                                      }
+                                                                                                                                                                      }
+                                                                                                                                                         }
+                                                                                                                                                     ]
+                                                                                                                                                 ]
+                                                                                                                        },
+                                                                                                      "metadata":  {
+                                                                                                                       "subRun":  [
+                                                                                                                                      {
+                                                                                                                                          "node":  "Modelo Google Gemini",
+                                                                                                                                          "runIndex":  0
+                                                                                                                                      }
+                                                                                                                                  ]
+                                                                                                                   }
+                                                                                                  },
+                                                                                                  {
+                                                                                                      "startTime":  1770642553196,
+                                                                                                      "executionTime":  889,
+                                                                                                      "executionIndex":  5,
+                                                                                                      "executionStatus":  "success",
+                                                                                                      "source":  [
+                                                                                                                     {
+                                                                                                                         "previousNode":  "Agente Katutinha",
+                                                                                                                         "previousNodeRun":  0
+                                                                                                                     }
+                                                                                                                 ],
+                                                                                                      "data":  {
+                                                                                                                   "ai_languageModel":  [
+                                                                                                                                            [
+                                                                                                                                                {
+                                                                                                                                                    "json":  {
+                                                                                                                                                                 "response":  {
+                                                                                                                                                                                  "generations":  [
+                                                                                                                                                                                                      [
+                                                                                                                                                                                                          {
+                                                                                                                                                                                                              "text":  "Ah, poxa! Parece que tivemos um pequeno erro técnico na hora de registrar aqui.\n\nVocê se importaria de aguardar só 30 segundos para eu tentar novamente? Peço desculpas pelo inconveniente, Isaac!",
+                                                                                                                                                                                                              "generationInfo":  {
+                                                                                                                                                                                                                                     "index":  0,
+                                                                                                                                                                                                                                     "finishReason":  "STOP"
+                                                                                                                                                                                                                                 }
+                                                                                                                                                                                                          }
+                                                                                                                                                                                                      ]
+                                                                                                                                                                                                  ]
+                                                                                                                                                                              },
+                                                                                                                                                                 "tokenUsage":  {
+                                                                                                                                                                                    "completionTokens":  30,
+                                                                                                                                                                                    "promptTokens":  0,
+                                                                                                                                                                                    "totalTokens":  30
+                                                                                                                                                                                }
+                                                                                                                                                             }
+                                                                                                                                                }
+                                                                                                                                            ]
+                                                                                                                                        ]
+                                                                                                               },
+                                                                                                      "inputOverride":  {
+                                                                                                                            "ai_languageModel":  [
+                                                                                                                                                     [
+                                                                                                                                                         {
+                                                                                                                                                             "json":  {
+                                                                                                                                                                          "messages":  [
+                                                                                                                                                                                           "System: Voc? ? o Katutinha (masculino), atendente da Katuta\u0027s Pizzaria. \n\nREGRAS DE OURO:\n1. Persona: Simp?tico e prestativo.\n2. Timing: S? inicie a reserva se o cliente pedir ou ap?s ele tirar todas as d?vidas.\n3. EXECU??O: Assim que tiver NOME e QUANTIDADE TOTAL (pax), chame a ferramenta \u0027reserva_motor\u0027 imediatamente.\n4. Hor?rio: Reservas at? as 19:00h. Se for depois, informe que ? ordem de chegada.\n5. Paci?ncia: Se houver atraso ou limite de cota, pe?a para o cliente aguardar 30 segundos e tentar novamente.\nHuman: boa noite\nAI: Boa noite! Eu sou o Katutinha, da Katuta\u0027s Pizzaria. Seja muito bem-vindo!\n\nComo posso te ajudar hoje?\nHuman: queria fazer uma reserva\nAI: Que ótimo! Fico feliz em te atender.\n\nPara eu registrar sua reserva, preciso de duas informações:\n\n1. **Qual o nome** que devo colocar na reserva?\n2. **Quantas pessoas** no total (o número de *pax*)?\n\nLembrando que fazemos reservas até as 19h. Se for depois, é por ordem de chegada! ??\nHuman: Isaac, 4 pessoas\nAI: model, [{\"name\":\"reserva_motor\",\"args\":{\"input\":\"pax: 4, nome_cliente: Isaac\"},\"id\":\"954d5221-b694-4918-bc0b-1dc7142259a5\",\"type\":\"tool_call\"}]\nTool: Erro t?cnico ao chamar o motor de reservas: fetch is not defined"
+                                                                                                                                                                                       ],
+                                                                                                                                                                          "estimatedTokens":  364,
+                                                                                                                                                                          "options":  {
+                                                                                                                                                                                          "google_api_key":  {
+                                                                                                                                                                                                                 "lc":  1,
+                                                                                                                                                                                                                 "type":  "secret",
+                                                                                                                                                                                                                 "id":  [
+                                                                                                                                                                                                                            "GOOGLE_API_KEY"
+                                                                                                                                                                                                                        ]
+                                                                                                                                                                                                             },
+                                                                                                                                                                                          "base_url":  "https://generativelanguage.googleapis.com",
+                                                                                                                                                                                          "model":  "gemini-flash-latest",
+                                                                                                                                                                                          "temperature":  0.7
+                                                                                                                                                                                      }
+                                                                                                                                                                      }
+                                                                                                                                                         }
+                                                                                                                                                     ]
+                                                                                                                                                 ]
+                                                                                                                        },
+                                                                                                      "metadata":  {
+                                                                                                                       "subRun":  [
+                                                                                                                                      {
+                                                                                                                                          "node":  "Modelo Google Gemini",
+                                                                                                                                          "runIndex":  1
+                                                                                                                                      }
+                                                                                                                                  ]
+                                                                                                                   }
+                                                                                                  }
+                                                                                              ],
+                                                                     "Ferramenta de Mesas":  [
+                                                                                                 {
+                                                                                                     "startTime":  1770642552639,
+                                                                                                     "executionTime":  535,
+                                                                                                     "executionIndex":  4,
+                                                                                                     "executionStatus":  "success",
+                                                                                                     "source":  [
+                                                                                                                    {
+                                                                                                                        "previousNode":  "Agente Katutinha",
+                                                                                                                        "previousNodeRun":  0
+                                                                                                                    }
+                                                                                                                ],
+                                                                                                     "data":  {
+                                                                                                                  "ai_tool":  [
+                                                                                                                                  [
+                                                                                                                                      {
+                                                                                                                                          "json":  {
+                                                                                                                                                       "response":  "Erro t?cnico ao chamar o motor de reservas: fetch is not defined"
+                                                                                                                                                   }
+                                                                                                                                      }
+                                                                                                                                  ]
+                                                                                                                              ]
+                                                                                                              },
+                                                                                                     "inputOverride":  {
+                                                                                                                           "ai_tool":  [
+                                                                                                                                           [
+                                                                                                                                               {
+                                                                                                                                                   "json":  {
+                                                                                                                                                                "query":  "pax: 4, nome_cliente: Isaac"
+                                                                                                                                                            }
+                                                                                                                                               }
+                                                                                                                                           ]
+                                                                                                                                       ]
+                                                                                                                       },
+                                                                                                     "metadata":  {
+                                                                                                                      "subRun":  [
+                                                                                                                                     {
+                                                                                                                                         "node":  "Ferramenta de Mesas",
+                                                                                                                                         "runIndex":  0
+                                                                                                                                     }
+                                                                                                                                 ]
+                                                                                                                  }
+                                                                                                 }
+                                                                                             ],
+                                                                     "Agente Katutinha":  [
+                                                                                              {
+                                                                                                  "startTime":  1770642551727,
+                                                                                                  "executionIndex":  1,
+                                                                                                  "source":  [
+                                                                                                                 {
+                                                                                                                     "previousNode":  "Bate-papo Antigravidade",
+                                                                                                                     "previousNodeOutput":  0,
+                                                                                                                     "previousNodeRun":  0
+                                                                                                                 }
+                                                                                                             ],
+                                                                                                  "hints":  [
+
+                                                                                                            ],
+                                                                                                  "executionTime":  2372,
+                                                                                                  "executionStatus":  "success",
+                                                                                                  "data":  {
+                                                                                                               "main":  [
+                                                                                                                            [
+                                                                                                                                {
+                                                                                                                                    "json":  {
+                                                                                                                                                 "output":  "Ah, poxa! Parece que tivemos um pequeno erro técnico na hora de registrar aqui.\n\nVocê se importaria de aguardar só 30 segundos para eu tentar novamente? Peço desculpas pelo inconveniente, Isaac!"
+                                                                                                                                             },
+                                                                                                                                    "pairedItem":  {
+                                                                                                                                                       "item":  0
+                                                                                                                                                   }
+                                                                                                                                }
+                                                                                                                            ]
+                                                                                                                        ]
+                                                                                                           }
+                                                                                              }
+                                                                                          ]
+                                                                 },
+                                                     "pinData":  {
+
+                                                                 },
+                                                     "lastNodeExecuted":  "Agente Katutinha"
+                                                 },
+                                  "executionData":  {
+                                                        "contextData":  {
+
+                                                                        },
+                                                        "nodeExecutionStack":  [
+
+                                                                               ],
+                                                        "metadata":  {
+                                                                         "Mem?ria de IA":  [
+                                                                                               {
+                                                                                                   "subRun":  [
+                                                                                                                  {
+                                                                                                                      "node":  "Mem?ria de IA",
+                                                                                                                      "runIndex":  0
+                                                                                                                  }
+                                                                                                              ]
+                                                                                               },
+                                                                                               {
+                                                                                                   "subRun":  [
+                                                                                                                  {
+                                                                                                                      "node":  "Mem?ria de IA",
+                                                                                                                      "runIndex":  1
+                                                                                                                  }
+                                                                                                              ]
+                                                                                               }
+                                                                                           ],
+                                                                         "Modelo Google Gemini":  [
+                                                                                                      {
+                                                                                                          "subRun":  [
+                                                                                                                         {
+                                                                                                                             "node":  "Modelo Google Gemini",
+                                                                                                                             "runIndex":  0
+                                                                                                                         }
+                                                                                                                     ]
+                                                                                                      },
+                                                                                                      {
+                                                                                                          "subRun":  [
+                                                                                                                         {
+                                                                                                                             "node":  "Modelo Google Gemini",
+                                                                                                                             "runIndex":  1
+                                                                                                                         }
+                                                                                                                     ]
+                                                                                                      }
+                                                                                                  ],
+                                                                         "Ferramenta de Mesas":  [
+                                                                                                     {
+                                                                                                         "subRun":  [
+                                                                                                                        {
+                                                                                                                            "node":  "Ferramenta de Mesas",
+                                                                                                                            "runIndex":  0
+                                                                                                                        }
+                                                                                                                    ]
+                                                                                                     }
+                                                                                                 ]
+                                                                     },
+                                                        "waitingExecution":  {
+
+                                                                             },
+                                                        "waitingExecutionSource":  {
+
+                                                                                   },
+                                                        "runtimeData":  {
+                                                                            "version":  1,
+                                                                            "establishedAt":  1770642551722,
+                                                                            "source":  "manual",
+                                                                            "triggerNode":  {
+                                                                                                "name":  "Bate-papo Antigravidade",
+                                                                                                "type":  "@n8n/n8n-nodes-langchain.chatTrigger"
+                                                                                            }
+                                                                        }
+                                                    }
+                              },
+                     "workflowData":  {
+                                          "id":  "BVr8U25654fBzy6N",
+                                          "name":  "Katuta-02-AI-Brain",
+                                          "active":  false,
+                                          "activeVersionId":  null,
+                                          "nodes":  [
+                                                        {
+                                                            "parameters":  {
+                                                                               "multipleMethods":  false,
+                                                                               "httpMethod":  "GET",
+                                                                               "path":  "9bd45acb-0168-4648-b5ff-e3bd3d68fce0",
+                                                                               "authentication":  "none",
+                                                                               "responseMode":  "onReceived",
+                                                                               "responseCode":  200,
+                                                                               "contentTypeNotice":  "",
+                                                                               "options":  {
+
+                                                                                           }
+                                                                           },
+                                                            "id":  "b1",
+                                                            "name":  "Executar entrada",
+                                                            "type":  "n8n-nodes-base.webhook",
+                                                            "typeVersion":  1,
+                                                            "position":  [
+                                                                             208,
+                                                                             304
+                                                                         ],
+                                                            "webhookId":  "9bd45acb-0168-4648-b5ff-e3bd3d68fce0"
+                                                        },
+                                                        {
+                                                            "parameters":  {
+                                                                               "public":  false,
+                                                                               "availableInChat":  false,
+                                                                               "options":  {
+
+                                                                                           }
+                                                                           },
+                                                            "id":  "ct1",
+                                                            "name":  "Bate-papo Antigravidade",
+                                                            "type":  "@n8n/n8n-nodes-langchain.chatTrigger",
+                                                            "typeVersion":  1,
+                                                            "position":  [
+                                                                             208,
+                                                                             112
+                                                                         ],
+                                                            "webhookId":  "03ecd8e8-3b7a-4042-b532-b0ffbb7632d9"
+                                                        },
+                                                        {
+                                                            "parameters":  {
+                                                                               "aiAgentStarterCallout":  "",
+                                                                               "agent":  "toolsAgent",
+                                                                               "promptType":  "auto",
+                                                                               "text":  "={{ $json.chatInput }}",
+                                                                               "hasOutputParser":  false,
+                                                                               "options":  {
+                                                                                               "systemMessage":  "Voc? ? o Katutinha (masculino), atendente da Katuta\u0027s Pizzaria. \n\nREGRAS DE OURO:\n1. Persona: Simp?tico e prestativo.\n2. Timing: S? inicie a reserva se o cliente pedir ou ap?s ele tirar todas as d?vidas.\n3. EXECU??O: Assim que tiver NOME e QUANTIDADE TOTAL (pax), chame a ferramenta \u0027reserva_motor\u0027 imediatamente.\n4. Hor?rio: Reservas at? as 19:00h. Se for depois, informe que ? ordem de chegada.\n5. Paci?ncia: Se houver atraso ou limite de cota, pe?a para o cliente aguardar 30 segundos e tentar novamente."
+                                                                                           },
+                                                                               "credentials":  ""
+                                                                           },
+                                                            "id":  "b2",
+                                                            "name":  "Agente Katutinha",
+                                                            "type":  "@n8n/n8n-nodes-langchain.agent",
+                                                            "typeVersion":  1.7,
+                                                            "position":  [
+                                                                             608,
+                                                                             304
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "parameters":  {
+                                                                               "notice":  "",
+                                                                               "modelName":  "models/gemini-flash-latest",
+                                                                               "options":  {
+                                                                                               "temperature":  0.7
+                                                                                           }
+                                                                           },
+                                                            "id":  "b3",
+                                                            "name":  "Modelo Google Gemini",
+                                                            "type":  "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+                                                            "typeVersion":  1,
+                                                            "position":  [
+                                                                             512,
+                                                                             560
+                                                                         ],
+                                                            "credentials":  {
+                                                                                "googlePalmApi":  {
+                                                                                                      "id":  "lGTwBhVPGUnJ6RPP",
+                                                                                                      "name":  "Google Gemini(PaLM) Api account"
+                                                                                                  }
+                                                                            }
+                                                        },
+                                                        {
+                                                            "parameters":  {
+                                                                               "notice":  "",
+                                                                               "scalingNotice":  "",
+                                                                               "sessionIdType":  "fromInput",
+                                                                               "sessionKey":  "={{ $json.sessionId }}",
+                                                                               "contextWindowLength":  5
+                                                                           },
+                                                            "id":  "b4",
+                                                            "name":  "Mem?ria de IA",
+                                                            "type":  "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+                                                            "typeVersion":  1.3,
+                                                            "position":  [
+                                                                             656,
+                                                                             560
+                                                                         ]
+                                                        },
+                                                        {
+                                                            "parameters":  {
+                                                                               "notice":  "",
+                                                                               "noticeTemplateExample":  "",
+                                                                               "name":  "reserva_motor",
+                                                                               "description":  "Ferramenta para registrar reservas. Envie \u0027pax\u0027 (n?mero) e \u0027nome_cliente\u0027 (string).",
+                                                                               "language":  "javaScript",
+                                                                               "jsCode":  "try {\n  const response = await fetch(\u0027http://localhost:5678/webhook-test/reserva-motor-webhook\u0027, {\n    method: \u0027POST\u0027,\n    headers: { \u0027Content-Type\u0027: \u0027application/json\u0027 },\n    body: JSON.stringify({ pax, nome_cliente })\n  });\n  const data = await response.json();\n  return data.output || \"Reserva registrada com sucesso!\";\n} catch (e) {\n  return \"Erro t?cnico ao chamar o motor de reservas: \" + e.message;\n}",
+                                                                               "specifyInputSchema":  false
+                                                                           },
+                                                            "id":  "b5",
+                                                            "name":  "Ferramenta de Mesas",
+                                                            "type":  "@n8n/n8n-nodes-langchain.toolCode",
+                                                            "typeVersion":  1,
+                                                            "position":  [
+                                                                             800,
+                                                                             560
+                                                                         ]
+                                                        }
+                                                    ],
+                                          "connections":  {
+                                                              "Executar entrada":  {
+                                                                                       "main":  [
+                                                                                                    [
+                                                                                                        {
+                                                                                                            "node":  "Agente Katutinha",
+                                                                                                            "type":  "main",
+                                                                                                            "index":  0
+                                                                                                        }
+                                                                                                    ]
+                                                                                                ]
+                                                                                   },
+                                                              "Bate-papo Antigravidade":  {
+                                                                                              "main":  [
+                                                                                                           [
+                                                                                                               {
+                                                                                                                   "node":  "Agente Katutinha",
+                                                                                                                   "type":  "main",
+                                                                                                                   "index":  0
+                                                                                                               }
+                                                                                                           ]
+                                                                                                       ]
+                                                                                          },
+                                                              "Modelo Google Gemini":  {
+                                                                                           "ai_languageModel":  [
+                                                                                                                    [
+                                                                                                                        {
+                                                                                                                            "node":  "Agente Katutinha",
+                                                                                                                            "type":  "ai_languageModel",
+                                                                                                                            "index":  0
+                                                                                                                        }
+                                                                                                                    ]
+                                                                                                                ]
+                                                                                       },
+                                                              "Mem?ria de IA":  {
+                                                                                    "ai_memory":  [
+                                                                                                      [
+                                                                                                          {
+                                                                                                              "node":  "Agente Katutinha",
+                                                                                                              "type":  "ai_memory",
+                                                                                                              "index":  0
+                                                                                                          }
+                                                                                                      ]
+                                                                                                  ]
+                                                                                },
+                                                              "Ferramenta de Mesas":  {
+                                                                                          "ai_tool":  [
+                                                                                                          [
+                                                                                                              {
+                                                                                                                  "node":  "Agente Katutinha",
+                                                                                                                  "type":  "ai_tool",
+                                                                                                                  "index":  0
+                                                                                                              }
+                                                                                                          ]
+                                                                                                      ]
+                                                                                      }
+                                                          },
+                                          "settings":  {
+                                                           "errorWorkflow":  "NyQKhHnymOvXQRdx",
+                                                           "callerPolicy":  "workflowsFromSameOwner",
+                                                           "availableInMCP":  false
+                                                       },
+                                          "pinData":  {
+
+                                                      }
+                                      },
+                     "customData":  {
+
+                                    }
+                 }
+             ],
+    "nextCursor":  "eyJsYXN0SWQiOiIzOSIsImxpbWl0IjoxfQ=="
+}
