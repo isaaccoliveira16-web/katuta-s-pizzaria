@@ -20,7 +20,10 @@ document.getElementById('reserva-form').addEventListener('submit', async (e) => 
         // Tenta PRODUÇÃO (Workflow ATIVO) - Usando Tunnel Público para teste externo
         let response = await fetch('https://huge-chairs-argue.loca.lt/webhook/reserva-motor-webhook', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Bypass-Tunnel-Reminder': 'true'
+            },
             body: JSON.stringify(formData)
         });
 
@@ -28,7 +31,10 @@ document.getElementById('reserva-form').addEventListener('submit', async (e) => 
         if (response.status === 404) {
             response = await fetch('https://huge-chairs-argue.loca.lt/webhook-test/reserva-motor-webhook', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Bypass-Tunnel-Reminder': 'true'
+                },
                 body: JSON.stringify(formData)
             });
         }
