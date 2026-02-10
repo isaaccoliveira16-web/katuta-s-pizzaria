@@ -18,7 +18,7 @@ document.getElementById('reserva-form').addEventListener('submit', async (e) => 
 
     try {
         // Tenta PRODUÇÃO (Workflow ATIVO) - Usando Tunnel Público para teste externo
-        let response = await fetch('https://sweet-bears-enter.loca.lt/webhook/reserva-motor-webhook', {
+        let response = await fetch('https://huge-chairs-argue.loca.lt/webhook/reserva-motor-webhook', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
@@ -26,7 +26,7 @@ document.getElementById('reserva-form').addEventListener('submit', async (e) => 
 
         // Tenta TESTE se PRODUÇÃO falhar
         if (response.status === 404) {
-            response = await fetch('http://127.0.0.1:5678/webhook-test/reserva-motor-webhook', {
+            response = await fetch('https://huge-chairs-argue.loca.lt/webhook-test/reserva-motor-webhook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
