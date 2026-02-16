@@ -1,0 +1,21 @@
+{
+    "version": 2,
+    "rewrites": [
+        {
+            "source": "/dashboard",
+            "destination": "/dashboard/index.html"
+        },
+        {
+            "source": "/dashboard/:match*",
+            "destination": "/dashboard/:match*"
+        },
+        {
+            "source": "/",
+            "destination": "/website/index.html"
+        },
+        {
+            "source": "/:match*",
+            "destination": "/website/:match*"
+        }
+    ]
+}

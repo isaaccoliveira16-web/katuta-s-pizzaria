@@ -20,7 +20,7 @@
         },
         {
             "parameters": {
-                "jsCode": "const body = $input.item.json.body || $input.item.json;\nconst pax = parseInt(body.pax) || 1;\nconst kids = parseInt(body.kids) || 0;\nconst nome_cliente = body.nome_cliente || \"Cliente Web\";\nconst whatsapp_id = body.whatsapp_id || \"Não informado\";\nconst mesasNeeded = Math.ceil(pax / 4);\n\nreturn {\n  pax,\n  kids,\n  mesasNeeded,\n  nome_cliente,\n  whatsapp_id\n};"
+                "jsCode": "const body = $input.item.json.body || $input.item.json;\n\n// NOVOS CAMPOS COM BACKWARD COMPATIBILITY\nconst adultos = parseInt(body.adultos) || parseInt(body.pax) || 0;\nconst criancas_6_10 = parseInt(body.criancas_6_10) || parseInt(body.kids) || 0;\nconst criancas_0_5 = parseInt(body.criancas_0_5) || 0;\n\n// PAX TOTAL (Soma tudo para cálculo de mesas)\nconst pax = adultos + criancas_6_10 + criancas_0_5;\nconst pax_pagante = adultos + criancas_6_10; // Para estatística futura\n\nconst nome_cliente = body.nome_cliente || \"Cliente Web\";\nconst whatsapp_id = body.whatsapp_id || \"Não informado\";\nconst data_reserva = body.data_reserva || new Date().toISOString().split('T')[0];\n\n// Lógica de Mesas e Cadeiras Extras\nlet mesasNeeded = Math.ceil(pax / 4);\nlet observacao = \"\";\n\nif (pax > 4) {\n  const remainder = pax % 4;\n  if (remainder === 1) {\n    mesasNeeded = mesasNeeded - 1;\n    observacao = \"1 Cadeira Adicional\";\n  } else if (remainder === 2) {\n    mesasNeeded = mesasNeeded - 1;\n    observacao = \"2 Cadeiras Adicionais\";\n  }\n}\n\n// DATAS E ABAS\nconst daysMap = ['Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];\nconst dateParts = data_reserva.split('-'); \nconst dateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);\nconst dayOfWeek = dateObj.getDay();\nconst diaSemana = daysMap[dayOfWeek];\n\nconst sheetReservas = `Reservas_${diaSemana}`;\nconst sheetMesas = `Mesas_${diaSemana}`;\n\n// LÓGICA DE FUTURO: Verifica se a data é desta semana ou futura\nconst hoje = new Date();\n// Calcula próximo domingo (fim desta semana)\nconst proximoDomingo = new Date(hoje);\nproximoDomingo.setDate(hoje.getDate() + (7 - hoje.getDay()));\nproximoDomingo.setHours(23, 59, 59, 999);\n\nlet isFuture = false;\nif (dateObj > proximoDomingo) {\n    isFuture = true;\n}\n\nreturn {\n  pax,\n  adultos,\n  criancas_6_10,\n  criancas_0_5,\n  mesasNeeded,\n  nome_cliente,\n  whatsapp_id,\n  observacao,\n  data_reserva,\n  diaSemana,\n  sheet_reservas: sheetReservas,\n  sheet_mesas: sheetMesas,\n  isFuture: isFuture\n};"
             },
             "id": "node-logic-calc",
             "name": "[JS] Calc Mesas",
@@ -33,9 +33,44 @@
         },
         {
             "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{ $json.isFuture }}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "id": "node-switch-future",
+            "name": "É Futura?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                600,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const info = $node[\"[JS] Calc Mesas\"].json;\nconst generateID = () => Math.random().toString(36).substr(2, 9).toUpperCase();\nconst timestamp = new Date().toLocaleString('pt-BR');\n\n// Formata detalhe PAX para observação se necessário ou mantém simples\n// Vamos salvar detalhes em colunas separadas se a planilha permitir, \n// mas por segurança vamos adicionar no objeto.\n\nreturn {\n  Reserva_ID: generateID(),\n  Nome_Cliente: info.nome_cliente,\n  WhatsApp: info.whatsapp_id,\n  Qtd_Pessoas: info.pax,\n  Qtd_Adultos: info.adultos,\n  Qtd_Criancas_Meia: info.criancas_6_10,\n  Qtd_Criancas_Free: info.criancas_0_5,\n  Mesas_Alocadas: \"A Definir (Semana Seguinte)\",\n  Observacao: info.observacao,\n  Timestamp: timestamp,\n  Status: \"Pré-Reserva (Futura)\",\n  whatsapp_original: info.whatsapp_id,\n  data_reserva: info.data_reserva, \n  sheet_reservas: \"Reservas_Futuras\" \n};"
+            },
+            "id": "node-format-future",
+            "name": "[JS] Formatar Futura",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                800,
+                100
+            ]
+        },
+        {
+            "parameters": {
                 "operation": "read",
                 "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
-                "sheetName": "Mesas",
+                "sheetName": {
+                    "value": "={{ $node['[JS] Calc Mesas'].json.sheet_mesas }}"
+                },
                 "filters": {
                     "conditions": [
                         {
@@ -50,29 +85,32 @@
             "type": "n8n-nodes-base.googleSheets",
             "typeVersion": 4,
             "position": [
-                600,
-                300
+                800,
+                400
             ],
-            "continueOnFail": true
+            "continueOnFail": false
         },
         {
             "parameters": {
-                "jsCode": "const mesasLivres = $input.all();\nconst info = $node[\"[JS] Calc Mesas\"].json;\n\nconst generateID = () => Math.random().toString(36).substr(2, 9).toUpperCase();\nconst timestamp = new Date().toLocaleString('pt-BR');\n\n// Lógica de Alocação\nlet mesasAlocadas = \"Mesa Fictícia\";\nlet idsToUpdate = [];\n\nif (mesasLivres.length > 0 && mesasLivres[0].json.Mesa_ID) {\n  const selected = mesasLivres.slice(0, info.mesasNeeded);\n  mesasAlocadas = selected.map(m => m.json.Mesa_ID).join(\", \");\n  idsToUpdate = selected.map(m => m.json.Mesa_ID);\n}\n\nreturn {\n  Reserva_ID: generateID(),\n  Nome_Cliente: info.nome_cliente,\n  WhatsApp: info.whatsapp_id,\n  Qtd_Pessoas: info.pax,\n  Mesas_Alocadas: mesasAlocadas,\n  Timestamp: timestamp,\n  Status: \"Website\",\n  whatsapp_original: info.whatsapp_id,\n  idsToUpdate // Passando lista para atualização\n};"
+                "jsCode": "const allMesas = $input.all();\nconst info = $node[\"[JS] Calc Mesas\"].json;\n\n// FILTRAGEM MANUAL (Mais Segura)\n// Garante que só pega mesas com Status \"LIVRE\" (Maiúsculo ou Minúsculo)\nconst mesasLivres = allMesas.filter(m => \n   m.json.Status && m.json.Status.toString().trim().toUpperCase() === 'LIVRE'\n);\n\nconst generateID = () => Math.random().toString(36).substr(2, 9).toUpperCase();\nconst timestamp = new Date().toLocaleString('pt-BR');\n\n// Lógica de Alocação\nlet mesasAlocadas = \"Indisponível\";\nlet idsToUpdate = [];\n\n// Verifica se tem mesas suficientes\nif (mesasLivres.length >= info.mesasNeeded) {\n  const selected = mesasLivres.slice(0, info.mesasNeeded);\n  mesasAlocadas = selected.map(m => m.json.Mesa_ID).join(\", \");\n  idsToUpdate = selected.map(m => m.json.Mesa_ID);\n} else {\n   // Opcional: Lidar com falta de mesas (por enquanto deixa Indisponível)\n   mesasAlocadas = \"SEM MESAS LIVRES\";\n}\n\nreturn {\n  Reserva_ID: generateID(),\n  Nome_Cliente: info.nome_cliente,\n  WhatsApp: info.whatsapp_id,\n  Qtd_Pessoas: info.pax,\n  Qtd_Adultos: info.adultos,\n  Qtd_Criancas_Meia: info.criancas_6_10,\n  Qtd_Criancas_Free: info.criancas_0_5,\n  Mesas_Alocadas: mesasAlocadas,\n  Observacao: info.observacao,\n  Timestamp: timestamp,\n  Status: \"Website\",\n  whatsapp_original: info.whatsapp_id,\n  idsToUpdate, // Passando lista para atualização\n  sheet_reservas: info.sheet_reservas, // Passando para o próximo node\n  sheet_mesas: info.sheet_mesas, // Passando para o próximo node\n  data_reserva: info.data_reserva // ADICIONADO: Data da reserva para filtro\n};"
             },
             "id": "node-logic-aloca",
             "name": "[JS] Gerar Objeto Reserva",
             "type": "n8n-nodes-base.code",
             "typeVersion": 1,
             "position": [
-                800,
-                300
+                1000,
+                400
             ]
         },
         {
             "parameters": {
                 "operation": "append",
                 "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
-                "sheetName": "Controle_Reservas",
+                "sheetName": {
+                    "mode": "name",
+                    "value": "={{ $json.sheet_reservas }}"
+                },
                 "columns": {
                     "mappingMode": "autoMapInputData",
                     "value": {}
@@ -83,37 +121,103 @@
             "type": "n8n-nodes-base.googleSheets",
             "typeVersion": 4,
             "position": [
-                1000,
-                300
-            ],
-            "continueOnFail": true
-        },
-        {
-            "parameters": {
-                "phoneNumberId": "SUA_PHONE_NUMBER_ID_AQUI",
-                "recipientPhoneNumber": "={{ $json[\"WhatsApp\"] }}",
-                "text": "={{ \"Olá \" + $json[\"Nome_Cliente\"] + \"! Sua reserva na Katuta\\'s está confirmada. \\n\\n📍 Endereço: Rua Pref. Valter Belinzoni, 260, Araranguá/SC. \\n\\nAgradecemos a preferência! 🍕🕺\" }}"
-            },
-            "continueOnFail": true,
-            "id": "node-whatsapp-confirm",
-            "name": "[WA] Confirmação Automática (Opcional)",
-            "type": "n8n-nodes-base.whatsApp",
-            "typeVersion": 1,
-            "position": [
                 1200,
                 300
-            ]
+            ],
+            "continueOnFail": false
         },
         {
             "parameters": {
-                "jsCode": "const reserva = $node[\"[JS] Gerar Objeto Reserva\"].json;\nreturn {\n  output: \"Reserva confirmada para \" + reserva.Nome_Cliente + \". Mesas: \" + reserva.Mesas_Alocadas + \".\"\n};"
+                "method": "POST",
+                "url": "https://graph.facebook.com/v21.0/SEU_PHONE_NUMBER_ID/messages",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendBody": true,
+                "contentType": "json",
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "messaging_product",
+                            "value": "whatsapp"
+                        },
+                        {
+                            "name": "to",
+                            "value": "={{ $json.WhatsApp }}"
+                        },
+                        {
+                            "name": "type",
+                            "value": "text"
+                        },
+                        {
+                            "name": "text",
+                            "value": "={{ JSON.stringify({body: \"Olá \" + $json[\"Nome_Cliente\"] + \"! Sua reserva na Katuta's está PRE-CONFIRMADA! \\n\\nComo é para a próxima semana, nós já salvamos seu lugar mas vamos confirmar a mesa exata na próxima Segunda-Feira. Fique tranquilo! 🍕🕺\"}) }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "node-whatsapp-future",
+            "name": "[Meta] Confirmação Futura",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1400,
+                100
+            ],
+            "continueOnFail": true,
+            "notes": "⚠️ PLACEHOLDER: Substitua SEU_PHONE_NUMBER_ID pela sua Phone Number ID da Meta e configure as credenciais HTTP Header Auth com o Access Token."
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://graph.facebook.com/v21.0/SEU_PHONE_NUMBER_ID/messages",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendBody": true,
+                "contentType": "json",
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "messaging_product",
+                            "value": "whatsapp"
+                        },
+                        {
+                            "name": "to",
+                            "value": "={{ $json.WhatsApp }}"
+                        },
+                        {
+                            "name": "type",
+                            "value": "text"
+                        },
+                        {
+                            "name": "text",
+                            "value": "={{ JSON.stringify({body: \"Olá \" + $json[\"Nome_Cliente\"] + \"! Sua reserva na Katuta's está confirmada. \\n\\n📍 Endereço: Rua Pref. Valter Belinzoni, 260, Araranguá/SC. \\n\\nAgradecemos a preferência! 🍕🕺\"}) }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "node-whatsapp-confirm",
+            "name": "[Meta] Confirmação Automática",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                1400,
+                400
+            ],
+            "continueOnFail": true,
+            "notes": "⚠️ PLACEHOLDER: Substitua SEU_PHONE_NUMBER_ID pela sua Phone Number ID da Meta e configure as credenciais HTTP Header Auth com o Access Token."
+        },
+        {
+            "parameters": {
+                "jsCode": "const reserva = $input.first().json;\nreturn {\n  output: \"Reserva (\" + reserva.Status + \") confirmada para \" + reserva.Nome_Cliente + \".\"\n};"
             },
             "id": "node-output",
             "name": "Resposta Final",
             "type": "n8n-nodes-base.code",
             "typeVersion": 1,
             "position": [
-                1400,
+                1600,
                 300
             ]
         },
@@ -126,7 +230,7 @@
             "type": "n8n-nodes-base.code",
             "typeVersion": 1,
             "position": [
-                1000,
+                1200,
                 500
             ]
         },
@@ -134,7 +238,10 @@
             "parameters": {
                 "operation": "update",
                 "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
-                "sheetName": "Mesas",
+                "sheetName": {
+                    "mode": "name",
+                    "value": "={{ $node[\"[JS] Gerar Objeto Reserva\"].json.sheet_mesas }}"
+                },
                 "columns": {
                     "mappingMode": "autoMapInputData",
                     "value": {},
@@ -148,10 +255,10 @@
             "type": "n8n-nodes-base.googleSheets",
             "typeVersion": 4,
             "position": [
-                1200,
-                500
+                1400,
+                600
             ],
-            "continueOnFail": true
+            "continueOnFail": false
         }
     ],
     "connections": {
@@ -170,7 +277,36 @@
             "main": [
                 [
                     {
+                        "node": "É Futura?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "É Futura?": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Formatar Futura",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
                         "node": "[GSheets] Buscar Livres",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Formatar Futura": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Registrar Reserva",
                         "type": "main",
                         "index": 0
                     }
@@ -208,14 +344,30 @@
             "main": [
                 [
                     {
-                        "node": "[WA] Confirmação Automática (Opcional)",
+                        "node": "[Meta] Confirmação Futura",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "[Meta] Confirmação Automática",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "[WA] Confirmação Automática (Opcional)": {
+        "[Meta] Confirmação Futura": {
+            "main": [
+                [
+                    {
+                        "node": "Resposta Final",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[Meta] Confirmação Automática": {
             "main": [
                 [
                     {
@@ -236,7 +388,8 @@
                     }
                 ]
             ]
-        }
+        },
+        "[GSheets] Atualizar Status": {}
     },
     "settings": {
         "errorWorkflow": "NyQKhHnymOvXQRdx"

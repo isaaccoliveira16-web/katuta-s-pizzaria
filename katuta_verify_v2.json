@@ -1,0 +1,49 @@
+{
+    "name": "Katuta-Verify-Simple",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "GET",
+                "path": "katuta-chat-flow",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "node-verify-webhook",
+            "name": "Webhook Verification",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                460,
+                340
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "text",
+                "responseBody": "={{ $json.query['hub.challenge'] }}",
+                "options": {}
+            },
+            "id": "node-respond-challenge",
+            "name": "Respond Challenge",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                680,
+                340
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook Verification": {
+            "main": [
+                [
+                    {
+                        "node": "Respond Challenge",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

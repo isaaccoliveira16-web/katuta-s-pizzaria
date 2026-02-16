@@ -15,10 +15,23 @@
 
 <body>
     <header>
-        <nav class="container" style="justify-content: center;">
-            <div class="logo-area">
-                <img src="logo.jpg" alt="Katuta's Logo" id="logo">
+        <nav class="container nav-bar">
+            <a href="#" class="logo-area">
+                <img src="style/logo-icon.svg" alt="Katuta's" class="logo-svg">
+                <div class="logo-name">
+                    <span class="logo-text">Katuta's</span>
+                    <span class="logo-sub">PIZZARIA</span>
+                </div>
+            </a>
+            <div class="nav-links">
+                <a href="#quem-somos" class="nav-btn nav-btn--outline">Quem Somos</a>
+                <a href="#precos" class="nav-btn nav-btn--gold">Valores</a>
+                <a href="#catalogo" class="nav-btn nav-btn--filled">Catálogo</a>
+                <a href="#contato" class="nav-btn nav-btn--glass">Contatos</a>
             </div>
+            <button class="nav-hamburger" id="hamburger-btn" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
         </nav>
     </header>
 
@@ -28,12 +41,47 @@
                 <div class="hero-text">
                     <h1>A Verdadeira Pizza Artesanal</h1>
                     <p>Rodízio Completo: Sabores tradicionais, especiais e doces.</p>
-                    <a href="#reserva" class="btn-primary">Reservar Minha Mesa</a>
+                    <div class="hero-buttons">
+                        <a href="#reserva" class="btn-primary">Reservar Minha Mesa</a>
+                        <a href="https://katutasrestauranteepizzaria.saipos.com/home" target="_blank"
+                            class="btn-primary">Peça Delivery</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUEM SOMOS -->
+        <section id="quem-somos" class="container section-block">
+            <h2 class="section-title">Quem Somos</h2>
+            <div class="about-content glass-panel">
+                <p>A <strong>Katuta's Pizzaria</strong> nasceu da paixão por pizza artesanal de verdade. Localizada em
+                    Araranguá/SC, oferecemos um rodízio completo com sabores tradicionais, especiais e doces — tudo
+                    preparado com ingredientes frescos e massa artesanal.</p>
+                <p>Nosso compromisso é proporcionar uma experiência gastronômica única, em um ambiente acolhedor e
+                    familiar. Venha saborear a melhor pizza da região!</p>
+                <div class="about-highlights">
+                    <div class="highlight-item">
+                        <span class="highlight-icon">●</span>
+                        <span>Massa Artesanal</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="highlight-icon">●</span>
+                        <span>Ingredientes Selecionados</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="highlight-icon">●</span>
+                        <span>Ambiente Familiar</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="highlight-icon">●</span>
+                        <span>Rodízio Completo</span>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section id="precos" class="container">
+            <h2 class="section-title">Valores</h2>
             <div class="price-grid">
                 <div class="price-card glass-panel">
                     <h3>Adulto</h3>
@@ -53,6 +101,35 @@
             </div>
         </section>
 
+        <!-- CATÁLOGO -->
+        <section id="catalogo" class="container section-block">
+            <h2 class="section-title">Catálogo</h2>
+            <div class="catalogo-grid">
+                <div class="catalogo-card glass-panel">
+                    <span class="catalogo-emoji">—</span>
+                    <h3>Tradicionais</h3>
+                    <p>Margherita, Calabresa, Portuguesa, Quatro Queijos, Frango com Catupiry e muito mais.</p>
+                </div>
+                <div class="catalogo-card glass-panel">
+                    <span class="catalogo-emoji">—</span>
+                    <h3>Especiais</h3>
+                    <p>Carne Seca com Cream Cheese, Camarão, Filé Mignon, Lombo Canadense e outras criações exclusivas.
+                    </p>
+                </div>
+                <div class="catalogo-card glass-panel">
+                    <span class="catalogo-emoji">—</span>
+                    <h3>Doces</h3>
+                    <p>Chocolate com Morango, Banana com Canela, Romeu & Julieta, Prestígio e mais sobremesas
+                        irresistíveis.</p>
+                </div>
+                <div class="catalogo-card glass-panel">
+                    <span class="catalogo-emoji">—</span>
+                    <h3>Bebidas</h3>
+                    <p>Refrigerantes, Sucos Naturais, Água e variedades para acompanhar sua refeição.</p>
+                </div>
+            </div>
+        </section>
+
         <section id="reserva" class="container">
             <div class="form-container glass-panel">
                 <h2>Faça sua Reserva</h2>
@@ -63,43 +140,128 @@
                             required>
                     </div>
 
-                    <div class="row">
-                        <div class="input-group">
-                            <label for="pax">Total de Pessoas</label>
-                            <input type="number" id="pax" name="pax" min="1" max="50" value="4" required>
+                    <!-- Linha 1: Faixas Etárias (Precificação) -->
+                    <div style="margin-bottom: 1rem;">
+                        <label
+                            style="color: var(--primary); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Quantidade
+                            de Pessoas</label>
+
+                        <div class="row" style="margin-bottom: 0.5rem;">
+                            <div class="input-group" style="flex: 1;">
+                                <label for="adultos" style="font-size: 0.8rem;">Adultos (11+ anos)</label>
+                                <input type="number" id="adultos" name="adultos" min="1" max="50" value="2" required
+                                    placeholder="0">
+                            </div>
+                            <div class="input-group" style="flex: 1;">
+                                <label for="criancas_6_10" style="font-size: 0.8rem;">Crianças (6-10)</label>
+                                <input type="number" id="criancas_6_10" name="criancas_6_10" min="0" max="20" value="0"
+                                    placeholder="0">
+                            </div>
                         </div>
-                        <div class="input-group">
-                            <label for="kids">Crianças (5-10 anos)</label>
-                            <input type="number" id="kids" name="kids" min="0" max="20" value="0" required>
+
+                        <div class="row">
+                            <div class="input-group" style="flex: 1;">
+                                <label for="criancas_0_5" style="font-size: 0.8rem;">Crianças (0-5)</label>
+                                <input type="number" id="criancas_0_5" name="criancas_0_5" min="0" max="20" value="0"
+                                    placeholder="0">
+                            </div>
+                            <div class="input-group"
+                                style="flex: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
+                                <div
+                                    style="background: rgba(212, 175, 55, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--primary);">
+                                    <span style="color: #ccc; font-size: 0.8rem;">Total (PAX):</span>
+                                    <span id="total-pax"
+                                        style="color: var(--primary); font-weight: bold; font-size: 1.2rem; margin-left: 5px;">2</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="input-group">
-                            <label for="whatsapp">WhatsApp (com DDD)</label>
-                            <input type="tel" id="whatsapp" name="whatsapp" placeholder="Ex: 48999999999" required>
+                    <!-- Linha 2: WhatsApp -->
+                    <div class="input-group">
+                        <label for="whatsapp">WhatsApp</label>
+                        <div class="row" style="margin-bottom: 0;">
+                            <div class="input-group" style="flex: 0 0 90px;">
+                                <select id="ddi" name="ddi"
+                                    style="width: 100%; height: 48px; padding: 10px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: #fff;">
+                                    <option value="55" selected>BR +55</option>
+                                    <option value="1">US +1</option>
+                                    <option value="351">PT +351</option>
+                                    <option value="44">UK +44</option>
+                                    <option value="54">AR +54</option>
+
+                                </select>
+                            </div>
+                            <div class="input-group" style="flex: 1;">
+                                <input type="tel" id="whatsapp" name="whatsapp" placeholder="48 99999-9999" required
+                                    style="width: 100%;">
+                            </div>
                         </div>
-                        <div class="input-group">
+                    </div>
+
+                    <!-- Linha 3: Data e Hora -->
+                    <div class="row">
+                        <div class="input-group" style="flex: 2;">
+                            <label for="data_reserva">Data da Reserva</label>
+                            <input type="date" id="data_reserva" name="data_reserva" required>
+                        </div>
+                        <div class="input-group" style="flex: 1;">
                             <label for="hora">Horário</label>
-                            <input type="time" id="hora" name="hora" min="18:00" max="19:00" value="19:00" required>
+                            <input type="time" id="hora" name="hora" min="18:30" max="23:00" value="19:00" required>
                         </div>
                     </div>
 
-                    <p class="warning">⚠️ Reservas online válidas apenas até às 19:00h.</p>
+                    <p class="warning">Reservas online válidas apenas até às 19:00h.</p>
 
                     <button type="submit" class="btn-primary" id="btn-submit">Confirmar Reserva</button>
                 </form>
                 <div id="status-message"></div>
             </div>
         </section>
+
+        <!-- CONTATO -->
+        <section id="contato" class="container section-block">
+            <h2 class="section-title">Contatos</h2>
+            <div class="contato-grid">
+                <div class="contato-card glass-panel">
+                    <span class="contato-icon">Endereço</span>
+                    <h3>Endereço</h3>
+                    <p>Rua Pref. Valter Belinzoni, 260<br>Araranguá/SC</p>
+                </div>
+                <div class="contato-card glass-panel">
+                    <span class="contato-icon">Telefone</span>
+                    <h3>WhatsApp</h3>
+                    <p><a href="https://wa.me/5548992190505" class="contato-link">(48) 99219-0505</a></p>
+                </div>
+                <div class="contato-card glass-panel">
+                    <span class="contato-icon">Horário</span>
+                    <h3>Horário</h3>
+                    <p>Terça a Domingo<br>19:00 às 23:00</p>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer>
         <div class="container">
-            <p><strong>Katuta's Pizzaria</strong></p>
-            <p>Rua Pref. Valter Belinzoni, 260, Araranguá/SC</p>
-            <p style="margin-top: 10px; font-size: 0.8rem; color: var(--text-muted)">&copy; 2026 Todos os direitos
-                reservados.</p>
+            <div class="footer-content"
+                style="display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center;">
+                <p><strong>Katuta's Pizzaria</strong></p>
+                <p>Rua Pref. Valter Belinzoni, 260, Araranguá/SC</p>
+                <p><a href="https://wa.me/5548992190505" style="color: var(--secondary); text-decoration: none;">(48)
+                        99219-0505</a></p>
+                <!-- CNPJ é OBRIGATÓRIO para verificação Meta. Isaac deve preencher. -->
+                <p style="font-size: 0.9rem;">CNPJ: 08.732.416/0001-06</p>
+
+                <div class="legal-links" style="margin-top: 15px; font-size: 0.8rem;">
+                    <a href="legal.html" style="color: var(--text-muted); margin: 0 10px;">Política de Privacidade</a> |
+                    <a href="legal.html" style="color: var(--text-muted); margin: 0 10px;">Termos de Uso</a>
+                </div>
+
+                <p style="margin-top: 10px; font-size: 0.8rem; color: var(--text-muted)">&copy; 2026 Todos os direitos
+                    reservados.</p>
+                <p style="font-size: 0.7rem; color: var(--text-muted)">Powered by <strong>Vértice Automação</strong></p>
+            </div>
         </div>
     </footer>
 

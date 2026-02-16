@@ -3,3 +3,8 @@ node_modules
 .n8n
 *.log
 *.tmp
+.vercel
+ngrok.exe
+credentials.json
+new_cred.json
+katuta_internal_test.json

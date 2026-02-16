@@ -4,886 +4,826 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐷 Meu Porquinho Inteligente - Dashboard Financeiro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <title>Katuta's Admin</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-card: #1a1a24;
-            --accent-green: #00ff88;
-            --accent-red: #ff4466;
-            --accent-blue: #4488ff;
-            --accent-purple: #8844ff;
-            --accent-pink: #ff66b2;
-            --text-primary: #ffffff;
-            --text-secondary: #888899;
-            --border-color: #2a2a3a;
-        }
-
-        .share-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            justify-content: center;
-        }
-
-        .share-label {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .share-btn {
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: opacity 0.2s;
-            text-decoration: none;
-            color: white;
-            font-size: 0.9rem;
-        }
-
-        .share-whatsapp {
-            background: #25D366;
-        }
-
-        .share-twitter {
-            background: #1DA1F2;
-        }
-
-        .share-btn:hover {
-            opacity: 0.9;
+            --bg-dark: #0a0a0a;
+            --surface: #141414;
+            --surface-hover: #1e1e1e;
+            --primary: #d4af37;
+            /* Dourado Premium */
+            --primary-hover: #b5952f;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --success: #2ecc71;
+            --warning: #f1c40f;
+            --danger: #e74c3c;
+            --border: #333;
         }
 
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .header {
+        /* HEADER */
+        header {
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .logo {
+        .logo-area {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 12px;
         }
 
-        .logo-icon {
+        .logo-circle {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
-            border-radius: 10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #8e7018);
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            align-items: center;
+            font-weight: bold;
+            color: #000;
+            font-size: 1.2rem;
         }
 
-        .logo h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .logo-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
         }
 
-        .upload-section {
-            background: var(--bg-card);
-            border: 2px dashed var(--border-color);
-            border-radius: 16px;
-            padding: 3rem;
-            text-align: center;
-            margin-bottom: 2rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .upload-section:hover {
-            border-color: var(--accent-green);
-            background: rgba(0, 255, 136, 0.05);
-        }
-
-        .upload-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .upload-section h2 {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .upload-section p {
-            color: var(--text-secondary);
+        .date-display {
+            color: var(--text-muted);
             font-size: 0.9rem;
         }
 
-        #fileInput {
-            display: none;
+        /* MAIN CONTENT */
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
         }
 
-        .loading {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            padding: 3rem;
-        }
-
-        .loading.active {
-            display: flex;
-        }
-
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid var(--border-color);
-            border-top-color: var(--accent-green);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .loading p {
-            margin-top: 1rem;
-            color: var(--text-secondary);
-        }
-
-        .dashboard {
-            display: none;
-        }
-
-        .dashboard.active {
-            display: block;
-        }
-
-        .summary-cards {
+        /* METRICS GRID */
+        .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
-        .card {
-            background: var(--bg-card);
-            border-radius: 16px;
+        .metric-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             padding: 1.5rem;
-            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .card-header {
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary);
+        }
+
+        .metric-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
         }
 
-        .card-title {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            font-weight: 500;
+        .metric-title {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
 
-        .card-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+        .metric-icon {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1;
+        }
+
+        .metric-sub {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            color: var(--success);
+            /* Default to green */
+        }
+
+        /* ACTIONS BAR */
+        .actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: var(--surface);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
+            gap: 8px;
         }
 
-        .card-icon.green {
-            background: rgba(0, 255, 136, 0.15);
+        button:hover {
+            background: var(--surface-hover);
+            border-color: var(--text-muted);
         }
 
-        .card-icon.red {
-            background: rgba(255, 68, 102, 0.15);
+        button.primary {
+            background: var(--primary);
+            color: #000;
+            border: none;
         }
 
-        .card-icon.blue {
-            background: rgba(68, 136, 255, 0.15);
+        button.primary:hover {
+            background: var(--primary-hover);
         }
 
-        .card-value {
-            font-size: 2rem;
-            font-weight: 700;
-        }
-
-        .card-value.positive {
-            color: var(--accent-green);
-        }
-
-        .card-value.negative {
-            color: var(--accent-red);
-        }
-
-        .charts-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 900px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .chart-container {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .chart-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .transactions-card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid var(--border-color);
+        /* DATA TABLE */
+        .table-container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            /* Arredonda cantos da tabela */
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            text-align: left;
         }
 
-        th,
-        td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
+        thead {
+            background: rgba(255, 255, 255, 0.03);
         }
 
         th {
-            color: var(--text-secondary);
-            font-weight: 500;
-            font-size: 0.8rem;
+            padding: 1rem 1.5rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 600;
         }
 
         td {
-            font-size: 0.9rem;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.95rem;
         }
 
-        .category-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* STATUS BADGES */
+        .status-badge {
+            padding: 4px 10px;
             border-radius: 20px;
             font-size: 0.75rem;
-            font-weight: 500;
-            background: rgba(68, 136, 255, 0.15);
-            color: var(--accent-blue);
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
-        .tips-card {
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(68, 136, 255, 0.1));
-            border: 1px solid var(--accent-green);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-top: 2rem;
+        .status-confirmada {
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
         }
 
-        .tips-title {
+        .status-pendente {
+            background: rgba(241, 196, 15, 0.15);
+            color: #f1c40f;
+        }
+
+        .status-cancelada {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+        }
+
+        /* SEARCH INPUT */
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+            min-width: 200px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            /* Space for icon */
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .controls {
+                justify-content: space-between;
+                margin-top: 10px;
+            }
+
+            /* Scroll horizontal na tabela para mobile */
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 600px;
+                /* Força largura mínima para scroll */
+            }
+        }
+
+        /* LOADING OVERLAY */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* TOOLBAR STYLES */
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            background: var(--surface);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
+            gap: 8px;
         }
 
-        .tips-list {
-            list-style: none;
-        }
-
-        .tips-list li {
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-
-        .tips-list li:last-child {
-            border-bottom: none;
-        }
-
-        .balance-row {
-            background: rgba(68, 136, 255, 0.05);
-            font-weight: 500;
-        }
-
-        .balance-badge {
-            background: rgba(68, 136, 255, 0.1);
-            color: var(--accent-blue);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            text-transform: uppercase;
+        input[type="date"] {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px;
+            border-radius: 6px;
+            color-scheme: dark;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="logo">
-                <div class="logo-icon">🐷</div>
-                <h1>Meu Porquinho Inteligente</h1>
-            </div>
-            <span id="dateDisplay"></span>
-        </header>
 
-        <section class="upload-section" id="uploadSection">
-            <div class="upload-icon">📁</div>
-            <h2>Arraste seu extrato bancário aqui</h2>
-            <p>PDF ou CSV - Processamento 100% local e seguro</p>
-            <input type="file" id="fileInput" accept=".pdf,.csv">
-
-            <div style="margin-top: 2rem;">
-                <span class="share-label">猪 Indique para um amigo:</span>
-                <div class="share-buttons">
-                    <a href="#" id="shareWhatsApp" class="share-btn share-whatsapp">
-                        WhatsApp
-                    </a>
-                    <a href="#" id="shareTwitter" class="share-btn share-twitter">
-                        X / Twitter
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section class="loading" id="loadingSection">
-            <div class="spinner"></div>
-            <p id="loadingText">Extraindo texto do PDF...</p>
-        </section>
-
-        <section class="dashboard" id="dashboard">
-            <div class="summary-cards">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Saldo Anterior</span>
-                        <div class="card-icon blue">🏦</div>
-                    </div>
-                    <div class="card-value" id="saldoAnterior">R$ 0,00</div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Total Entradas</span>
-                        <div class="card-icon green">📈</div>
-                    </div>
-                    <div class="card-value positive" id="totalEntradas">R$ 0,00</div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Total Saídas</span>
-                        <div class="card-icon red">📉</div>
-                    </div>
-                    <div class="card-value negative" id="totalSaidas">R$ 0,00</div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Saldo Atual</span>
-                        <div class="card-icon pink">🐷</div>
-                    </div>
-                    <div class="card-value" id="saldoAtual">R$ 0,00</div>
-                </div>
-            </div>
-
-            <div class="charts-grid">
-                <div class="chart-container">
-                    <h3 class="chart-title">📊 Gastos por Categoria</h3>
-                    <canvas id="categoryChart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <h3 class="chart-title">💳 Gastos por Tipo de Transação</h3>
-                    <canvas id="typeChart"></canvas>
-                </div>
-            </div>
-
-            <div class="transactions-card">
-                <h3 class="chart-title">📋 Transações Categorizadas</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Descrição</th>
-                            <th>Categoria</th>
-                            <th>Tipo</th>
-                            <th>Valor</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transactionsBody"></tbody>
-                </table>
-            </div>
-
-            <div class="tips-card">
-                <h3 class="tips-title">💡 Dicas para Melhorar suas Finanças</h3>
-                <ul class="tips-list" id="tipsList"></ul>
-
-                <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
-                    <span class="share-label">📊 Compartilhar meus resultados:</span>
-                    <div class="share-buttons">
-                        <a href="#" id="shareWhatsAppRes" class="share-btn share-whatsapp">
-                            📲 WhatsApp
-                        </a>
-                        <a href="#" id="shareTwitterRes" class="share-btn share-twitter">
-                            X / Twitter
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div id="debugSection"
-                style="display: none; margin-top: 2rem; background: #1a1a24; border: 1px solid #ffce56; border-radius: 16px; padding: 1.5rem;">
-                <h3 style="color: #ffce56; margin-bottom: 1rem;">⚠️ Opa! Não conseguimos ler este extrato...</h3>
-                <p style="font-size: 0.9rem; color: #888; margin-bottom: 1rem;">
-                    Nosso porquinho ainda está aprendendo a ler extratos de todos os bancos.
-                    Se você quiser nos ajudar, mande o texto abaixo para o desenvolvedor:
-                </p>
-                <textarea id="rawTextContent" readonly
-                    style="width: 100%; height: 200px; background: #0a0a0f; color: #00ff88; border: 1px solid #2a2a3a; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem;"></textarea>
-            </div>
-        </section>
+    <!-- LOADING SPINNER -->
+    <div id="loading">
+        <div class="spinner"></div>
     </div>
 
+    <header>
+        <div class="logo-area">
+            <div class="logo-circle">K</div>
+            <span class="logo-text">Katuta's Admin</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="date-display" id="currentDate">Carregando...</div>
+            <div id="userInfo" style="font-size: 0.9rem; color: var(--primary); font-weight: 600;"></div>
+            <button onclick="Auth.logout()"
+                style="padding: 5px 10px; font-size: 0.8rem; background: rgba(255,255,255,0.1); border: 1px solid var(--border);">Sair</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- METRICS -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-title">Reservas Hoje</span>
+                    <span class="metric-icon">📅</span>
+                </div>
+                <div class="metric-value" id="totalReservas">-</div>
+                <div class="metric-sub">Confirmadas</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-title">Total Pessoas (Pax)</span>
+                    <span class="metric-icon">👥</span>
+                </div>
+                <div class="metric-value" id="totalPax">-</div>
+                <div class="metric-sub">Clientes esperados</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <span class="metric-title">Ocupação Mesas</span>
+                    <span class="metric-icon">🍕</span>
+                </div>
+                <div class="metric-value" id="occupancyRate">-</div>
+                <div class="metric-sub" id="mesasLivresText" style="color: var(--success)">- mesas livres</div>
+            </div>
+        </div>
+
+        <!-- ACTIONS & FILTERS -->
+        <div class="actions-bar">
+            <h2 class="section-title">Reservas</h2>
+
+            <div class="controls">
+                <button onclick="fetchData()">Atualizar ↻</button>
+            </div>
+        </div>
+
+        <!-- TOOLBAR (New) -->
+        <div class="toolbar" style="margin-bottom: 20px;">
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input" placeholder="Buscar por Nome ou WhatsApp...">
+            </div>
+
+            <div class="filter-group">
+                <input type="date" id="datePicker">
+                <button class="primary" id="btnWeek" onclick="handleWeekView()">Ver Semana</button>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="25%">Nome Cliente</th>
+                        <th width="20%">WhatsApp</th>
+                        <th width="10%">Total Pessoas</th>
+                        <th width="15%">Status</th>
+                        <th width="10%">Mesas</th>
+                        <th width="15%">Obs</th>
+                        <th width="15%" id="actionsHeader">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="reservationsBody">
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                            Carregando dados...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    </main>
+    <script src="auth.js"></script>
     <script>
-        // PDF.js worker
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-        const uploadSection = document.getElementById('uploadSection');
-        const loadingSection = document.getElementById('loadingSection');
-        const dashboard = document.getElementById('dashboard');
-
-        // Exibir data de hoje
-        document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
-        const fileInput = document.getElementById('fileInput');
-        const loadingText = document.getElementById('loadingText');
-
-        document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('pt-BR', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        });
-
-        // Initial Share links (Invite)
-        const inviteText = "🐷 Conheça o Meu Porquinho Inteligente! Organize suas finanças de forma simples e segura com este analisador de PDF local!";
-        const currentUrl = window.location.href; // Note: if local file, this might not work as a link
-        document.getElementById('shareWhatsApp').href = `https://wa.me/?text=${encodeURIComponent(inviteText)}`;
-        document.getElementById('shareTwitter').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(inviteText)}`;
-
-        uploadSection.addEventListener('click', () => fileInput.click());
-        uploadSection.addEventListener('dragover', (e) => { e.preventDefault(); uploadSection.style.borderColor = 'var(--accent-green)'; });
-        uploadSection.addEventListener('dragleave', () => { uploadSection.style.borderColor = ''; });
-        uploadSection.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadSection.style.borderColor = '';
-            if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]);
-        });
-        fileInput.addEventListener('change', (e) => { if (e.target.files[0]) processFile(e.target.files[0]); });
-
-        async function processFile(file) {
-            uploadSection.style.display = 'none';
-            loadingSection.classList.add('active');
-            document.getElementById('debugSection').style.display = 'none';
-
-            let text = '';
-
-            if (file.name.endsWith('.pdf')) {
-                loadingText.textContent = 'Extraindo texto do PDF...';
-                text = await extractTextFromPDF(file);
-            } else {
-                loadingText.textContent = 'Lendo arquivo CSV...';
-                text = await file.text();
-            }
-
-            loadingText.textContent = 'Analisando transações...';
-            // Salvar texto bruto para debug
-            document.getElementById('rawTextContent').value = text;
-
-            const transactions = parseTransactions(text);
-
-            if (transactions.length === 0) {
-                loadingSection.classList.remove('active');
-                dashboard.classList.add('active');
-                document.getElementById('debugSection').style.display = 'block';
-                // Reset dashboard values to zero
-                renderDashboard({
-                    resumo: { saldo_anterior: '0.00', total_entrada: '0.00', total_saida: '0.00', saldo_atual: '0.00' },
-                    por_tipo: {}, por_categoria: {}, transacoes: []
-                });
-            } else {
-                loadingText.textContent = 'Gerando dashboard...';
-                setTimeout(() => {
-                    const data = generateDashboardData(transactions);
-                    renderDashboard(data);
-                }, 500);
+        // AUTH CHECK
+        const currentUser = Auth.checkAuth();
+        if (currentUser) {
+            document.getElementById('userInfo').textContent = `Ola, ${currentUser.name}`;
+            // Hide Actions Header if not admin
+            if (!Auth.canEdit()) {
+                const actHeader = document.getElementById('actionsHeader');
+                if (actHeader) actHeader.style.display = 'none';
             }
         }
+        // CONFIG
+        const API_URL = "https://disaffectedly-vibrative-rafael.ngrok-free.dev/webhook/dashboard-data";
 
-        async function extractTextFromPDF(file) {
-            const arrayBuffer = await file.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-            let fullText = '';
+        // STATE
+        let rawData = null; // Store fetched data for filtering
+        let isWeeklyView = false;
 
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const content = await page.getTextContent();
-                const pageText = content.items.map(item => item.str).join(' ');
-                fullText += pageText + '\n';
-            }
+        // UTILS
+        const formatPhone = (phone) => {
+            if (!phone) return '-';
+            phone = phone.toString().replace(/\D/g, '');
+            if (phone.length > 11) return `+${phone.slice(0, 2)} (${phone.slice(2, 4)}) ${phone.slice(4, 9)}-${phone.slice(9)}`;
+            if (phone.length === 11) return `(${phone.slice(0, 2)}) ${phone.slice(2, 7)}-${phone.slice(7)}`;
+            return phone;
+        };
 
-            return fullText;
-        }
+        const getTodayDate = () => new Date().toISOString().split('T')[0];
 
-        function parseTransactions(text) {
-            const transactions = [];
+        // INIT
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set DatePicker to Today
+            const today = getTodayDate();
+            document.getElementById('datePicker').value = today;
 
-            // Regexes
-            const monthNames = 'janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro';
-            const datePattern = new RegExp(`(\\d{1,2}\\/\\d{2}(?:\\/\\d{2,4})?|\\d{1,2}\\s+de\\s+(?:${monthNames})\\s+de\\s+\\d{4})`, 'i');
-            // Regex atualizada: agora captura opcionalmente o sufixo C ou D do Sicoob logo após o valor
-            const moneyPattern = /(?:-?\s*R\$\s*)?(\d{1,3}(?:\.\d{3})*,\d{2})(?![%,\d])\s*([CD])?/gi;
-            const signalPattern = /\b([CD])\b/i;
+            // Initial Fetch
+            fetchData();
 
-            const entradaKeywords = [
-                'RECEB', 'CREDITO', 'CRÉDITO', 'CRÉD.', 'CRÉD', 'SALARIO', 'SALÁRIO', 'SALÁ', 'DEP', 'TED RECEB',
-                'PIX RECEB', 'PIX RECEBIDO', 'INVEST', 'ESTORNO', 'RESGATE', 'TRANSF. RECEB', 'TRANSF RECEB'
-            ];
-            const saldoKeywords = ['SALDO ANTERIOR', 'SALDO DO DIA', 'SALDO ATUAL', 'SALDO FINAL', 'SALDO EM CONTA', 'SALDO DISPONIVEL', 'SALDO TOTAL'];
-            const blockSplitKeywords = ['PIX ENVIADO', 'PIX RECEBIDO', 'PAGAMENTO', 'COMPRA', 'TRANSFERÊNCIA', 'TRANSF.', 'DEB.', 'SALDO DO DIA', 'SALDO ANTERIOR'];
-
-            // Quebrar o texto em "possíveis blocos"
-            let currentText = text;
-            currentText = currentText.replace(new RegExp(datePattern.source, 'gi'), '\n$1');
-            blockSplitKeywords.forEach(kw => {
-                currentText = currentText.replace(new RegExp(`(${kw})`, 'gi'), '\n$1');
+            // Search Filter Listener
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                filterTable(e.target.value);
             });
 
-            const lines = currentText.split('\n');
-            let lastDate = null;
+            // Date Picker Listener
+            document.getElementById('datePicker').addEventListener('change', () => {
+                isWeeklyView = false;
+                fetchData();
+            });
+        });
 
-            for (let line of lines) {
-                line = line.trim();
-                const upLine = line.toUpperCase();
+        async function fetchData() {
+            showLoading(true, "Buscando dados...");
+            try {
+                const selectedDate = document.getElementById('datePicker').value;
+                const url = new URL(API_URL);
+                url.searchParams.append('date', selectedDate);
 
-                // Filtros de metadados
-                const ignorarKeywords = ['CHEQUE ESPECIAL CONTRATADO', 'JUROS VENCIDOS', 'TARIFAS VENCIDAS', 'SALDO BLOQUEADO', 'ENCARGOS VENCIDOS', 'ENCARGOS A VENCER', 'OUTRAS INFORMAÇÕES', 'LIMITES DE CREDITO', 'EXTRATOS EMITIDOS ATÉ', 'VENCIMENTO CHEQUE', 'TAXA CHEQUE ESPECIAL', 'CUSTO EFETIVO TOTAL', 'CRÉDITO PESSOAL:', 'PARCELA MÁXIMA'];
-                if (ignorarKeywords.some(k => upLine.includes(k))) continue;
+                const data = await fetchFromApi(url);
 
-                const dateMatch = line.match(datePattern);
-                if (dateMatch) lastDate = dateMatch[1];
-                if (!lastDate) continue;
+                rawData = data;
+                isWeeklyView = false;
+                renderDashboard(data);
 
-                // Usamos RegExp.exec para capturar os grupos separadamente
-                let moneyMatch;
-                const matches = [];
-                moneyPattern.lastIndex = 0; // Reset
-                while ((moneyMatch = moneyPattern.exec(line)) !== null) {
-                    matches.push({
-                        full: moneyMatch[0],
-                        value: moneyMatch[1],
-                        suffix: moneyMatch[2]
-                    });
+                // Update specific elements directly
+                document.getElementById('currentDate').textContent = data.meta ? `${data.meta.day} - ${data.meta.date}` : selectedDate;
+
+            } catch (error) {
+                console.error("Erro ao buscar dados:", error);
+                alert("Erro ao conectar com o sistema Katuta. Verifique se o n8n está rodando.");
+                document.getElementById('reservationsBody').innerHTML = '<tr><td colspan="6" style="text-align:center; color: #e74c3c;">Erro de Conexão</td></tr>';
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function handleWeekView() {
+            isWeeklyView = true;
+            fetchWeeklyData();
+        }
+
+        function getWeekDates(currentDate) {
+            // Logic: Get TUESDAY (Start of business week) to SUNDAY
+            // If Monday, go to next Tuesday? Or show past week? Assuming current week.
+            // Simplified: Get current week's Tuesday to Sunday.
+
+            const d = new Date(currentDate);
+            const day = d.getDay(); // 0-6
+            const diff = d.getDate() - day + (day == 0 ? -6 : 1); // Adjust when day is Sunday
+            // Start is Monday, but business starts Tuesday (index 2)
+            // Let's grab Tuesday to Sunday specifically
+
+            /* 
+              Strategy: 
+              Find the "Monday" of this week as anchor.
+              Then iterate Day +1 (Tue) to Day +6 (Sun).
+            */
+            const monday = new Date(d.setDate(diff));
+
+            const dates = [];
+            for (let i = 1; i <= 6; i++) { // Tue(1 after mon) to Sun(6 after mon)? No.
+                // Monday is base.
+                // Tue = Mon + 1
+                // Wed = Mon + 2 ...
+                // Sun = Mon + 6
+                const nextDay = new Date(monday);
+                nextDay.setDate(monday.getDate() + i);
+                dates.push(nextDay);
+            }
+            return dates;
+        }
+
+        // Shared fetcher
+        async function fetchFromApi(url) {
+            const res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'ngrok-skip-browser-warning': 'true',
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+            return await res.json();
+        }
+
+        async function fetchWeeklyData() {
+            showLoading(true, "Carregando semana... (Isso pode demorar um pouco)");
+            try {
+                const anchorDate = new Date(document.getElementById('datePicker').value + 'T12:00:00');
+                const datesToFetch = getWeekDates(anchorDate);
+
+                // SERIAL FETCH to avoid choking local n8n database
+                const results = [];
+                for (const d of datesToFetch) {
+                    const url = new URL(API_URL);
+                    url.searchParams.append('date', d.toISOString().split('T')[0]);
+                    try {
+                        const res = await fetchFromApi(url);
+                        results.push(res);
+                    } catch (e) {
+                        // Improved Error Handling: Warn instead of fail
+                        console.warn(`Falha ao buscar dia ${d}:`, e);
+                        // Push null or skip? Pushing null helps us know a day failed
+                        // results.push(null); 
+                    }
                 }
 
-                if (matches.length > 0) {
-                    matches.forEach((m, idx) => {
-                        const numericValueStr = m.value.replace(/[^\d,.-]/g, '');
-                        let value = parseFloat(numericValueStr.replace(/\./g, '').replace(',', '.'));
-                        if (isNaN(value)) return;
-
-                        const upFull = m.full.toUpperCase();
-                        const isBalanceLine = saldoKeywords.some(k => upLine.includes(k));
-
-                        // Determinar se este valor específico é um SALDO
-                        const saldoIndex = upLine.indexOf('SALDO');
-                        const valueIndex = upLine.indexOf(upFull);
-                        const isThisValueBalance = isBalanceLine &&
-                            (matches.length === 1 || (saldoIndex !== -1 && Math.abs(saldoIndex - valueIndex) < 25));
-
-                        if (isThisValueBalance) {
-                            // Mesmo o saldo pode ter sufixo C/D no Sicoob
-                            let isNegativeBalance = false;
-                            if (m.suffix) isNegativeBalance = (m.suffix.toUpperCase() === 'D');
-                            else if (m.full.includes('-')) isNegativeBalance = true;
-
-                            transactions.push({
-                                data: lastDate,
-                                descricao: line.substring(0, 100).toUpperCase().trim(),
-                                valor: isNegativeBalance ? -Math.abs(value) : Math.abs(value),
-                                tipo: 'SALDO',
-                                categoria: 'SALDO'
-                            });
-                        } else {
-                            // É uma transação (entrada/saída)
-                            let isExpense = true;
-
-                            // 1. Prio Sicoob: Sufixo colado (C=Crédito/Receita, D=Débito/Gasto)
-                            if (m.suffix) {
-                                isExpense = (m.suffix.toUpperCase() === 'D');
-                            }
-                            // 2. Sinal negativo literal
-                            else if (m.full.includes('-')) {
-                                isExpense = true;
-                            }
-                            // 3. Sinal C/D isolado na linha ou palavras-chave
-                            else {
-                                const signalMatch = line.match(signalPattern);
-                                if (signalMatch) {
-                                    isExpense = (signalMatch[1].toUpperCase() === 'D');
-                                } else if (entradaKeywords.some(k => upLine.includes(k))) {
-                                    isExpense = false;
-                                }
-                            }
-
-                            value = isExpense ? -Math.abs(value) : Math.abs(value);
-
-                            transactions.push({
-                                data: lastDate,
-                                descricao: line.replace(lastDate, '').replace(m.full, '').replace(/\s+/g, ' ').trim() || 'Transação',
-                                valor: value,
-                                tipo: detectType(upLine),
-                                categoria: categorizeTransaction(upLine)
-                            });
-                        }
-                    });
-                }
-            }
-            return transactions;
-        }
-
-
-        function detectType(desc) {
-            const d = desc.toUpperCase();
-            if (d.includes('PIX')) return 'PIX';
-            if (d.includes('TED') || d.includes('DOC')) return 'TED';
-            if (d.includes('CREDITO') || d.includes('CRÉDITO')) return 'Crédito';
-            if (d.includes('DEBITO') || d.includes('DÉBITO')) return 'Débito';
-            return 'Outros';
-        }
-
-        function categorizeTransaction(desc) {
-            const d = desc.toUpperCase();
-            const categories = {
-                'Alimentação': ['IFOOD', 'RAPPI', 'UBER EATS', 'RESTAURANTE', 'LANCHONETE', 'PIZZARIA', 'MCDONALD', 'BURGER', 'SUBWAY', 'STARBUCKS', 'PADARIA'],
-                'Mercado': ['SUPERMERCADO', 'MERCADO', 'ATACADAO', 'CARREFOUR', 'EXTRA', 'PAO DE ACUCAR', 'ASSAI', 'BIG', 'MART'],
-                'Transporte': ['UBER', '99', 'CABIFY', 'TAXI', 'ONIBUS', 'METRO', 'VLT', 'BILHETE', 'ESTACIONAMENTO'],
-                'Combustível': ['POSTO', 'SHELL', 'IPIRANGA', 'PETROBRAS', 'BR DISTRIBUIDORA', 'GASOLINA', 'COMBUSTIVEL'],
-                'Farmácia': ['FARMACIA', 'DROGASIL', 'DROGARIA', 'RAIA', 'PACHECO', 'PAGUE MENOS', 'DROGA'],
-                'Entretenimento': ['NETFLIX', 'SPOTIFY', 'AMAZON PRIME', 'DISNEY', 'HBO', 'CINEMA', 'INGRESSO', 'STEAM', 'PLAYSTATION', 'XBOX', 'YOUTUBE'],
-                'Moradia': ['ALUGUEL', 'CONDOMINIO', 'IPTU', 'AGUA', 'LUZ', 'ENERGIA', 'GAS', 'ELETROPAULO', 'ENEL', 'SABESP', 'COMGAS'],
-                'Transferência Pessoal': ['PIX PARA', 'TRANSF PARA', 'TED PARA'],
-                'Salário': ['SALARIO', 'PAGAMENTO', 'REMUNERACAO', 'FOLHA', 'SALÁ', 'CRÉD.']
-            };
-            for (const [cat, keywords] of Object.entries(categories)) { if (keywords.some(k => d.includes(k))) return cat; }
-            return 'Outros';
-        }
-
-        function generateDashboardData(transactions) {
-            let totalEntrada = 0, totalSaida = 0;
-            const porTipo = {}, porCategoria = {};
-            const transacoesFiltradas = [];
-            const saldos = transactions.filter(t => t.tipo === 'SALDO');
-
-            let saldoAnterior = 0, saldoAtual = 0;
-
-            if (saldos.length > 0) {
-                // PRIORIDADE 1: Lógica de palavras-chave
-                const anteriorMatch = saldos.find(s => s.descricao.includes('ANTERIOR'));
-                saldoAnterior = anteriorMatch ? anteriorMatch.valor : saldos[0].valor;
-
-                const atualKeywords = ['ATUAL', 'FINAL', 'DIA', 'DISPONIVEL', 'EM CONTA', 'TOTAL'];
-                const atualMatch = [...saldos].reverse().find(s => atualKeywords.some(kw => s.descricao.includes(kw)));
-                saldoAtual = atualMatch ? atualMatch.valor : saldos[saldos.length - 1].valor;
-            }
-
-            for (const t of transactions) {
-                if (t.tipo === 'SALDO') {
-                    transacoesFiltradas.push(t);
-                    continue;
+                if (results.length === 0) {
+                    alert("Não foi possível carregar dados de nenhum dia da semana. Verifique a conexão.");
+                    showLoading(false);
+                    return;
                 }
 
-                transacoesFiltradas.push(t);
-                if (t.valor >= 0) totalEntrada += t.valor;
-                else totalSaida += Math.abs(t.valor);
+                // AGGREGATE RESULTS
+                const aggregated = {
+                    meta: { date: 'Resumo Semanal', day: 'Semana Completa' },
+                    metrics: { total_reservas: 0, total_pax: 0, occupancy_rate: '-', mesas_livres: '-' },
+                    reservations: []
+                };
 
-                porTipo[t.tipo] = porTipo[t.tipo] || { qtd: 0, valor: 0 };
-                porTipo[t.tipo].qtd++;
-                porTipo[t.tipo].valor += Math.abs(t.valor);
-                porCategoria[t.categoria] = (porCategoria[t.categoria] || 0) + Math.abs(t.valor);
+                results.forEach(r => {
+                    if (!r || !r.metrics) return;
+                    aggregated.metrics.total_reservas += (parseInt(r.metrics.total_reservas) || 0);
+                    aggregated.metrics.total_pax += (parseInt(r.metrics.total_pax) || 0);
+
+                    if (r.reservations && Array.isArray(r.reservations)) {
+                        // Add Date field to reservation object for display
+                        const enhancedReservations = r.reservations.map(res => ({
+                            ...res,
+                            _displayDate: r.meta?.date || ''
+                        }));
+                        aggregated.reservations.push(...enhancedReservations);
+                    }
+                });
+
+                rawData = aggregated;
+                renderDashboard(aggregated);
+                document.getElementById('currentDate').textContent = "Visualização Semanal";
+
+            } catch (e) {
+                console.error("Erro crítico na visão semanal:", e);
+                // alert('Erro ao carregar visualização semanal.'); // Suppress intrusive alert
+            } finally {
+                showLoading(false);
             }
-
-            return {
-                resumo: {
-                    saldo_anterior: saldoAnterior.toFixed(2),
-                    total_entrada: totalEntrada.toFixed(2),
-                    total_saida: totalSaida.toFixed(2),
-                    saldo_atual: saldoAtual.toFixed(2)
-                },
-                por_tipo: porTipo,
-                por_categoria: porCategoria,
-                transacoes: transacoesFiltradas
-            };
         }
-
-
-        let categoryChart = null;
-        let typeChart = null;
 
         function renderDashboard(data) {
-            loadingSection.classList.remove('active');
-            dashboard.classList.add('active');
-
-            // Atualizar cards de resumo
-            document.getElementById('saldoAnterior').textContent = formatCurrency(data.resumo.saldo_anterior);
-            document.getElementById('totalEntradas').textContent = formatCurrency(data.resumo.total_entrada);
-            document.getElementById('totalSaidas').textContent = formatCurrency(data.resumo.total_saida);
-            const saldoAtualEl = document.getElementById('saldoAtual');
-            const saldoAtualVal = parseFloat(data.resumo.saldo_atual);
-            saldoAtualEl.textContent = formatCurrency(saldoAtualVal);
-            saldoAtualEl.className = 'card-value ' + (saldoAtualVal >= 0 ? 'positive' : 'negative');
-
-            // Destruir gráficos anteriores para evitar bugs de hover e memória
-            if (categoryChart) categoryChart.destroy();
-            if (typeChart) typeChart.destroy();
-
-            // Category Chart
-            categoryChart = new Chart(document.getElementById('categoryChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(data.por_categoria),
-                    datasets: [{
-                        data: Object.values(data.por_categoria),
-                        backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff', '#ff9f40', '#00ff88', '#ff4466'],
-                        borderWidth: 0
-                    }]
-                },
-                options: { responsive: true, plugins: { legend: { position: 'right', labels: { color: '#fff' } } } }
-            });
-
-            // Type Chart
-            typeChart = new Chart(document.getElementById('typeChart'), {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(data.por_tipo),
-                    datasets: [{
-                        label: 'Valor (R$)',
-                        data: Object.keys(data.por_tipo).map(k => data.por_tipo[k].valor),
-                        backgroundColor: ['#4488ff', '#00ff88', '#ff4466', '#ffce56'],
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { x: { ticks: { color: '#888' }, grid: { display: false } }, y: { ticks: { color: '#888' }, grid: { color: '#2a2a3a' } } }
-                }
-            });
-
-            // Transactions Table
-            document.getElementById('transactionsBody').innerHTML = data.transacoes.map(t => `
-                <tr class="${t.tipo === 'SALDO' ? 'balance-row' : ''}">
-                    <td>${t.data}</td>
-                    <td>${t.descricao}</td>
-                    <td>${t.tipo === 'SALDO' ? '<span class="balance-badge">SALDO</span>' : `<span class="category-badge">${t.categoria}</span>`}</td>
-                    <td>${t.tipo}</td>
-                    <td style="color: ${t.tipo === 'SALDO' ? 'var(--accent-blue)' : (t.valor >= 0 ? 'var(--accent-green)' : 'var(--accent-red)')}">
-                        ${formatCurrency(Math.abs(t.valor))}
-                    </td>
-                </tr>
-            `).join('');
-
-            // Tips
-            generateTips(data);
-        }
-
-        function generateTips(data) {
-            const tips = [];
-            const totalSaida = parseFloat(data.resumo.total_saida);
-            const totalEntrada = parseFloat(data.resumo.total_entrada);
-            const saldoFinal = parseFloat(data.resumo.saldo_atual);
-            const cats = data.por_categoria;
-
-            if (totalSaida > 0) {
-                if (cats['Alimentação'] > totalSaida * 0.15) tips.push({ icon: '🍔', text: `Alimentação representa ${((cats['Alimentação'] / totalSaida) * 100).toFixed(0)}% dos gastos. Cozinhar em casa pode economizar até 50%!` });
-                if (cats['Entretenimento'] > totalSaida * 0.1) tips.push({ icon: '🎬', text: `Revise suas assinaturas de streaming - cancele as que não usa.` });
+            // Metrics
+            if (data.metrics) {
+                document.getElementById('totalReservas').textContent = data.metrics.total_reservas || 0;
+                document.getElementById('totalPax').textContent = data.metrics.total_pax || 0;
+                document.getElementById('occupancyRate').textContent = data.metrics.occupancy_rate || '-';
+                document.getElementById('mesasLivresText').textContent = isWeeklyView ? '-' : `${data.metrics.mesas_livres || 0} mesas livres`;
             }
 
-            if (totalEntrada > 0) {
-                const percPoupado = (saldoFinal / totalEntrada) * 100;
-                if (percPoupado < 10) {
-                    tips.push({ icon: '💡', text: `Você guardou apenas ${percPoupado.toFixed(0)}% da renda. Tente reservar pelo menos 10% para emergências.` });
+            // Table
+            const tbody = document.getElementById('reservationsBody');
+            tbody.innerHTML = '';
+
+            // Filter invalid rows (ghost rows from empty sheet lines)
+            const list = (data.reservations || []).filter(r => r.Nome_Cliente || r.WhatsApp);
+
+            if (list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #666;">Nenhuma reserva encontrada.</td></tr>';
+                return;
+            }
+
+            list.forEach(res => {
+                const row = document.createElement('tr');
+
+                let statusClass = 'status-pendente';
+                const statusUpper = (res.Status || '').toUpperCase();
+                if (statusUpper.includes('CONFIRMADA') || statusUpper.includes('WEBSITE')) statusClass = 'status-confirmada';
+                if (statusUpper.includes('CANCELADA')) statusClass = 'status-cancelada';
+
+                // Se for Admin, mostra a coluna de Ações (botões)
+                let actionsHtml = '';
+                if (Auth.canEdit()) {
+                    actionsHtml = `
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            <button onclick="updateStatus('${res.Reserva_ID}', 'CONFIRMADA')" style="background: var(--success); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;">✔</button>
+                            <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;">✖</button>
+                        </div>
+                    </td>`;
                 } else {
-                    tips.push({ icon: '🎉', text: `Ótimo! Você está com um saldo positivo de ${percPoupado.toFixed(0)}% da sua renda mensal!` });
+                    // Se não for admin, e criamos o header, precisamos de uma TD vazia ou simplesmente não criar se o header for oculto.
+                    // Como ocultamos o header via JS no inicio, aqui não precisa de TD extra se a tabela alinhar.
+                    // MAS, se o header 'Ações' existir no HTML base, precisamos ocultar a coluna inteira ou o header.
+                    // A melhor abordagem foi ocultar o header 'actionsHeader' no inicio.
+                    // E aqui, só adicionamos a TD se for admin.
                 }
-            }
 
-            tips.push({ icon: '📊', text: 'Dica: Use o Porquinho toda semana para não perder o controle!' });
+                // If Weekly View, show date in Obs or Name?
+                const obsDisplay = res._displayDate ? `[${res._displayDate}] ${res.Observacao || ''}` : (res.Observacao || '');
 
-            document.getElementById('tipsList').innerHTML = tips.map(t => `<li><span>${t.icon}</span><span>${t.text}</span></li>`).join('');
-
-            // Configurar botões de compartilhamento (Resultados)
-            const shareResultText = `💰 Acabei de organizar minhas finanças com o Meu Porquinho Inteligente! 📊\nEntradas: ${formatCurrency(data.resumo.total_entrada)}\nSaídas: ${formatCurrency(data.resumo.total_saida)}\nSaldo Final: ${formatCurrency(data.resumo.saldo_atual)}`;
-
-            const shareLinks = [
-                { wa: 'shareWhatsApp', tw: 'shareTwitter' },
-                { wa: 'shareWhatsAppRes', tw: 'shareTwitterRes' }
-            ];
-
-            shareLinks.forEach(ids => {
-                const wa = document.getElementById(ids.wa);
-                const tw = document.getElementById(ids.tw);
-                if (wa) wa.href = `https://wa.me/?text=${encodeURIComponent(shareResultText)}`;
-                if (tw) tw.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareResultText)}`;
+                row.innerHTML = `
+                    <td><strong>${res.Nome_Cliente || '-'}</strong></td>
+                    <td>${formatPhone(res.WhatsApp)}</td>
+                    <td>${res.Qtd_Pessoas || '0'}</td>
+                    <td><span class="status-badge ${statusClass}">${res.Status || 'Pendente'}</span></td>
+                    <td>${res.Mesas_Alocadas || '-'}</td>
+                    <td style="color: #888; font-size: 0.85rem;">${obsDisplay}</td>
+                    ${actionsHtml}
+                `;
+                tbody.appendChild(row);
             });
         }
 
-        function formatCurrency(val) {
-            return parseFloat(val).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        function filterTable(searchTerm) {
+            if (!rawData) return;
+
+            const term = searchTerm.toLowerCase();
+            const filteredList = (rawData.reservations || []).filter(r => {
+                // Must be valid row
+                if (!r.Nome_Cliente && !r.WhatsApp) return false;
+
+                const nameContent = (r.Nome_Cliente || '').toLowerCase();
+                const phoneContent = (r.WhatsApp || '').toLowerCase();
+
+                return nameContent.includes(term) || phoneContent.includes(term);
+            });
+
+            // Re-render table only (simplified render func would be better, but we inline logic here for now)
+            const tbody = document.getElementById('reservationsBody');
+            tbody.innerHTML = '';
+
+            if (filteredList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #666;">Nenhum resultado para a busca.</td></tr>';
+                return;
+            }
+
+            filteredList.forEach(res => {
+                const row = document.createElement('tr');
+
+                let statusClass = 'status-pendente';
+                const statusUpper = (res.Status || '').toUpperCase();
+                if (statusUpper.includes('CONFIRMADA') || statusUpper.includes('WEBSITE')) statusClass = 'status-confirmada';
+                if (statusUpper.includes('CANCELADA')) statusClass = 'status-cancelada';
+
+                const obsDisplay = res._displayDate ? `[${res._displayDate}] ${res.Observacao || ''}` : (res.Observacao || '');
+
+                let actionsHtml = '';
+                if (Auth.canEdit()) {
+                    actionsHtml = `
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            <button onclick="updateStatus('${res.Reserva_ID}', 'CONFIRMADA')" style="background: var(--success); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Confirmar">✔</button>
+                            <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Cancelar">✖</button>
+                        </div>
+                    </td>`;
+                }
+
+                row.innerHTML = `
+                    <td><strong>${res.Nome_Cliente || '-'}</strong></td>
+                    <td>${formatPhone(res.WhatsApp)}</td>
+                    <td>${res.Qtd_Pessoas || '0'}</td>
+                    <td><span class="status-badge ${statusClass}">${res.Status || 'Pendente'}</span></td>
+                    <td>${res.Mesas_Alocadas || '-'}</td>
+                    <td style="color: #888; font-size: 0.85rem;">${obsDisplay}</td>
+                    ${actionsHtml}
+                `;
+                tbody.appendChild(row);
+            });
         }
+
+        async function updateStatus(id, newStatus) {
+            if (!confirm(`Tem certeza que deseja marcar como ${newStatus}?`)) return;
+
+            const btn = event.target; // Simple way to target button
+            const originalText = btn.innerText;
+            btn.innerText = '...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+                    body: JSON.stringify({ action: 'update_status', id: id, status: newStatus })
+                });
+
+                if (response.ok) {
+                    // alert('Status atualizado!');
+                    fetchData(); // Reload to see changes
+                } else {
+                    alert('Erro ao atualizar status. Verifique se você é admin.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Erro de conexão ao atualizar status.');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function showLoading(show, message = "Carregando...") {
+            const el = document.getElementById('loading');
+            el.style.display = show ? 'flex' : 'none';
+            if (show) {
+                el.innerHTML = `<div class="spinner"></div><div style="color:white; margin-top:20px; font-weight:600;">${message}</div>`;
+                el.style.flexDirection = 'column';
+            }
+        }
+
     </script>
 </body>
 

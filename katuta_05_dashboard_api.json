@@ -1,0 +1,160 @@
+{
+    "name": "Katuta-05-Dashboard-API",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "GET",
+                "path": "dashboard-data",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "node-webhook",
+            "name": "Webhook (GET /dashboard-data)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                300
+            ],
+            "webhookId": "dashboard-data-id"
+        },
+        {
+            "parameters": {
+                "jsCode": "const today = new Date();\nconst daysMap = ['Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];\nconst dayName = daysMap[today.getDay()];\n\n// Lógica para lidar com Segunda-feira (Dia de Descanso/Faxina)\nlet targetDay = dayName;\nif (dayName === 'Segunda') targetDay = 'Terca';\n\nreturn {\n  day_name: dayName,\n  target_day: targetDay,\n  sheet_reservas: `Reservas_${targetDay}`,\n  sheet_mesas: `Mesas_${targetDay}`,\n  date_formatted: today.toLocaleDateString('pt-BR')\n};"
+            },
+            "id": "node-config-dates",
+            "name": "[JS] Configurar Datas",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                400,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "read",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": {
+                    "value": "={{ $node[\"[JS] Configurar Datas\"].json.sheet_reservas }}"
+                },
+                "options": {}
+            },
+            "id": "node-read-reservas",
+            "name": "[GSheets] Ler Reservas",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "alwaysOutputData": true,
+            "position": [
+                600,
+                300
+            ],
+            "continueOnFail": true
+        },
+        {
+            "parameters": {
+                "operation": "read",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": {
+                    "value": "={{ $node[\"[JS] Configurar Datas\"].json.sheet_mesas }}"
+                },
+                "options": {}
+            },
+            "id": "node-read-mesas",
+            "name": "[GSheets] Ler Mesas",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "alwaysOutputData": true,
+            "position": [
+                800,
+                300
+            ],
+            "continueOnFail": true
+        },
+        {
+            "parameters": {
+                "jsCode": "// Acessando dados dos nós anteriores via nome (agora execução serial)\n// No n8n, $items(\"Node\") pega a saída daquele node.\n\nlet reservas = [];\ntry {\n    reservas = $items(\"[GSheets] Ler Reservas\").map(i => i.json);\n} catch (e) { console.log('Erro ao ler reservas ou vazio'); }\n\nlet mesas = [];\ntry {\n    mesas = $items(\"[GSheets] Ler Mesas\").map(i => i.json);\n} catch (e) { console.log('Erro ao ler mesas ou vazio'); }\n\nconst config = $items(\"[JS] Configurar Datas\")[0].json;\n\n// Métricas Reservas\nconst totalReservas = reservas.length;\nconst totalPax = reservas.reduce((acc, curr) => acc + (parseInt(curr.Qtd_Pessoas) || 0), 0);\n\n// Métricas Mesas\nlet mesasOcupadas = 0;\nlet mesasLivres = 0;\nlet totalMesas = mesas.length;\n\nif (totalMesas > 0) {\n  mesasOcupadas = mesas.filter(m => m.Status && m.Status.toString().toUpperCase() === 'OCUPADA').length;\n  mesasLivres = totalMesas - mesasOcupadas;\n}\n\nconst occupancyRate = totalMesas > 0 ? Math.round((mesasOcupadas / totalMesas) * 100) : 0;\n\nreturn {\n  meta: {\n    day: config.target_day,\n    date: config.date_formatted,\n    is_monday: config.day_name === 'Segunda'\n  },\n  metrics: {\n    total_reservas: totalReservas,\n    total_pax: totalPax,\n    mesas_ocupadas: mesasOcupadas,\n    mesas_livres: mesasLivres,\n    occupancy_rate: occupancyRate + '%'\n  },\n  reservations: reservas,\n  tables_summary: mesas.map(m => ({ id: m.Mesa_ID, status: m.Status }))\n};"
+            },
+            "id": "node-calc-metrics",
+            "name": "[JS] Calcular Métricas",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                1000,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ JSON.stringify($json) }}",
+                "options": {}
+            },
+            "id": "node-respond",
+            "name": "Responder JSON",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                1200,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook (GET /dashboard-data)": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Configurar Datas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Configurar Datas": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Ler Reservas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[GSheets] Ler Reservas": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Ler Mesas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[GSheets] Ler Mesas": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Calcular Métricas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Calcular Métricas": {
+            "main": [
+                [
+                    {
+                        "node": "Responder JSON",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

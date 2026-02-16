@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Fork (left) -->
+  <g transform="translate(8, 10)">
+    <line x1="8" y1="0" x2="8" y2="30"/>
+    <line x1="14" y1="0" x2="14" y2="30"/>
+    <line x1="20" y1="0" x2="20" y2="30"/>
+    <line x1="8" y1="30" x2="8" y2="35" stroke-width="3"/>
+    <line x1="20" y1="30" x2="20" y2="35" stroke-width="3"/>
+    <path d="M8 35 Q14 42 20 35" stroke-width="2.5"/>
+    <line x1="14" y1="40" x2="14" y2="80"/>
+  </g>
+  <!-- Plate (center circle) -->
+  <circle cx="60" cy="50" r="32"/>
+  <circle cx="60" cy="50" r="26"/>
+  <!-- Pizza slice inside plate -->
+  <g transform="translate(60, 50)">
+    <path d="M-5 -20 L15 15 L-18 8 Z" fill="white" stroke="white" stroke-width="1.5"/>
+    <circle cx="-2" cy="-5" r="2.5" fill="currentColor" stroke="none"/>
+    <circle cx="4" cy="5" r="2.5" fill="currentColor" stroke="none"/>
+    <circle cx="-8" cy="3" r="2" fill="currentColor" stroke="none"/>
+  </g>
+  <!-- Knife (right) -->
+  <g transform="translate(92, 10)">
+    <path d="M10 0 Q16 20 10 40" stroke-width="2.5" fill="none"/>
+    <line x1="10" y1="40" x2="10" y2="80"/>
+  </g>
+</svg>

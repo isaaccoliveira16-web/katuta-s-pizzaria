@@ -1,0 +1,213 @@
+{
+    "name": "Katuta-95-Weekly-Archiver",
+    "nodes": [
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "weeks",
+                            "triggerAtHour": 3
+                        }
+                    ]
+                }
+            },
+            "id": "node-schedule",
+            "name": "Cron (Segunda as 03:00 AM)",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1,
+            "position": [
+                200,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Definição das abas a serem processadas\nreturn [\n  { json: { sheetName: 'Reservas_Terca' } },\n  { json: { sheetName: 'Reservas_Quarta' } },\n  { json: { sheetName: 'Reservas_Quinta' } },\n  { json: { sheetName: 'Reservas_Sexta' } },\n  { json: { sheetName: 'Reservas_Sabado' } },\n  { json: { sheetName: 'Reservas_Domingo' } }\n];"
+            },
+            "id": "node-config-sheets",
+            "name": "[JS] Lista de Abas",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                400,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "batchSize": 1,
+                "options": {}
+            },
+            "id": "node-split",
+            "name": "Loop por Aba",
+            "type": "n8n-nodes-base.splitInBatches",
+            "typeVersion": 1,
+            "position": [
+                600,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "read",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": {
+                    "value": "={{ $node[\"Loop por Aba\"].json.sheetName }}"
+                },
+                "options": {}
+            },
+            "id": "node-read-source",
+            "name": "[GSheets] Ler Aba Atual",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "position": [
+                800,
+                200
+            ],
+            "alwaysOutputData": true
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{ $node[\"[GSheets] Ler Aba Atual\"].json.length > 0 }}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "id": "node-check-empty",
+            "name": "Tem dados?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                1000,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "append",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": {
+                    "value": "Reservas_Historico"
+                },
+                "options": {}
+            },
+            "id": "node-archive",
+            "name": "[GSheets] Arquivar em Historico",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "position": [
+                1200,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "clear",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": {
+                    "value": "={{ $node[\"Loop por Aba\"].json.sheetName }}"
+                },
+                "startIndex": 2
+            },
+            "id": "node-clean-daily",
+            "name": "[GSheets] Limpar Aba Diaria",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "position": [
+                1400,
+                100
+            ]
+        }
+    ],
+    "connections": {
+        "Cron (Segunda as 03:00 AM)": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Lista de Abas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Lista de Abas": {
+            "main": [
+                [
+                    {
+                        "node": "Loop por Aba",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Loop por Aba": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Ler Aba Atual",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[GSheets] Ler Aba Atual": {
+            "main": [
+                [
+                    {
+                        "node": "Tem dados?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Tem dados?": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Arquivar em Historico",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Loop por Aba",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[GSheets] Arquivar em Historico": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Limpar Aba Diaria",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[GSheets] Limpar Aba Diaria": {
+            "main": [
+                [
+                    {
+                        "node": "Loop por Aba",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

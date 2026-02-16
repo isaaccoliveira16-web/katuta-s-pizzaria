@@ -1,0 +1,315 @@
+{
+    "name": "Katuta-05-Dashboard-API-v2",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "dashboard-data",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "node-webhook-post",
+            "name": "Webhook POST (Actions)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                200
+            ],
+            "webhookId": "dashboard-data-id-post"
+        },
+        {
+            "parameters": {
+                "httpMethod": "GET",
+                "path": "dashboard-data",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "node-webhook-get",
+            "name": "Webhook GET (Data)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                400
+            ],
+            "webhookId": "dashboard-data-id-get"
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{ $json.body && $json.body.action === 'update_status' ? 'POST' : 'GET' }}",
+                            "value2": "POST"
+                        }
+                    ]
+                }
+            },
+            "id": "node-route",
+            "name": "Rota (POST vs GET)",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                400,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Ler Data da Query String (enviada pelo Dashboard)\n// Ex: ?date=2023-10-25\n\nconst query = $input.all()[0].json.query || {};\nlet targetDate = new Date();\n\nif (query.date) {\n  // Força hora do meio do dia para evitar problemas de fuso horário\n  targetDate = new Date(query.date + 'T12:00:00');\n}\n\nconst isoDate = targetDate.toISOString().split('T')[0];\nconst daysMap = ['Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];\nconst dayName = daysMap[targetDate.getDay()];\n\n// Lógica para lidar com Segunda-feira (Dia de Descanso/Faxina)\nlet targetDay = dayName;\nif (dayName === 'Segunda') targetDay = 'Terca';\n\nreturn {\n  day_name: dayName,\n  target_day: targetDay,\n  sheet_reservas: `Reservas_${targetDay}`,\n  sheet_mesas: `Mesas_${targetDay}`,\n  date_formatted: targetDate.toLocaleDateString('pt-BR'),\n  iso_date: isoDate\n};"
+            },
+            "id": "node-config-dates",
+            "name": "[JS] Configurar Datas",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                600,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "read",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": {
+                    "value": "={{ $node[\"[JS] Configurar Datas\"].json.sheet_reservas }}"
+                },
+                "options": {}
+            },
+            "id": "node-read-reservas",
+            "name": "[GSheets] Ler Reservas",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "alwaysOutputData": true,
+            "position": [
+                800,
+                400
+            ],
+            "continueOnFail": true
+        },
+        {
+            "parameters": {
+                "operation": "read",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": {
+                    "value": "={{ $node[\"[JS] Configurar Datas\"].json.sheet_mesas }}"
+                },
+                "options": {}
+            },
+            "id": "node-read-mesas",
+            "name": "[GSheets] Ler Mesas",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "alwaysOutputData": true,
+            "position": [
+                1000,
+                400
+            ],
+            "continueOnFail": true
+        },
+        {
+            "parameters": {
+                "jsCode": "// Acessando dados dos nós anteriores via nome (agora execução serial)\nlet reservas = [];\ntry {\n    reservas = $items(\"[GSheets] Ler Reservas\").map(i => i.json);\n} catch (e) { console.log('Erro ao ler reservas ou vazio'); }\n\nlet mesas = [];\ntry {\n    mesas = $items(\"[GSheets] Ler Mesas\").map(i => i.json);\n} catch (e) { console.log('Erro ao ler mesas ou vazio'); }\n\nconst config = $items(\"[JS] Configurar Datas\")[0].json;\n\n// FILTRAGEM DE RESERVAS\n// 1. Remove linhas vazias (ghost rows)\n// 2. Filtra pela coluna 'data_reserva' se ela existir e estiver preenchida\nreservas = reservas.filter(r => {\n  // Remover vazios\n  if (!r.Nome_Cliente && !r.WhatsApp) return false;\n  \n  // Filtro por Data (Se existir a coluna e não estiver vazia)\n  if (r.data_reserva) {\n    const rowDate = r.data_reserva.toString().trim();\n    // Tenta match com YYYY-MM-DD (ISO)\n    if (rowDate === config.iso_date) return true;\n    \n    // Tenta match com DD/MM/YYYY (BR)\n    const [year, month, day] = config.iso_date.split('-');\n    const brDate = `${day}/${month}/${year}`;\n    if (rowDate === brDate) return true;\n\n    // Tenta comparar objetos de data (mais custoso, mas fallback)\n    try {\n        // Converte DD/MM/YYYY para Date se necessário\n        let d1;\n        if (rowDate.includes('/')) {\n            const [d, m, y] = rowDate.split('/');\n            d1 = new Date(`${y}-${m}-${d}T12:00:00`);\n        } else {\n            d1 = new Date(rowDate + 'T12:00:00');\n        }\n        \n        const d2 = new Date(config.iso_date + 'T12:00:00');\n        if (d1.toDateString() === d2.toDateString()) return true;\n    } catch(e) {}\n\n    return false;\n  }\n  \n  // Se não tem coluna data_reserva, Mantém (Legacy)\n  return true;\n});\n\n// Métricas Reservas\nconst totalReservas = reservas.length;\nconst totalPax = reservas.reduce((acc, curr) => acc + (parseInt(curr.Qtd_Pessoas) || 0), 0);\n\n// Métricas Mesas\nlet mesasOcupadas = 0;\nlet mesasLivres = 0;\nlet totalMesas = mesas.length;\n\nif (totalMesas > 0) {\n  mesasOcupadas = mesas.filter(m => m.Status && m.Status.toString().toUpperCase() === 'OCUPADA').length;\n  mesasLivres = totalMesas - mesasOcupadas;\n}\n\nconst occupancyRate = totalMesas > 0 ? Math.round((mesasOcupadas / totalMesas) * 100) : 0;\n\nreturn {\n  meta: {\n    day: config.target_day,\n    date: config.date_formatted,\n    is_monday: config.day_name === 'Segunda'\n  },\n  metrics: {\n    total_reservas: totalReservas,\n    total_pax: totalPax,\n    mesas_ocupadas: mesasOcupadas,\n    mesas_livres: mesasLivres,\n    occupancy_rate: occupancyRate + '%'\n  },\n  reservations: reservas,\n  tables_summary: mesas.map(m => ({ id: m.Mesa_ID, status: m.Status }))\n};"
+            },
+            "id": "node-calc-metrics",
+            "name": "[JS] Calcular Métricas",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                1200,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ JSON.stringify($json) }}",
+                "options": {}
+            },
+            "id": "node-respond",
+            "name": "Responder JSON",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                1400,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// UPDATE STATUS LOGIC\nconst body = $input.item.json.body;\nconst id = body.id;\nconst status = body.status;\n// Precisamos saber qual aba atualizar. Por padrão vamos assumir HOJE, \n// mas ideal seria receber a data no body também.\n// Vamos tentar descobrir a aba baseada no dia da semana atual.\n\nconst today = new Date();\nconst daysMap = ['Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];\nlet dayName = daysMap[today.getDay()];\nif (dayName === 'Segunda') dayName = 'Terca'; // Fallback\n\nconst sheetName = `Reservas_${dayName}`;\n\nreturn { id, status, sheetName };"
+            },
+            "id": "node-prep-update",
+            "name": "[JS] Prep Update",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                600,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "update",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": {
+                    "value": "={{ $json.sheetName }}"
+                },
+                "columns": {
+                    "mappingMode": "defineBelow",
+                    "value": {
+                        "Status": "={{ $json.status }}"
+                    },
+                    "matchingColumns": [
+                        "Reserva_ID"
+                    ]
+                },
+                "options": {}
+            },
+            "id": "node-update-sheet",
+            "name": "[GSheets] Atualizar Status",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "position": [
+                800,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "return { success: true, message: \"Status atualizado\" };"
+            },
+            "id": "node-success",
+            "name": "[JS] Success",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                1000,
+                200
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook POST (Actions)": {
+            "main": [
+                [
+                    {
+                        "node": "Rota (POST vs GET)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook GET (Data)": {
+            "main": [
+                [
+                    {
+                        "node": "Rota (POST vs GET)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Rota (POST vs GET)": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Prep Update",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "[JS] Configurar Datas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Configurar Datas": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Ler Reservas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[GSheets] Ler Reservas": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Ler Mesas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[GSheets] Ler Mesas": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Calcular Métricas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Calcular Métricas": {
+            "main": [
+                [
+                    {
+                        "node": "Responder JSON",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Prep Update": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Atualizar Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[GSheets] Atualizar Status": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Success",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Success": {
+            "main": [
+                [
+                    {
+                        "node": "Responder JSON",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "errorWorkflow": "NyQKhHnymOvXQRdx"
+    }
+}

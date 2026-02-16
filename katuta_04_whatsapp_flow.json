@@ -1,0 +1,128 @@
+{
+    "name": "Katuta-04-WhatsApp-Flow",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "katuta-chat-flow",
+                "options": {}
+            },
+            "id": "node-webhook-meta",
+            "name": "Webhook Meta",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ],
+            "notes": "⚠️ Quando a Meta aprovar, configure o Verify Token e o Webhook URL no Meta Developer Portal."
+        },
+        {
+            "parameters": {
+                "jsCode": "// Adaptador Meta -> Formato do Cérebro\n// Meta envia: entry[0].changes[0].value.messages[0]\nconst entry = $input.item.json.body?.entry || $input.item.json.entry || [];\nlet message = \"\";\nlet whatsapp_id = \"\";\n\nif (entry.length > 0) {\n  const changes = entry[0].changes || [];\n  if (changes.length > 0) {\n    const value = changes[0].value || {};\n    const messages = value.messages || [];\n    if (messages.length > 0) {\n      message = messages[0].text?.body || \"\";\n      whatsapp_id = messages[0].from || \"\";\n    }\n  }\n}\n\nreturn {\n  whatsapp_id: whatsapp_id,\n  message: message\n};"
+            },
+            "id": "node-adapter-meta",
+            "name": "[JS] Adaptador Meta",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "workflowId": "BVr8U25654fBzy6N",
+                "mode": "each",
+                "options": {}
+            },
+            "id": "node-exec-brain",
+            "name": "Consultar Cérebro",
+            "type": "n8n-nodes-base.executeWorkflow",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://graph.facebook.com/v21.0/SEU_PHONE_NUMBER_ID/messages",
+                "authentication": "genericCredentialType",
+                "genericAuthType": "httpHeaderAuth",
+                "sendBody": true,
+                "contentType": "json",
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "messaging_product",
+                            "value": "whatsapp"
+                        },
+                        {
+                            "name": "to",
+                            "value": "={{ $json.whatsapp_id }}"
+                        },
+                        {
+                            "name": "type",
+                            "value": "text"
+                        },
+                        {
+                            "name": "text",
+                            "value": "={{ JSON.stringify({body: $json.output}) }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "node-send-meta",
+            "name": "[Meta] Responder via WhatsApp",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                850,
+                300
+            ],
+            "continueOnFail": true,
+            "notes": "⚠️ PLACEHOLDER: Substitua SEU_PHONE_NUMBER_ID pela sua Phone Number ID da Meta e configure as credenciais HTTP Header Auth com o Access Token."
+        }
+    ],
+    "connections": {
+        "Webhook Meta": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Adaptador Meta",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Adaptador Meta": {
+            "main": [
+                [
+                    {
+                        "node": "Consultar Cérebro",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Consultar Cérebro": {
+            "main": [
+                [
+                    {
+                        "node": "[Meta] Responder via WhatsApp",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "errorWorkflow": "NyQKhHnymOvXQRdx"
+    }
+}

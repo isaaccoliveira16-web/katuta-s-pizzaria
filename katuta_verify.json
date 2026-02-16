@@ -1,0 +1,73 @@
+{
+    "name": "Katuta-Verify-Only",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "GET",
+                "path": "katuta-chat-flow",
+                "responseMode": "lastNode",
+                "options": {}
+            },
+            "id": "node-verify-webhook",
+            "name": "Webhook Verification",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                460,
+                340
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "return { json: { challenge: $input.params.query['hub.challenge'] } };"
+            },
+            "id": "node-extract-challenge",
+            "name": "Extract Challenge",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                680,
+                340
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "text",
+                "responseBody": "={{ $json.challenge }}",
+                "options": {}
+            },
+            "id": "node-respond-challenge",
+            "name": "Respond Challenge",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                900,
+                340
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook Verification": {
+            "main": [
+                [
+                    {
+                        "node": "Extract Challenge",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Extract Challenge": {
+            "main": [
+                [
+                    {
+                        "node": "Respond Challenge",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
