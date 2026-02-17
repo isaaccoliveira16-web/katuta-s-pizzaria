@@ -37,6 +37,23 @@
         },
         {
             "parameters": {
+                "httpMethod": "OPTIONS",
+                "path": "dashboard-data",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "node-webhook-options",
+            "name": "Webhook OPTIONS (CORS)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                600
+            ],
+            "webhookId": "dashboard-data-id-options"
+        },
+        {
+            "parameters": {
                 "conditions": {
                     "string": [
                         {
@@ -51,8 +68,40 @@
             "type": "n8n-nodes-base.if",
             "typeVersion": 1,
             "position": [
-                400,
+                500,
                 300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "{\"status\":\"ok\"}",
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Access-Control-Allow-Origin",
+                                "value": "*"
+                            },
+                            {
+                                "name": "Access-Control-Allow-Methods",
+                                "value": "GET, POST, OPTIONS"
+                            },
+                            {
+                                "name": "Access-Control-Allow-Headers",
+                                "value": "Content-Type, ngrok-skip-browser-warning"
+                            }
+                        ]
+                    }
+                }
+            },
+            "id": "node-respond-options",
+            "name": "Responder OPTIONS",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                500,
+                600
             ]
         },
         {
@@ -64,7 +113,7 @@
             "type": "n8n-nodes-base.code",
             "typeVersion": 1,
             "position": [
-                600,
+                700,
                 400
             ]
         },
@@ -83,7 +132,7 @@
             "typeVersion": 4,
             "alwaysOutputData": true,
             "position": [
-                800,
+                900,
                 400
             ],
             "continueOnFail": true
@@ -103,7 +152,7 @@
             "typeVersion": 4,
             "alwaysOutputData": true,
             "position": [
-                1000,
+                1100,
                 400
             ],
             "continueOnFail": true
@@ -117,7 +166,7 @@
             "type": "n8n-nodes-base.code",
             "typeVersion": 1,
             "position": [
-                1200,
+                1300,
                 400
             ]
         },
@@ -141,7 +190,7 @@
             "type": "n8n-nodes-base.respondToWebhook",
             "typeVersion": 1,
             "position": [
-                1400,
+                1500,
                 300
             ]
         },
@@ -154,7 +203,7 @@
             "type": "n8n-nodes-base.code",
             "typeVersion": 1,
             "position": [
-                600,
+                700,
                 200
             ]
         },
@@ -181,7 +230,7 @@
             "type": "n8n-nodes-base.googleSheets",
             "typeVersion": 4,
             "position": [
-                800,
+                900,
                 200
             ]
         },
@@ -194,7 +243,7 @@
             "type": "n8n-nodes-base.code",
             "typeVersion": 1,
             "position": [
-                1000,
+                1100,
                 200
             ]
         }
@@ -216,6 +265,17 @@
                 [
                     {
                         "node": "Rota (POST vs GET)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook OPTIONS (CORS)": {
+            "main": [
+                [
+                    {
+                        "node": "Responder OPTIONS",
                         "type": "main",
                         "index": 0
                     }

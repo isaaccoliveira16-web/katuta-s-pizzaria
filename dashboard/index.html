@@ -480,6 +480,9 @@
     </main>
     <script src="auth.js"></script>
     <script>
+        // CONFIG - Defined FIRST to avoid initialization errors
+        const API_URL = "https://disaffectedly-vibrative-rafael.ngrok-free.dev/webhook/dashboard-data";
+
         // AUTH CHECK
         const currentUser = Auth.checkAuth();
         if (currentUser) {
@@ -491,7 +494,7 @@
             }
         }
         // CONFIG
-        const API_URL = "https://disaffectedly-vibrative-rafael.ngrok-free.dev/webhook/dashboard-data";
+
 
         // STATE
         let rawData = null; // Store fetched data for filtering
