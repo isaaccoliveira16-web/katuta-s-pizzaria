@@ -717,8 +717,8 @@
                     actionsHtml = `
                     <td>
                         <div style="display: flex; gap: 5px;">
-                            <button onclick="updateStatus('${res.Reserva_ID}', 'CONFIRMADA')" style="background: var(--success); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;">✔</button>
-                            <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;">✖</button>
+                            <button onclick="updateStatus('${res.Reserva_ID}', 'CONFIRMADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}')" style="background: var(--success); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;">✔</button>
+                            <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;">✖</button>
                         </div>
                     </td>`;
                 } else {
@@ -786,8 +786,8 @@
                     actionsHtml = `
                     <td>
                         <div style="display: flex; gap: 5px;">
-                            <button onclick="updateStatus('${res.Reserva_ID}', 'CONFIRMADA')" style="background: var(--success); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Confirmar">✔</button>
-                            <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Cancelar">✖</button>
+                            <button onclick="updateStatus('${res.Reserva_ID}', 'CONFIRMADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}')" style="background: var(--success); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Confirmar">✔</button>
+                            <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Cancelar">✖</button>
                         </div>
                     </td>`;
                 }
@@ -805,7 +805,7 @@
             });
         }
 
-        async function updateStatus(id, newStatus) {
+        async function updateStatus(id, newStatus, sheetRes, sheetMesas) {
             if (!confirm(`Tem certeza que deseja marcar como ${newStatus}?`)) return;
 
             const btn = event.target; // Simple way to target button
@@ -817,7 +817,7 @@
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-                    body: JSON.stringify({ action: 'update_status', id: id, status: newStatus, date: document.getElementById('datePicker').value })
+                    body: JSON.stringify({ action: 'update_status', id: id, status: newStatus, date: document.getElementById('datePicker').value, sheet_reservas: sheetRes, sheet_mesas: sheetMesas })
                 });
 
                 if (response.ok) {
