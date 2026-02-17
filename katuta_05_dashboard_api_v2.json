@@ -125,7 +125,16 @@
             "parameters": {
                 "respondWith": "json",
                 "responseBody": "={{ JSON.stringify($json) }}",
-                "options": {}
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Access-Control-Allow-Origin",
+                                "value": "*"
+                            }
+                        ]
+                    }
+                }
             },
             "id": "node-respond",
             "name": "Responder JSON",

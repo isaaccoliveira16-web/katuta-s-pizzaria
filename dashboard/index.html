@@ -547,8 +547,9 @@
 
             } catch (error) {
                 console.error("Erro ao buscar dados:", error);
-                alert("Erro ao conectar com o sistema Katuta. Verifique se o n8n está rodando.");
-                document.getElementById('reservationsBody').innerHTML = '<tr><td colspan="6" style="text-align:center; color: #e74c3c;">Erro de Conexão</td></tr>';
+                // SHOW REAL ERROR
+                alert(`Erro técnico: ${error.message}\nVerifique o console (F12) para mais detalhes.`);
+                document.getElementById('reservationsBody').innerHTML = `<tr><td colspan="6" style="text-align:center; color: #e74c3c;">Erro: ${error.message}</td></tr>`;
             } finally {
                 showLoading(false);
             }
