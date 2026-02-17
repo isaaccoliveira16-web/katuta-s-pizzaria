@@ -135,9 +135,9 @@ document.getElementById('reserva-form').addEventListener('submit', async (e) => 
             throw new Error('Sem resposta do n8n');
         }
     } catch (error) {
-        status.innerHTML = `<p style="color: #ff4444"><b>O Katutinha não respondeu:</b><br>
-        1. Abra o n8n.<br>
-        2. Clique em <b>"Execute Workflow"</b> no fluxo Katuta-03.</p>`;
+        console.error(error);
+        status.innerHTML = `<p style="color: #ff4444"><b>Houve um problema técnico.</b><br>
+        Nossa equipe já está resolvendo. Por favor, tente novamente em alguns instantes ou chame no WhatsApp.</p>`;
     } finally {
         btn.disabled = false;
         btn.innerText = 'Confirmar Reserva';
