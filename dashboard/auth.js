@@ -35,17 +35,12 @@ const Auth = {
     },
 
     checkAuth: () => {
-        // AUTENTICAÇÃO TEMPORARIAMENTE DESATIVADA
-        return { name: 'Admin (Sem Senha)', role: 'admin' };
-
-        /* ORIGINAL CODE (Reativar Futuramente)
         const session = sessionStorage.getItem(SESSION_KEY);
         if (!session) {
             window.location.href = 'login.html';
             return null;
         }
         return JSON.parse(session);
-        */
     },
 
     getUser: () => {
