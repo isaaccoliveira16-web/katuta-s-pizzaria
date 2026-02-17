@@ -813,8 +813,27 @@
                 });
 
                 if (response.ok) {
-                    // alert('Status atualizado!');
-                    fetchData(); // Reload to see changes
+                    // UI Optimista: Atualiza visualmente sem recarregar tudo
+                    const row = btn.closest('tr');
+                    if (row) {
+                        // 1. Atualizar Badge
+                        const badge = row.querySelector('.status-badge');
+                        if (badge) {
+                            badge.textContent = newStatus;
+                            badge.className = 'status-badge'; // Reset
+                            if (newStatus === 'CONFIRMADA') badge.classList.add('status-confirmada');
+                            if (newStatus === 'CANCELADA') badge.classList.add('status-cancelada');
+                        }
+
+                        // 2. Remover Botões (Ações)
+                        const actionsCell = row.querySelector('td:last-child'); // Assumptions: Actions is last col
+                        if (actionsCell && actionsCell.innerHTML.includes('updateStatus')) {
+                            actionsCell.innerHTML = ''; // Limpa os botões
+                        }
+                    }
+
+                    // Opcional: Recarregar dados em background para garantir consistência
+                    // fetchData(); 
                 } else {
                     alert('Erro ao atualizar status. Verifique se você é admin.');
                 }
