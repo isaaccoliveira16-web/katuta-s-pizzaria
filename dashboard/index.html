@@ -690,8 +690,13 @@
             const tbody = document.getElementById('reservationsBody');
             tbody.innerHTML = '';
 
-            // Filter invalid rows (ghost rows from empty sheet lines)
-            const list = (data.reservations || []).filter(r => r.Nome_Cliente || r.WhatsApp);
+            // Filter invalid rows AND hide CANCELADA reservations
+            const list = (data.reservations || []).filter(r => {
+                if (!r.Nome_Cliente && !r.WhatsApp) return false;
+                const st = (r.Status || '').toUpperCase();
+                if (st.includes('CANCELADA')) return false;
+                return true;
+            });
 
             if (list.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #666;">Nenhuma reserva encontrada.</td></tr>';
@@ -747,6 +752,9 @@
             const filteredList = (rawData.reservations || []).filter(r => {
                 // Must be valid row
                 if (!r.Nome_Cliente && !r.WhatsApp) return false;
+                // Hide canceled
+                const st = (r.Status || '').toUpperCase();
+                if (st.includes('CANCELADA')) return false;
 
                 const nameContent = (r.Nome_Cliente || '').toLowerCase();
                 const phoneContent = (r.WhatsApp || '').toLowerCase();
@@ -813,27 +821,28 @@
                 });
 
                 if (response.ok) {
-                    // UI Optimista: Atualiza visualmente sem recarregar tudo
                     const row = btn.closest('tr');
-                    if (row) {
-                        // 1. Atualizar Badge
+                    if (newStatus === 'CANCELADA') {
+                        // Animação de remoção
+                        if (row) {
+                            row.style.transition = 'opacity 0.4s, transform 0.4s';
+                            row.style.opacity = '0';
+                            row.style.transform = 'translateX(30px)';
+                            setTimeout(() => row.remove(), 400);
+                        }
+                    } else if (row) {
+                        // Atualizar Badge para CONFIRMADA
                         const badge = row.querySelector('.status-badge');
                         if (badge) {
                             badge.textContent = newStatus;
-                            badge.className = 'status-badge'; // Reset
-                            if (newStatus === 'CONFIRMADA') badge.classList.add('status-confirmada');
-                            if (newStatus === 'CANCELADA') badge.classList.add('status-cancelada');
+                            badge.className = 'status-badge status-confirmada';
                         }
-
-                        // 2. Remover Botões (Ações)
-                        const actionsCell = row.querySelector('td:last-child'); // Assumptions: Actions is last col
+                        // Remover Botões
+                        const actionsCell = row.querySelector('td:last-child');
                         if (actionsCell && actionsCell.innerHTML.includes('updateStatus')) {
-                            actionsCell.innerHTML = ''; // Limpa os botões
+                            actionsCell.innerHTML = '';
                         }
                     }
-
-                    // Opcional: Recarregar dados em background para garantir consistência
-                    // fetchData(); 
                 } else {
                     alert('Erro ao atualizar status. Verifique se você é admin.');
                 }
