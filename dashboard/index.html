@@ -478,20 +478,28 @@
     </main>
 
     </main>
-    <script src="auth.js"></script>
+    </main>
+    <!-- Use absolute path for Vercel routing -->
+    <script src="/dashboard/auth.js"></script>
     <script>
         // CONFIG - Defined FIRST to avoid initialization errors
         const API_URL = "https://disaffectedly-vibrative-rafael.ngrok-free.dev/webhook/dashboard-data";
 
         // AUTH CHECK
-        const currentUser = Auth.checkAuth();
-        if (currentUser) {
-            document.getElementById('userInfo').textContent = `Ola, ${currentUser.name}`;
-            // Hide Actions Header if not admin
-            if (!Auth.canEdit()) {
-                const actHeader = document.getElementById('actionsHeader');
-                if (actHeader) actHeader.style.display = 'none';
+        let currentUser = null;
+        if (typeof Auth !== 'undefined') {
+            currentUser = Auth.checkAuth();
+            if (currentUser) {
+                document.getElementById('userInfo').textContent = `Ola, ${currentUser.name}`;
+                // Hide Actions Header if not admin
+                if (!Auth.canEdit()) {
+                    const actHeader = document.getElementById('actionsHeader');
+                    if (actHeader) actHeader.style.display = 'none';
+                }
             }
+        } else {
+            console.error("Auth module failed to load.");
+            document.getElementById('userInfo').textContent = "Erro de Autenticação";
         }
         // CONFIG
 
