@@ -37,7 +37,7 @@ const Auth = {
     checkAuth: () => {
         const session = sessionStorage.getItem(SESSION_KEY);
         if (!session) {
-            window.location.href = 'login.html';
+            window.location.href = '/dashboard/login.html';
             return null;
         }
         return JSON.parse(session);
