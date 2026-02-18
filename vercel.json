@@ -10,6 +10,14 @@
             "destination": "/dashboard/:match*"
         },
         {
+            "source": "/vertice",
+            "destination": "/vertice/index.html"
+        },
+        {
+            "source": "/vertice/:match*",
+            "destination": "/vertice/:match*"
+        },
+        {
             "source": "/",
             "destination": "/website/index.html"
         },
