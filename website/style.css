@@ -497,6 +497,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     display: flex;
     gap: 20px;
     align-items: flex-end;
+    flex-wrap: wrap;
 }
 
 .warning {
@@ -626,9 +627,7 @@ footer {
         font-size: 1.6rem;
     }
 
-    .row {
-        flex-direction: column;
-    }
+    /* .row { flex-direction: column; } Removed to fix WhatsApp/Date layout */
 
     .about-content {
         padding: 30px 20px;
