@@ -2,12 +2,28 @@
     "version": 2,
     "rewrites": [
         {
+            "source": "/katutas-dashboard",
+            "destination": "/dashboard/index.html"
+        },
+        {
+            "source": "/katutas-dashboard/:match*",
+            "destination": "/dashboard/:match*"
+        },
+        {
             "source": "/dashboard",
             "destination": "/dashboard/index.html"
         },
         {
             "source": "/dashboard/:match*",
             "destination": "/dashboard/:match*"
+        },
+        {
+            "source": "/katutas",
+            "destination": "/website/index.html"
+        },
+        {
+            "source": "/katutas/:match*",
+            "destination": "/website/:match*"
         },
         {
             "source": "/vertice",
@@ -19,11 +35,11 @@
         },
         {
             "source": "/",
-            "destination": "/website/index.html"
+            "destination": "/vertice/index.html"
         },
         {
             "source": "/:match*",
-            "destination": "/website/:match*"
+            "destination": "/vertice/:match*"
         }
     ]
 }
