@@ -82,6 +82,13 @@ document.getElementById('reserva-form').addEventListener('submit', async (e) => 
         return;
     }
 
+    // Validação de WhatsApp (Mínimo 10 dígitos: DDD + Número)
+    const phoneDigits = document.getElementById('whatsapp').value.replace(/\D/g, '');
+    if (phoneDigits.length < 10) {
+        alert("Por favor, digite um número de WhatsApp válido com DDD (Ex: 48999999999).");
+        return;
+    }
+
     if (totalPax === 0) {
         alert("Por favor, informe a quantidade de pessoas.");
         btn.disabled = false;
