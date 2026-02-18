@@ -3,8 +3,8 @@
 // Em produção real, isso deveria ser via API. Para o MVP, serve.
 
 const USERS = {
-    'admin': { pass: 'katuta2024!', role: 'admin', name: 'Administrador' },
-    'maicon': { pass: 'pizza123', role: 'admin', name: 'Maicon' },
+    'admin': { pass: 'katuta2024!', role: 'admin', name: 'Externo' },
+    'maicon': { pass: 'pizza123', role: 'admin', name: 'Maicon (Gerente)' },
     'colab1': { pass: 'colab003', role: 'viewer', name: 'Colaboradora 1' },
     'colab2': { pass: 'colab008', role: 'viewer', name: 'Colaboradora 2' },
     'kaue': { pass: 'kaue123', role: 'viewer', name: 'Kauê' }
