@@ -75,6 +75,13 @@ document.getElementById('reserva-form').addEventListener('submit', async (e) => 
     const criancas_free = parseInt(document.getElementById('criancas_0_5').value) || 0;
     const totalPax = adultos + criancas_meia + criancas_free;
 
+    // Validação de Nome + Sobrenome
+    const nome = document.getElementById('nome_cliente').value.trim();
+    if (nome.split(/\s+/).length < 2) {
+        alert("Por favor, digite seu Nome e Sobrenome.");
+        return;
+    }
+
     if (totalPax === 0) {
         alert("Por favor, informe a quantidade de pessoas.");
         btn.disabled = false;

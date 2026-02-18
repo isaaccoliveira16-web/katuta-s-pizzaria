@@ -142,8 +142,7 @@
 
                     <!-- Linha 1: Faixas Etárias (Precificação) -->
                     <div style="margin-bottom: 1rem;">
-                        <label
-                            style="color: var(--primary); font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Quantidade
+                        <label style="font-size: 0.9rem; margin-bottom: 0.5rem; display: block; color: #ccc;">Quantidade
                             de Pessoas</label>
 
                         <div class="row" style="margin-bottom: 0.5rem;">
@@ -167,11 +166,11 @@
                             </div>
                             <div class="input-group"
                                 style="flex: 1; display: flex; align-items: flex-end; justify-content: flex-end;">
-                                <div
-                                    style="background: rgba(212, 175, 55, 0.1); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--primary);">
-                                    <span style="color: #ccc; font-size: 0.8rem;">Total (PAX):</span>
+                                <div style="padding: 0.5rem 0; text-align: right;">
+                                    <span style="color: #ccc; font-size: 0.9rem;">Total:</span>
                                     <span id="total-pax"
-                                        style="color: var(--primary); font-weight: bold; font-size: 1.2rem; margin-left: 5px;">2</span>
+                                        style="color: #fff; font-weight: bold; font-size: 1.1rem; margin-left: 5px;">2</span>
+                                    <span style="color: #ccc; font-size: 0.9rem;">pessoas</span>
                                 </div>
                             </div>
                         </div>
@@ -206,12 +205,14 @@
                             <input type="date" id="data_reserva" name="data_reserva" required>
                         </div>
                         <div class="input-group" style="flex: 1;">
-                            <label for="hora">Horário</label>
-                            <input type="time" id="hora" name="hora" min="18:30" max="23:00" value="19:00" required>
+                            <label for="hora">Horário de Chegada</label>
+                            <input type="time" id="hora" name="hora" min="19:00" max="20:00" value="19:30" required>
                         </div>
                     </div>
 
-                    <p class="warning">Reservas online válidas apenas até às 19:00h.</p>
+                    <p class="warning" style="color: var(--secondary); font-size: 0.9rem; margin-top: 10px;">
+                        Tolerância de 15 minutos. Sua mesa ficará reservada até às 19:45.
+                    </p>
 
                     <button type="submit" class="btn-primary" id="btn-submit">Confirmar Reserva</button>
                 </form>
