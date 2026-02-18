@@ -157,3 +157,22 @@ document.getElementById('reserva-form').addEventListener('submit', async (e) => 
         btn.innerText = 'Confirmar Reserva';
     }
 });
+
+// Melhoria UX: Clique no input abre picker nativo (Calendário/Relógio)
+['data_reserva', 'hora'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+        el.addEventListener('click', () => {
+            if (typeof el.showPicker === 'function') {
+                try {
+                    el.showPicker();
+                } catch (e) {
+                    // Fallback se já estiver aberto ou erro
+                    el.focus();
+                }
+            } else {
+                el.focus();
+            }
+        });
+    }
+});

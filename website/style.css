@@ -481,9 +481,22 @@ input:focus {
     background: rgba(255, 255, 255, 0.1);
 }
 
+/* Fix Date/Time Icons Color */
+input[type="date"],
+input[type="time"] {
+    color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
 .row {
     display: flex;
     gap: 20px;
+    align-items: flex-end;
 }
 
 .warning {
