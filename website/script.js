@@ -56,7 +56,7 @@ function calcularPax() {
     const c6_10 = parseInt(document.getElementById('criancas_6_10').value) || 0;
     const c0_5 = parseInt(document.getElementById('criancas_0_5').value) || 0;
     const total = adultos + c6_10 + c0_5;
-    document.getElementById('total-pax').innerText = total;
+    document.getElementById('total-pax-display').innerText = '(Total: ' + total + ')';
 }
 
 ['adultos', 'criancas_6_10', 'criancas_0_5'].forEach(id => {
