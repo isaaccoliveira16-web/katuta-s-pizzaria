@@ -4,9 +4,9 @@
 
 const USERS = {
     'admin': { pass: 'katuta2024!', role: 'admin', name: 'Administrador' },
-    'maicon': { pass: 'pizza123', role: 'viewer', name: 'Maicon' },
-    'colab1': { pass: 'colab01', role: 'viewer', name: 'Colaboradora 1' },
-    'colab2': { pass: 'colab02', role: 'viewer', name: 'Colaboradora 2' },
+    'maicon': { pass: 'pizza123', role: 'admin', name: 'Maicon' },
+    'colab1': { pass: 'colab003', role: 'viewer', name: 'Colaboradora 1' },
+    'colab2': { pass: 'colab008', role: 'viewer', name: 'Colaboradora 2' },
     'kaue': { pass: 'kaue123', role: 'viewer', name: 'Kauê' }
 };
 
