@@ -482,8 +482,7 @@ input:focus {
 }
 
 .row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
     gap: 20px;
 }
 
@@ -615,7 +614,7 @@ footer {
     }
 
     .row {
-        grid-template-columns: 1fr;
+        flex-direction: column;
     }
 
     .about-content {
