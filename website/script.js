@@ -33,19 +33,37 @@ if (hamburger && navLinks) {
 }
 
 // Configurar Data Mínima (Hoje)
-const today = new Date().toISOString().split('T')[0];
-document.getElementById('data_reserva').value = today;
-document.getElementById('data_reserva').min = today;
+const now = new Date();
+const today = now.toISOString().split('T')[0];
 
-// Validar Dias da Semana (Bloquear Segunda-feira)
-document.getElementById('data_reserva').addEventListener('change', function () {
-    const date = new Date(this.value);
-    const day = date.getUTCDay(); // 0 = Domingo, 1 = Segunda, ...
+function validarData(inputEl) {
+    const selectedValue = inputEl.value;
+    if (!selectedValue) return false;
 
-    if (day === 1) { // Segunda-feira
+    const date = new Date(selectedValue + 'T12:00:00');
+    const day = date.getDay(); // 0 = Domingo, 1 = Segunda, ...
+
+    // 1. Bloquear Segunda-feira
+    if (day === 1) {
         alert('A pizzaria fecha às segundas-feiras! Por favor, escolha outra data.');
-        this.value = '';
+        inputEl.value = '';
+        return false;
     }
+
+    return true;
+}
+
+// Inicialização
+const dataInput = document.getElementById('data_reserva');
+dataInput.min = today;
+dataInput.value = today;
+
+// Validar no load (caso hoje seja segunda e o min permitir)
+validarData(dataInput);
+
+// Validar no change
+dataInput.addEventListener('change', function () {
+    validarData(this);
 });
 
 // ========================
@@ -56,7 +74,7 @@ function calcularPax() {
     const c6_10 = parseInt(document.getElementById('criancas_6_10').value) || 0;
     const c0_5 = parseInt(document.getElementById('criancas_0_5').value) || 0;
     const total = adultos + c6_10 + c0_5;
-    document.getElementById('total-pax-display').innerText = '(Total: ' + total + ')';
+    document.getElementById('total-pax-display').innerText = '(Total: ' + total + ' pessoas)';
 }
 
 ['adultos', 'criancas_6_10', 'criancas_0_5'].forEach(id => {
@@ -74,6 +92,12 @@ document.getElementById('reserva-form').addEventListener('submit', async (e) => 
     const criancas_meia = parseInt(document.getElementById('criancas_6_10').value) || 0;
     const criancas_free = parseInt(document.getElementById('criancas_0_5').value) || 0;
     const totalPax = adultos + criancas_meia + criancas_free;
+    const dataInput = document.getElementById('data_reserva');
+
+    // Validação de Data (Segunda e Corte 17h)
+    if (!validarData(dataInput)) {
+        return;
+    }
 
     // Validação de Nome + Sobrenome
     const nome = document.getElementById('nome_cliente').value.trim();
