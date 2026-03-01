@@ -260,6 +260,16 @@
             color: #e74c3c;
         }
 
+        .status-finalizada {
+            background: rgba(52, 152, 219, 0.15);
+            color: #3498db;
+        }
+
+        .status-fila {
+            background: rgba(230, 126, 34, 0.15);
+            color: #e67e22;
+        }
+
         /* SEARCH INPUT */
         .search-container {
             position: relative;
@@ -478,12 +488,15 @@
     </main>
 
     </main>
+    <footer style="text-align: center; color: #444; padding: 10px; font-size: 0.8rem;">
+        Katuta's Admin v2.5 - UI Updated
+    </footer>
     </main>
     <!-- Use absolute path for Vercel routing -->
     <script src="/katutas-dashboard/auth.js"></script>
     <script>
         // CONFIG - Defined FIRST to avoid initialization errors
-        const API_URL = "https://disaffectedly-vibrative-rafael.ngrok-free.dev/webhook/dashboard-data";
+        const API_URL = "http://localhost:5678/webhook/dashboard-data";
 
         // AUTH CHECK
         let currentUser = null;
@@ -546,6 +559,7 @@
                 const selectedDate = document.getElementById('datePicker').value;
                 const url = new URL(API_URL);
                 url.searchParams.append('date', selectedDate);
+                url.searchParams.append('_', new Date().getTime()); // Cache Buster
 
                 const data = await fetchFromApi(url);
 
@@ -602,6 +616,17 @@
             return dates;
         }
 
+        async function confirmReservation(id) {
+            if (!confirm('Confirmar esta reserva?')) return;
+
+            await updateReservationStatus(id, 'CONFIRMADO');
+        }
+
+        async function cancelReservation(id) {
+            if (!confirm('Cancelar esta reserva? Isso liberará as mesas associadas.')) return;
+
+            await updateReservationStatus(id, 'CANCELADO');
+        }
         // Shared fetcher
         async function fetchFromApi(url) {
             const res = await fetch(url, {
@@ -706,28 +731,64 @@
             list.forEach(res => {
                 const row = document.createElement('tr');
 
+                // Lógica de Status: Prioriza mostrar CONFIRMADA se houver qualquer sinal de confirmação
+                // Isso resolve o problema de colunas duplicadas no Google Sheets (Col W 'Website' vs Col G 'CONFIRMADA')
+                let statusUpper = (res.Status || '').toUpperCase();
+
+                // Se o objeto tiver múltiplos campos e um deles for CONFIRMADA, priorizamos
+                const allValues = Object.values(res).map(v => (v || '').toString().toUpperCase());
+                if (allValues.includes('CONFIRMADA') || allValues.includes('CONFIRMADO')) {
+                    statusUpper = 'CONFIRMADA';
+                }
+
                 let statusClass = 'status-pendente';
-                const statusUpper = (res.Status || '').toUpperCase();
-                if (statusUpper.includes('CONFIRMADA') || statusUpper.includes('WEBSITE')) statusClass = 'status-confirmada';
-                if (statusUpper.includes('CANCELADA')) statusClass = 'status-cancelada';
+                if (statusUpper.includes('CONFIRMAD')) {
+                    statusClass = 'status-confirmada';
+                } else if (statusUpper.includes('CANCELAD')) {
+                    statusClass = 'status-cancelada';
+                } else if (statusUpper.includes('FINALIZAD')) {
+                    statusClass = 'status-finalizada';
+                } else if (statusUpper.includes('FILA')) {
+                    statusClass = 'status-fila';
+                } else if (statusUpper.includes('WEBSITE') || statusUpper.includes('PENDENTE')) {
+                    statusClass = 'status-pendente';
+                }
 
                 // Se for Admin, mostra a coluna de Ações (botões)
                 let actionsHtml = '';
                 if (Auth.canEdit()) {
-                    actionsHtml = `
-                    <td>
-                        <div style="display: flex; gap: 5px;">
-                            <button onclick="updateStatus('${res.Reserva_ID}', 'CONFIRMADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}')" style="background: var(--success); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;">✔</button>
-                            <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;">✖</button>
-                        </div>
-                    </td>`;
-                } else {
-                    // Se não for admin, e criamos o header, precisamos de uma TD vazia ou simplesmente não criar se o header for oculto.
-                    // Como ocultamos o header via JS no inicio, aqui não precisa de TD extra se a tabela alinhar.
-                    // MAS, se o header 'Ações' existir no HTML base, precisamos ocultar a coluna inteira ou o header.
-                    // A melhor abordagem foi ocultar o header 'actionsHeader' no inicio.
-                    // E aqui, só adicionamos a TD se for admin.
+                    const isConfirmed = statusUpper.includes('CONFIRMAD');
+                    const isCanceled = statusUpper.includes('CANCELAD');
+                    const isFinalized = statusUpper.includes('FINALIZAD');
+
+                    if (isFinalized || isCanceled) {
+                        actionsHtml = `<td><span style="color:#aaa; font-size:0.8rem;">-</span></td>`;
+                    } else if (isConfirmed) {
+                        // Confirmado — mostrar botão Dar Baixa
+                        actionsHtml = `
+                        <td>
+                            <div style="display: flex; gap: 5px;">
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'FINALIZADO', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: #3498db; color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Dar Baixa (Cliente saiu)">🔓</button>
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Cancelar">✖</button>
+                            </div>
+                        </td>`;
+                    } else {
+                        // Pendente (Incluso Website e Fila) — confirmar ou cancelar
+                        actionsHtml = `
+                        <td>
+                            <div style="display: flex; gap: 5px;">
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'CONFIRMADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: var(--success); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Confirmar">✔</button>
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Cancelar">✖</button>
+                            </div>
+                        </td>`;
+                    }
                 }
+                // Se não for admin, e criamos o header, precisamos de uma TD vazia ou simplesmente não criar se o header for oculto.
+                // Como ocultamos o header via JS no inicio, aqui não precisa de TD extra se a tabela alinhar.
+                // MAS, se o header 'Ações' existir no HTML base, precisamos ocultar a coluna inteira ou o header.
+                // A melhor abordagem foi ocultar o header 'actionsHeader' no inicio.
+                // E aqui, só adicionamos a TD se for admin.
+
 
                 // If Weekly View, show date in Obs or Name?
                 const obsDisplay = res._displayDate ? `[${res._displayDate}] ${res.Observacao || ''}` : (res.Observacao || '');
@@ -774,22 +835,53 @@
             filteredList.forEach(res => {
                 const row = document.createElement('tr');
 
+                // Lógica de Status Resiliente (Mesma do renderDashboard)
+                let statusUpper = (res.Status || '').toUpperCase();
+                const allValues = Object.values(res).map(v => (v || '').toString().toUpperCase());
+                if (allValues.includes('CONFIRMADA') || allValues.includes('CONFIRMADO')) {
+                    statusUpper = 'CONFIRMADA';
+                }
+
                 let statusClass = 'status-pendente';
-                const statusUpper = (res.Status || '').toUpperCase();
-                if (statusUpper.includes('CONFIRMADA') || statusUpper.includes('WEBSITE')) statusClass = 'status-confirmada';
-                if (statusUpper.includes('CANCELADA')) statusClass = 'status-cancelada';
+                if (statusUpper.includes('CONFIRMAD')) {
+                    statusClass = 'status-confirmada';
+                } else if (statusUpper.includes('CANCELAD')) {
+                    statusClass = 'status-cancelada';
+                } else if (statusUpper.includes('FINALIZAD')) {
+                    statusClass = 'status-finalizada';
+                } else if (statusUpper.includes('FILA')) {
+                    statusClass = 'status-fila';
+                } else if (statusUpper.includes('WEBSITE') || statusUpper.includes('PENDENTE')) {
+                    statusClass = 'status-pendente';
+                }
 
                 const obsDisplay = res._displayDate ? `[${res._displayDate}] ${res.Observacao || ''}` : (res.Observacao || '');
 
                 let actionsHtml = '';
                 if (Auth.canEdit()) {
-                    actionsHtml = `
-                    <td>
-                        <div style="display: flex; gap: 5px;">
-                            <button onclick="updateStatus('${res.Reserva_ID}', 'CONFIRMADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: var(--success); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Confirmar">✔</button>
-                            <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Cancelar">✖</button>
-                        </div>
-                    </td>`;
+                    const isConfirmed = statusUpper.includes('CONFIRMAD');
+                    const isCanceled = statusUpper.includes('CANCELAD');
+                    const isFinalized = statusUpper.includes('FINALIZAD');
+
+                    if (isFinalized || isCanceled) {
+                        actionsHtml = `<td><span style="color:#aaa; font-size:0.8rem;">-</span></td>`;
+                    } else if (isConfirmed) {
+                        actionsHtml = `
+                        <td>
+                            <div style="display: flex; gap: 5px;">
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'FINALIZADO', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: #3498db; color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Dar Baixa (Cliente saiu)">🔓</button>
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Cancelar">✖</button>
+                            </div>
+                        </td>`;
+                    } else {
+                        actionsHtml = `
+                        <td>
+                            <div style="display: flex; gap: 5px;">
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'CONFIRMADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: var(--success); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Confirmar">✔</button>
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Cancelar">✖</button>
+                            </div>
+                        </td>`;
+                    }
                 }
 
                 row.innerHTML = `
@@ -830,6 +922,19 @@
                             row.style.transform = 'translateX(30px)';
                             setTimeout(() => row.remove(), 400);
                         }
+                    } else if (newStatus === 'FINALIZADO') {
+                        // Dar Baixa — atualizar badge e remover botões
+                        if (row) {
+                            const badge = row.querySelector('.status-badge');
+                            if (badge) {
+                                badge.textContent = 'FINALIZADO';
+                                badge.className = 'status-badge status-finalizada';
+                            }
+                            const actionsCell = row.querySelector('td:last-child');
+                            if (actionsCell && actionsCell.innerHTML.includes('updateStatus')) {
+                                actionsCell.innerHTML = '<span style="color:#aaa; font-size:0.8rem;">-</span>';
+                            }
+                        }
                     } else if (row) {
                         // Atualizar Badge para CONFIRMADA
                         const badge = row.querySelector('.status-badge');
@@ -837,10 +942,14 @@
                             badge.textContent = newStatus;
                             badge.className = 'status-badge status-confirmada';
                         }
-                        // Remover Botões
+                        // Trocar botões para Dar Baixa
                         const actionsCell = row.querySelector('td:last-child');
                         if (actionsCell && actionsCell.innerHTML.includes('updateStatus')) {
-                            actionsCell.innerHTML = '';
+                            actionsCell.innerHTML = `
+                                <div style="display: flex; gap: 5px;">
+                                    <button onclick="updateStatus('${id}', 'FINALIZADO', '${sheetRes}', '${sheetMesas}', '${mesas}')" style="background: #3498db; color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Dar Baixa">🔓</button>
+                                    <button onclick="updateStatus('${id}', 'CANCELADA', '${sheetRes}', '${sheetMesas}', '${mesas}')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Cancelar">✖</button>
+                                </div>`;
                         }
                     }
                 } else {
