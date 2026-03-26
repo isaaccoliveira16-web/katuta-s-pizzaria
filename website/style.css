@@ -430,6 +430,9 @@ header {
 /* ======================== */
 /*    RESERVA              */
 /* ======================== */
+/* ======================== */
+/*    RESERVA MODERNIZADA   */
+/* ======================== */
 #reserva {
     min-height: 100vh;
     display: flex;
@@ -441,44 +444,75 @@ header {
 
 .form-container {
     width: 100%;
-    max-width: 500px;
-    padding: 40px;
+    max-width: 550px;
+    padding: 50px 40px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, rgba(30, 30, 30, 0.95), rgba(15, 15, 15, 0.98));
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    /* Borda suave gold */
 }
 
 .form-container h2 {
-    font-size: 2rem;
-    margin-bottom: 30px;
+    font-size: 2.2rem;
+    margin-bottom: 5px;
     color: var(--secondary);
     text-align: center;
     font-family: var(--font-title);
+    letter-spacing: 1px;
+}
+
+.form-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 35px;
 }
 
 .input-group {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    position: relative;
 }
 
-label {
+.input-group label {
     display: block;
     margin-bottom: 8px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
     color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
 }
 
-input {
+.input-group:focus-within label {
+    color: var(--secondary);
+}
+
+input,
+select {
     width: 100%;
-    padding: 12px 15px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--glass-border);
-    border-radius: 8px;
+    padding: 15px 18px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
     color: var(--white);
     font-family: inherit;
-    font-size: 1rem;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-input:focus {
+input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+input:focus,
+select:focus {
     outline: none;
     border-color: var(--secondary);
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Fix Date/Time Icons Color */
@@ -491,24 +525,81 @@ input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="time"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
     cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+}
+
+input[type="date"]:focus::-webkit-calendar-picker-indicator,
+input[type="time"]:focus::-webkit-calendar-picker-indicator {
+    opacity: 1;
 }
 
 .row {
     display: flex;
     gap: 20px;
-    align-items: flex-end;
+    align-items: flex-start;
     flex-wrap: wrap;
 }
 
-.warning {
-    font-size: 0.8rem;
-    color: var(--secondary);
+/* Container específico para contagem de pessoas */
+.pessoas-container {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 20px;
     margin-bottom: 25px;
-    font-style: italic;
+}
+
+.pessoas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 10px;
+}
+
+.pessoas-header label {
+    margin-bottom: 0;
+    color: var(--white);
+    font-size: 0.95rem;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.warning {
+    font-size: 0.85rem;
+    color: #e6c446;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(212, 175, 55, 0.08);
+    padding: 12px 15px;
+    border-radius: 8px;
+    border-left: 3px solid var(--secondary);
 }
 
 #btn-submit {
     width: 100%;
+    padding: 16px;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, var(--secondary), var(--primary-light));
+    color: #fff;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+}
+
+#btn-submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+    background: linear-gradient(135deg, #e6c446, var(--primary));
 }
 
 .success-msg {

@@ -1,0 +1,630 @@
+{
+    "name": "Katuta-Dashboard-V8-WhatsApp",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "dashboard-data",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "node-webhook-post",
+            "name": "Webhook POST (Actions)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                200
+            ],
+            "webhookId": "dashboard-data-id-post"
+        },
+        {
+            "parameters": {
+                "httpMethod": "GET",
+                "path": "dashboard-data",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "node-webhook-get",
+            "name": "Webhook GET (Data)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                400
+            ],
+            "webhookId": "dashboard-data-id-get"
+        },
+        {
+            "parameters": {
+                "httpMethod": "OPTIONS",
+                "path": "dashboard-data",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "node-webhook-options",
+            "name": "Webhook OPTIONS (CORS)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                600
+            ],
+            "webhookId": "dashboard-data-id-options"
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{ $json.body && $json.body.action === 'update_status' ? 'POST' : 'GET' }}",
+                            "value2": "POST"
+                        }
+                    ]
+                }
+            },
+            "id": "node-route",
+            "name": "Rota (POST vs GET)",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                500,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "{\"status\":\"ok\"}",
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Access-Control-Allow-Origin",
+                                "value": "*"
+                            },
+                            {
+                                "name": "Access-Control-Allow-Methods",
+                                "value": "GET, POST, OPTIONS"
+                            },
+                            {
+                                "name": "Access-Control-Allow-Headers",
+                                "value": "Content-Type, ngrok-skip-browser-warning"
+                            }
+                        ]
+                    }
+                }
+            },
+            "id": "node-respond-options",
+            "name": "Responder OPTIONS",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                500,
+                600
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// CONFIGURAÇÃO DINÂMICA\nconst query = $input.all()[0].json.query || {};\nlet targetDate = new Date();\nif (query.date) targetDate = new Date(query.date + 'T12:00:00');\n\nconst daysMap = ['Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];\nlet dayName = daysMap[targetDate.getDay()];\nif (dayName === 'Segunda') dayName = 'Terca';\n\nreturn {\n  day_name: dayName,\n  sheet_reservas: `Reservas_${dayName}`,\n  sheet_mesas: `Mesas_${dayName}`,\n  iso_date: targetDate.toISOString().split('T')[0]\n};"
+            },
+            "id": "node-config-dates",
+            "name": "[JS] Configurar Datas",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                700,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "read",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": {
+                    "value": "={{ $node[\"[JS] Configurar Datas\"].json.sheet_reservas }}"
+                },
+                "options": {}
+            },
+            "id": "node-read-reservas",
+            "name": "[GSheets] Ler Reservas",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "alwaysOutputData": true,
+            "position": [
+                900,
+                400
+            ],
+            "continueOnFail": true
+        },
+        {
+            "parameters": {
+                "operation": "read",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": {
+                    "value": "={{ $node[\"[JS] Configurar Datas\"].json.sheet_mesas }}"
+                },
+                "options": {}
+            },
+            "id": "node-read-mesas",
+            "name": "[GSheets] Ler Mesas",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "alwaysOutputData": true,
+            "position": [
+                1100,
+                400
+            ],
+            "continueOnFail": true
+        },
+        {
+            "parameters": {
+                "jsCode": "const config = $items(\"[JS] Configurar Datas\")[0].json;\n\n// LER RESERVAS E MESAS\nlet reservas = $items(\"[GSheets] Ler Reservas\").map(i => {\n    const raw = i.json;\n    // Tenta encontrar o status em várias variações de nome (para garantir)\n    let status = raw.Status || raw.status || raw['Status '] || raw.STATUS || 'PENDENTE';\n    \n    // Remove espaços extras\n    if (typeof status === 'string') status = status.trim();\n    \n    return {\n        ...raw,\n        Status: status, // Normaliza para 'Status'\n        sheet_reservas: config.sheet_reservas,\n        sheet_mesas: config.sheet_mesas\n    };\n}).filter(r => r.Nome_Cliente || r.WhatsApp);\n\nlet mesas = $items(\"[GSheets] Ler Mesas\").map(i => i.json);\n\n// FILTRAR POR DATA ESPECÍFICA\n// A aba Reservas_Sexta acumula todas as sextas, então filtramos pela data selecionada\nconst isoDate = config.iso_date; // ex: '2026-02-27'\nreservas = reservas.filter(r => {\n  // Se a reserva não tem data_reserva (dado antigo), mantém por compatibilidade\n  if (!r.data_reserva) return true;\n  return r.data_reserva === isoDate;\n});\n\n// Filtra reservas canceladas (verifica QUALQUER campo que contenha 'CANCELAD')\nreservas = reservas.filter(r => {\n  const allValues = Object.values(r).map(v => (v || '').toString().toUpperCase());\n  return !allValues.some(v => v.includes('CANCELAD'));\n});\n\n// Métricas Simplificadas\nconst totalReservas = reservas.length;\nconst totalPax = reservas.reduce((acc, curr) => acc + (parseInt(curr.Qtd_Pessoas) || 0), 0);\nlet mesasOcupadas = mesas.filter(m => m.Status && m.Status.toString().toUpperCase() === 'OCUPADA').length;\n\nreturn {\n  metrics: {\n    total_reservas: totalReservas,\n    total_pax: totalPax,\n    mesas_ocupadas: mesasOcupadas,\n    mesas_livres: mesas.length - mesasOcupadas,\n    occupancy_rate: (mesas.length ? Math.round((mesasOcupadas / mesas.length) * 100) : 0) + '%'\n  },\n  reservations: reservas,\n  tables_summary: mesas.map(m => ({ id: m.Mesa_ID, status: m.Status }))\n};"
+            },
+            "id": "node-calc-metrics",
+            "name": "[JS] Calcular Métricas",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                1300,
+                400
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "json",
+                "responseBody": "={{ JSON.stringify($json) }}",
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Access-Control-Allow-Origin",
+                                "value": "*"
+                            }
+                        ]
+                    }
+                }
+            },
+            "id": "node-respond",
+            "name": "Responder JSON",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                1700,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// UPDATE STATUS LOGIC\nconst data = $input.item.json;\nconst body = data.body || data;\n\nconst id = body.id;\nconst status = body.status;\nconst action = body.action || 'update_status';\n\n// 1. Tenta usar o nome da aba enviado pelo Front-end (prioridade da vida!)\nlet sheetNameRes = body.sheet_reservas;\nlet sheetNameMesas = body.sheet_mesas;\nlet mesasAlocadasStr = body.mesas || '';\n\n// LOG DEBUG (Crucial para ver o que chega)\nconsole.log(`[V8 UPDATE] ID: ${id}, Status: ${status}, SheetRes: ${sheetNameRes}`);\n\n// Fallback: calcula a partir da data SE e SOMENTE SE não vier o nome da aba\nif (!sheetNameRes) {\n  let targetDate;\n  if (body.date) {\n    targetDate = new Date(body.date + 'T12:00:00');\n  } else {\n    const now = new Date();\n    targetDate = new Date(now.getTime() - (3 * 60 * 60 * 1000)); // UTC-3\n  }\n  \n  const daysMap = ['Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];\n  let dayName = daysMap[targetDate.getDay()];\n  if (dayName === 'Segunda') dayName = 'Terca';\n  \n  sheetNameRes = `Reservas_${dayName}`;\n  sheetNameMesas = `Mesas_${dayName}`;\n}\n\nreturn {\n  id: id,\n  status: status,\n  sheetNameRes: sheetNameRes,\n  sheetNameMesas: sheetNameMesas,\n  mesasAlocadasStr: mesasAlocadasStr\n};"
+            },
+            "id": "node-prep-update",
+            "name": "[JS] Prep Update",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                700,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "read",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": {
+                    "value": "={{ $node[\"[JS] Prep Update\"].json.sheetNameRes }}"
+                },
+                "options": {}
+            },
+            "id": "node-read-all-reservas",
+            "name": "[GSheets] Ler Todas",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "alwaysOutputData": true,
+            "position": [
+                900,
+                200
+            ],
+            "continueOnFail": true
+        },
+        {
+            "parameters": {
+                "jsCode": "const allItems = $input.all();\nconst allReservas = allItems.map(i => i.json);\nconst prep = $node[\"[JS] Prep Update\"].json;\nconst targetId = prep.id;\nconst targetStatus = prep.status;\nconst sheetNameRes = prep.sheetNameRes;\nconst sheetNameMesas = prep.sheetNameMesas;\nconst mesasStr = prep.mesasAlocadasStr;\n\nconst foundIndex = allReservas.findIndex(r => r.Reserva_ID == targetId);\n\nif (foundIndex === -1) {\n  return { success: false, message: \"Reserva não encontrada\" };\n}\n\nconst rowNumber = foundIndex + 2;\nconst found = allReservas[foundIndex];\n\n// Coluna K = Status (coluna 11 = K)\nconst batchData = [\n  { range: `${sheetNameRes}!K${rowNumber}`, values: [[targetStatus]] }\n];\n\n// Se Status for FINALIZADO ou CANCELADA, dar baixa nas mesas\nif (targetStatus === 'FINALIZADO' || targetStatus === 'CANCELADA') {\n  if (mesasStr && sheetNameMesas) {\n    const mesasArr = String(mesasStr).split(',').map(m => m.replace(/[^0-9]/g, '').trim()).filter(Boolean);\n    for (const mId of mesasArr) {\n      const mesaRow = parseInt(mId) + 1; // Mesa 1 = linha 2\n      batchData.push({\n        range: `${sheetNameMesas}!C${mesaRow}`,\n        values: [['LIVRE']]\n      });\n    }\n  }\n}\n\nreturn {\n  batchData: batchData,\n  status: targetStatus,\n  Mesas_Alocadas: found.Mesas_Alocadas,\n  WhatsApp: found.WhatsApp || '',\n  Nome_Cliente: found.Nome_Cliente || 'Cliente',\n  Qtd_Pessoas: found.Qtd_Pessoas || '',\n  Observacao: found.Observacao || ''\n};"
+            },
+            "id": "node-calc-range",
+            "name": "[JS] Encontrar Range",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                1100,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "googleSheetsOAuth2Api",
+                "method": "POST",
+                "url": "https://sheets.googleapis.com/v4/spreadsheets/1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk/values:batchUpdate",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ valueInputOption: 'USER_ENTERED', data: $json.batchData }) }}",
+                "options": {}
+            },
+            "id": "node-http-update",
+            "name": "[HTTP] Update Status",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                1300,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{ $node[\"[JS] Prep Update\"].json.status }}",
+                            "value2": "CANCELADO"
+                        },
+                        {
+                            "value1": "={{ $node[\"[JS] Prep Update\"].json.status }}",
+                            "value2": "CANCELADA"
+                        },
+                        {
+                            "value1": "={{ $node[\"[JS] Prep Update\"].json.status }}",
+                            "value2": "cancelado"
+                        },
+                        {
+                            "value1": "={{ $node[\"[JS] Prep Update\"].json.status }}",
+                            "value2": "cancelada"
+                        },
+                        {
+                            "value1": "={{ $node[\"[JS] Prep Update\"].json.status }}",
+                            "value2": "FINALIZADO"
+                        },
+                        {
+                            "value1": "={{ $node[\"[JS] Prep Update\"].json.status }}",
+                            "value2": "finalizado"
+                        }
+                    ]
+                },
+                "combineOperation": "any"
+            },
+            "id": "node-check-cancel",
+            "name": "Se Cancelou",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                1500,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "read",
+                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
+                "sheetName": {
+                    "value": "={{ $node[\"[JS] Prep Update\"].json.sheetNameMesas }}"
+                },
+                "options": {}
+            },
+            "id": "node-read-mesas-release",
+            "name": "[GSheets] Ler Mesas Release",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "position": [
+                1700,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// MAPEAR MESAS PARA LIBERAR\nconst allMesas = $input.all().map(i => i.json);\nconst mesasToRelease = $node[\"[JS] Encontrar Range\"].json.Mesas_Alocadas;\nconst sheetNameMesas = $node[\"[JS] Prep Update\"].json.sheetNameMesas;\n\nlet mesaIDs = [];\nif (mesasToRelease) {\n    mesaIDs = mesasToRelease.toString().split(',').map(m => m.trim());\n}\n\n// Prepara batch updates para AMBAS colunas C e D (para cobrir Status duplicado)\nconst batchData = [];\nmesaIDs.forEach(id => {\n    const foundIndex = allMesas.findIndex(m => m.Mesa_ID == id);\n    if (foundIndex !== -1) {\n        const rowNumber = foundIndex + 2;\n        batchData.push({ range: `${sheetNameMesas}!C${rowNumber}`, values: [['LIVRE']] });\n        batchData.push({ range: `${sheetNameMesas}!D${rowNumber}`, values: [['LIVRE']] });\n    }\n});\n\nreturn [{ json: { batchData: batchData } }];"
+            },
+            "id": "node-map-tables-range",
+            "name": "[JS] Map Table Ranges",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                1900,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "googleSheetsOAuth2Api",
+                "method": "POST",
+                "url": "https://sheets.googleapis.com/v4/spreadsheets/1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk/values:batchUpdate",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ valueInputOption: 'USER_ENTERED', data: $json.batchData }) }}",
+                "options": {}
+            },
+            "id": "node-http-release-table",
+            "name": "[HTTP] Release Table",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                2100,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://graph.facebook.com/v21.0/901240869748858/messages",
+                "sendBody": true,
+                "contentType": "json",
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "messaging_product",
+                            "value": "whatsapp"
+                        },
+                        {
+                            "name": "to",
+                            "value": "={{ $node[\"[JS] Encontrar Range\"].json.WhatsApp.replace(/\\D/g, '') }}"
+                        },
+                        {
+                            "name": "type",
+                            "value": "template"
+                        },
+                        {
+                            "name": "template",
+                            "value": "={{ {\n  name: \"verticeia\",\n  language: { code: \"pt_BR\" },\n  components: [\n    {\n      type: \"body\",\n      parameters: [\n        { type: \"text\", text: $node[\"[JS] Encontrar Range\"].json.Nome_Cliente || 'Cliente' },\n        { type: \"text\", text: ($node[\"[JS] Encontrar Range\"].json.Qtd_Pessoas || 'Vários').toString() },\n        { type: \"text\", text: \"19:30 (Tol. 15min)\" },\n        { type: \"text\", text: $node[\"[JS] Encontrar Range\"].json.Mesas_Alocadas || 'A definir' },\n        { type: \"text\", text: $node[\"[JS] Encontrar Range\"].json.Observacao || 'Nenhuma' }\n      ]\n    }\n  ]\n} }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "node-whatsapp-send",
+            "name": "[Meta] Enviar WhatsApp",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                2400,
+                200
+            ],
+            "credentials": {
+                "httpHeaderAuth": {
+                    "id": "",
+                    "name": "Meta API Token (Custom)"
+                }
+            },
+            "notes": "⚠️ Importante: Configure o Header Authorization com 'Bearer SEU_TOKEN' aqui ou use a credencial."
+        },
+        {
+            "parameters": {
+                "jsCode": "return { success: true, message: \"Status atualizado e notificação enviada\" };"
+            },
+            "id": "node-success",
+            "name": "[JS] Success",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                2600,
+                200
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook POST (Actions)": {
+            "main": [
+                [
+                    {
+                        "node": "Rota (POST vs GET)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook GET (Data)": {
+            "main": [
+                [
+                    {
+                        "node": "Rota (POST vs GET)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook OPTIONS (CORS)": {
+            "main": [
+                [
+                    {
+                        "node": "Responder OPTIONS",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Rota (POST vs GET)": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Prep Update",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "[JS] Configurar Datas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Configurar Datas": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Ler Reservas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[GSheets] Ler Reservas": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Ler Mesas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[GSheets] Ler Mesas": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Calcular Métricas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Calcular Métricas": {
+            "main": [
+                [
+                    {
+                        "node": "Responder JSON",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Prep Update": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Ler Todas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[GSheets] Ler Todas": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Encontrar Range",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Encontrar Range": {
+            "main": [
+                [
+                    {
+                        "node": "[HTTP] Update Status",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[HTTP] Update Status": {
+            "main": [
+                [
+                    {
+                        "node": "Se Cancelou",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Se Cancelou": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Ler Mesas Release",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "[Meta] Enviar WhatsApp",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[GSheets] Ler Mesas Release": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Map Table Ranges",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Map Table Ranges": {
+            "main": [
+                [
+                    {
+                        "node": "[HTTP] Release Table",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[HTTP] Release Table": {
+            "main": [
+                [
+                    {
+                        "node": "[Meta] Enviar WhatsApp",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[Meta] Enviar WhatsApp": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Success",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Success": {
+            "main": [
+                [
+                    {
+                        "node": "Responder JSON",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "errorWorkflow": "NyQKhHnymOvXQRdx"
+    }
+}

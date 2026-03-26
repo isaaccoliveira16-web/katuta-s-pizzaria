@@ -133,6 +133,8 @@
         <section id="reserva" class="container">
             <div class="form-container glass-panel">
                 <h2>Faça sua Reserva</h2>
+                <p class="form-subtitle">Garanta sua mesa em poucos passos</p>
+
                 <form id="reserva-form">
                     <div class="input-group">
                         <label for="nome_cliente">Seu Nome</label>
@@ -141,25 +143,26 @@
                     </div>
 
                     <!-- Linha 1: Faixas Etárias (Precificação) -->
-                    <div style="margin-bottom: 1rem;">
-                        <label id="label-qtd-pessoas"
-                            style="font-size: 0.9rem; margin-bottom: 0.5rem; display: block; color: #ccc;">Quantidade de
-                            Pessoas <span id="total-pax-display"
-                                style="font-weight: bold; color: #fff; margin-left: 5px;">(Total: 2)</span></label>
+                    <div class="pessoas-container">
+                        <div class="pessoas-header">
+                            <label id="label-qtd-pessoas">Quantidade de Pessoas</label>
+                            <span id="total-pax-display" style="font-weight: 600; color: var(--secondary);">Total:
+                                2</span>
+                        </div>
 
-                        <div class="row" style="margin-bottom: 0.5rem;">
-                            <div class="input-group" style="flex: 1;">
-                                <label for="adultos" style="font-size: 0.8rem;">Adultos (11+)</label>
+                        <div class="row" style="margin-bottom: 0;">
+                            <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                                <label for="adultos" style="font-size: 0.75rem;">Adultos (11+)</label>
                                 <input type="number" id="adultos" name="adultos" min="1" max="50" value="2" required
                                     placeholder="0">
                             </div>
-                            <div class="input-group" style="flex: 1;">
-                                <label for="criancas_6_10" style="font-size: 0.8rem;">Crianças (6-10)</label>
+                            <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                                <label for="criancas_6_10" style="font-size: 0.75rem;">Crianças (6-10)</label>
                                 <input type="number" id="criancas_6_10" name="criancas_6_10" min="0" max="20" value="0"
                                     placeholder="0">
                             </div>
-                            <div class="input-group" style="flex: 1;">
-                                <label for="criancas_0_5" style="font-size: 0.8rem;">Crianças (0-5)</label>
+                            <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                                <label for="criancas_0_5" style="font-size: 0.75rem;">Crianças (0-5)</label>
                                 <input type="number" id="criancas_0_5" name="criancas_0_5" min="0" max="20" value="0"
                                     placeholder="0">
                             </div>
@@ -169,21 +172,18 @@
                     <!-- Linha 2: WhatsApp -->
                     <div class="input-group">
                         <label for="whatsapp">WhatsApp</label>
-                        <div class="row" style="margin-bottom: 0;">
-                            <div class="input-group" style="flex: 0 0 90px;">
-                                <select id="ddi" name="ddi"
-                                    style="width: 100%; height: 48px; padding: 10px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; background: rgba(255, 255, 255, 0.05); color: #fff;">
+                        <div class="row" style="margin-bottom: 0; gap: 10px;">
+                            <div class="input-group" style="flex: 0 0 110px; margin-bottom: 0;">
+                                <select id="ddi" name="ddi" style="cursor: pointer;">
                                     <option value="55" selected>BR +55</option>
                                     <option value="1">US +1</option>
                                     <option value="351">PT +351</option>
                                     <option value="44">UK +44</option>
                                     <option value="54">AR +54</option>
-
                                 </select>
                             </div>
-                            <div class="input-group" style="flex: 1;">
-                                <input type="tel" id="whatsapp" name="whatsapp" placeholder="48 99999-9999" required
-                                    style="width: 100%;">
+                            <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                                <input type="tel" id="whatsapp" name="whatsapp" placeholder="48 99999-9999" required>
                             </div>
                         </div>
                     </div>
@@ -200,11 +200,11 @@
                         </div>
                     </div>
 
-                    <p class="warning" style="color: var(--secondary); font-size: 0.9rem; margin-top: 10px;">
-                        Tolerância de 15 minutos. Sua mesa ficará reservada até às 19:45.
+                    <p class="warning">
+                        <i class="fas fa-info-circle"></i> Chegar até 19:30. Tolerância máxima de 15 minutos!
                     </p>
 
-                    <button type="submit" class="btn-primary" id="btn-submit">Confirmar Reserva</button>
+                    <button type="submit" id="btn-submit">Confirmar Reserva</button>
                 </form>
                 <div id="status-message"></div>
             </div>
@@ -257,7 +257,7 @@
         </div>
     </footer>
 
-    <script src="/katutas/script.js"></script>
+    <script src="/katutas/script.js?v=2"></script>
 </body>
 
 </html>

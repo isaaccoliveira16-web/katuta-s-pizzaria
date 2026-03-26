@@ -196,7 +196,7 @@
         },
         {
             "parameters": {
-                "jsCode": "// UPDATE STATUS LOGIC\nconst data = $input.item.json;\nconst body = data.body || data;\n\nconst id = body.id;\nconst status = body.status;\nconst action = body.action;\n\nconst today = new Date();\nconst daysMap = ['Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];\nlet dayName = daysMap[today.getDay()];\nif (dayName === 'Segunda') dayName = 'Terca';\n\nreturn {\n  id: id,\n  status: status,\n  sheetNameRes: `Reservas_${dayName}`,\n  sheetNameMesas: `Mesas_${dayName}`\n};"
+                "jsCode": "// UPDATE STATUS LOGIC\nconst data = $input.item.json;\nconst body = data.body || data;\n\nconst id = body.id;\nconst status = body.status;\nconst action = body.action;\n\n// FIX: Use provided date or fallback to today\nlet targetDate = new Date();\nif (body.date) {\n    // Append time to prevent timezone issues if date is just YYYY-MM-DD\n    targetDate = new Date(body.date + 'T12:00:00');\n}\n\nconst daysMap = ['Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];\nlet dayName = daysMap[targetDate.getDay()];\nif (dayName === 'Segunda') dayName = 'Terca';\n\nreturn {\n  id: id,\n  status: status,\n  sheetNameRes: `Reservas_${dayName}`,\n  sheetNameMesas: `Mesas_${dayName}`\n};"
             },
             "id": "node-prep-update",
             "name": "[JS] Prep Update",
@@ -229,7 +229,7 @@
         },
         {
             "parameters": {
-                "jsCode": "const allReservas = $input.all().map(i => i.json);\nconst targetId = $node[\"[JS] Prep Update\"].json.id;\n\nconst found = allReservas.find(r => r.Reserva_ID == targetId);\n\nif (!found) {\n  return []; // Não achou reserva, evita erro\n}\n\nreturn { id: targetId, Mesas_Alocadas: found.Mesas_Alocadas };"
+                "jsCode": "const allReservas = $input.all().map(i => i.json);\nconst targetId = ($node[\"[JS] Prep Update\"].json.id || '').toString().trim();\n\nconst foundIndex = allReservas.findIndex(r => (r.Reserva_ID || '').toString().trim() == targetId);\n\nif (foundIndex === -1) {\n  return []; // Parar se não encontrar\n}\n\nconst rowNumber = foundIndex + 2; // +1 Header, +1 Index 0-based\n\nreturn { \n    Reserva_ID: targetId, \n    Mesas_Alocadas: allReservas[foundIndex].Mesas_Alocadas,\n    rowNumber: rowNumber\n};"
             },
             "id": "node-filter-reservation",
             "name": "[JS] Find Target",
@@ -242,26 +242,19 @@
         },
         {
             "parameters": {
-                "operation": "update",
-                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
-                "sheetName": {
-                    "value": "={{ $node[\"[JS] Prep Update\"].json.sheetNameRes }}"
-                },
-                "columns": {
-                    "mappingMode": "defineBelow",
-                    "value": {
-                        "Status": "={{ $node[\"[JS] Prep Update\"].json.status }}"
-                    },
-                    "matchingColumns": [
-                        "Reserva_ID"
-                    ]
-                },
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "googleSheetsOAuth2Api",
+                "method": "PUT",
+                "url": "={{ 'https://sheets.googleapis.com/v4/spreadsheets/1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk/values/' + $node[\"[JS] Prep Update\"].json.sheetNameRes + '!G' + $json.rowNumber + '?valueInputOption=USER_ENTERED' }}",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ values: [[ $node[\"[JS] Prep Update\"].json.status ]] }) }}",
                 "options": {}
             },
-            "id": "node-update-sheet",
-            "name": "[GSheets] Atualizar Status",
-            "type": "n8n-nodes-base.googleSheets",
-            "typeVersion": 4,
+            "id": "node-http-update-status",
+            "name": "[HTTP] Update Status",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
             "position": [
                 1300,
                 200
@@ -273,7 +266,7 @@
                     "string": [
                         {
                             "value1": "={{ $node[\"[JS] Prep Update\"].json.status }}",
-                            "value2": "CANCELADA"
+                            "value2": "CANCELADO"
                         },
                         {
                             "value1": "={{ $node[\"[JS] Find Target\"].json.Mesas_Alocadas }}",
@@ -293,12 +286,16 @@
         },
         {
             "parameters": {
-                "jsCode": "// MAPEAR MESAS PARA LIBERAR\nconst mesas = $json.Mesas_Alocadas; // Ex: \"1, 2, 5\"\nlet mesaIDs = [];\nif (mesas) {\n    mesaIDs = mesas.toString().split(',').map(m => m.trim());\n}\n\n// Cria um item para cada mesa, para atualizar uma por uma\n// Isso garante que se forem múltiplas mesas, todas serão atualizadas\nreturn mesaIDs.map(id => ({\n    json: {\n        Mesa_ID: id,\n        Status: \"LIVRE\"\n    }\n}));"
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "googleSheetsOAuth2Api",
+                "method": "GET",
+                "url": "={{ 'https://sheets.googleapis.com/v4/spreadsheets/1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk/values/' + $node[\"[JS] Prep Update\"].json.sheetNameMesas + '!A:A' }}",
+                "options": {}
             },
-            "id": "node-map-tables",
-            "name": "[JS] Map Table IDs",
-            "type": "n8n-nodes-base.code",
-            "typeVersion": 1,
+            "id": "node-http-read-mesas",
+            "name": "[HTTP] Ler Mesas (Release)",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
             "position": [
                 1700,
                 200
@@ -306,26 +303,12 @@
         },
         {
             "parameters": {
-                "operation": "update",
-                "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
-                "sheetName": {
-                    "value": "={{ $node[\"[JS] Prep Update\"].json.sheetNameMesas }}"
-                },
-                "columns": {
-                    "mappingMode": "defineBelow",
-                    "value": {
-                        "Status": "LIVRE"
-                    },
-                    "matchingColumns": [
-                        "Mesa_ID"
-                    ]
-                },
-                "options": {}
+                "jsCode": "// MAPEAR MESAS PARA LIBERAR\nconst mesasToRelease = $node[\"[JS] Find Target\"].json.Mesas_Alocadas; \nconst sheetNameMesas = $node[\"[JS] Prep Update\"].json.sheetNameMesas;\n\n// Dados lidos do Google Sheets via HTTP (Coluna A)\nconst values = $input.item.json.values || [];\nconst allTableIds = values.map(row => row[0]); // Flatten [[id], [id]] to [id, id]\n\nlet mesaIDs = [];\nif (mesasToRelease) {\n    mesaIDs = mesasToRelease.toString().split(',').map(m => parseInt(m.trim())).filter(n => !isNaN(n));\n}\n\nconst batchData = [];\nmesaIDs.forEach(id => {\n    // Encontrar linha (Index + 1 porque A1 é header? Não se pegamos A:A, A1 é 'Mesa_ID')\n    // Google Sheets API values index 0 is A1. So if A1 is header, index 0 is header.\n    // rowNumber should be 1-based.\n    // index 0 -> Row 1 (Header).\n    // index 1 -> Row 2 (First Table).\n    \n    // Match loose equality (1 == '1')\n    const foundIndex = allTableIds.findIndex(tid => tid == id);\n    \n    if (foundIndex !== -1) {\n        const rowNumber = foundIndex + 1; // Google Sheets API uses 1-based indexing for A1 notation ranges\n        \n        // Update Status (C) and WhatsApp (D) to 'LIVRE'\n        batchData.push({ range: `${sheetNameMesas}!C${rowNumber}`, values: [['LIVRE']] });\n        batchData.push({ range: `${sheetNameMesas}!D${rowNumber}`, values: [['LIVRE']] });\n    }\n});\n\nreturn { batchData: batchData };"
             },
-            "id": "node-free-table",
-            "name": "[GSheets] Liberar Mesa",
-            "type": "n8n-nodes-base.googleSheets",
-            "typeVersion": 4,
+            "id": "node-map-tables",
+            "name": "[JS] Map Table IDs",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
             "position": [
                 1900,
                 200
@@ -333,7 +316,27 @@
         },
         {
             "parameters": {
-                "jsCode": "return { success: true, message: \"Status atualizado e mesa liberada (se aplicável)\" };"
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "googleSheetsOAuth2Api",
+                "method": "POST",
+                "url": "https://sheets.googleapis.com/v4/spreadsheets/1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk/values:batchUpdate",
+                "sendBody": true,
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ valueInputOption: 'USER_ENTERED', data: $json.batchData }) }}",
+                "options": {}
+            },
+            "id": "node-http-release-table",
+            "name": "[HTTP] Liberar Mesa",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                2100,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "return { success: true, message: \"Status atualizado.\", debug_sheet: $node[\"[JS] Prep Update\"].json.sheetNameRes };"
             },
             "id": "node-success",
             "name": "[JS] Success",
@@ -467,14 +470,14 @@
             "main": [
                 [
                     {
-                        "node": "[GSheets] Atualizar Status",
+                        "node": "[HTTP] Update Status",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "[GSheets] Atualizar Status": {
+        "[HTTP] Update Status": {
             "main": [
                 [
                     {
@@ -507,14 +510,36 @@
             "main": [
                 [
                     {
-                        "node": "[GSheets] Liberar Mesa",
+                        "node": "[HTTP] Ler Mesas (Release)",
                         "type": "main",
                         "index": 0
                     }
                 ]
             ]
         },
-        "[GSheets] Liberar Mesa": {
+        "[HTTP] Ler Mesas (Release)": {
+            "main": [
+                [
+                    {
+                        "node": "[JS] Map Table IDs",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[JS] Map Table IDs": {
+            "main": [
+                [
+                    {
+                        "node": "[HTTP] Liberar Mesa",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[HTTP] Liberar Mesa": {
             "main": [
                 [
                     {

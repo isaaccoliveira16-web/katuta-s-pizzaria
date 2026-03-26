@@ -53,7 +53,7 @@
         },
         {
             "parameters": {
-                "jsCode": "const info = $node[\"[JS] Calc Mesas\"].json;\nconst generateID = () => Math.random().toString(36).substr(2, 9).toUpperCase();\nconst timestamp = new Date().toLocaleString('pt-BR');\n\n// Formata detalhe PAX para observação se necessário ou mantém simples\n// Vamos salvar detalhes em colunas separadas se a planilha permitir, \n// mas por segurança vamos adicionar no objeto.\n\nreturn {\n  Reserva_ID: generateID(),\n  Nome_Cliente: info.nome_cliente,\n  WhatsApp: info.whatsapp_id,\n  Qtd_Pessoas: info.pax,\n  Qtd_Adultos: info.adultos,\n  Qtd_Criancas_Meia: info.criancas_6_10,\n  Qtd_Criancas_Free: info.criancas_0_5,\n  Mesas_Alocadas: \"A Definir (Semana Seguinte)\",\n  Observacao: info.observacao,\n  Timestamp: timestamp,\n  Status: \"Pré-Reserva (Futura)\",\n  whatsapp_original: info.whatsapp_id,\n  data_reserva: info.data_reserva, \n  sheet_reservas: \"Reservas_Futuras\" \n};"
+                "jsCode": "const info = $node[\"[JS] Calc Mesas\"].json;\nconst generateID = () => Math.random().toString(36).substr(2, 9).toUpperCase();\nconst timestamp = new Date().toLocaleString('pt-BR');\n\n// Formata detalhe PAX para observação se necessário ou mantém simples\n// Vamos salvar detalhes em colunas separadas se a planilha permitir, \n// mas por segurança vamos adicionar no objeto.\n\nreturn {\n  Reserva_ID: generateID(),\n  Nome_Cliente: info.nome_cliente,\n  WhatsApp: info.whatsapp_id,\n  Qtd_Pessoas: info.pax,\n  Qtd_Adultos: info.adultos,\n  Qtd_Criancas_Meia: info.criancas_6_10,\n  Qtd_Criancas_Free: info.criancas_0_5,\n  Mesas_Alocadas: \"A Definir (Semana Seguinte)\",\n  Observacao: info.observacao,\n  Timestamp: timestamp,\n  Status: \"Pré-Reserva (Futura)\",\n  _meta: {\n    whatsapp_original: info.whatsapp_id,\n    data_reserva: info.data_reserva, \n    sheet_reservas: \"Reservas_Futuras\"\n  }\n};"
             },
             "id": "node-format-future",
             "name": "[JS] Formatar Futura",
@@ -92,7 +92,7 @@
         },
         {
             "parameters": {
-                "jsCode": "const allMesas = $input.all();\nconst info = $node[\"[JS] Calc Mesas\"].json;\n\n// FILTRAGEM MANUAL (Mais Segura)\n// Garante que só pega mesas com Status \"LIVRE\" (Maiúsculo ou Minúsculo)\nconst mesasLivres = allMesas.filter(m => \n   m.json.Status && m.json.Status.toString().trim().toUpperCase() === 'LIVRE'\n);\n\nconst generateID = () => Math.random().toString(36).substr(2, 9).toUpperCase();\nconst timestamp = new Date().toLocaleString('pt-BR');\n\n// Lógica de Alocação\nlet mesasAlocadas = \"Indisponível\";\nlet idsToUpdate = [];\n\n// Verifica se tem mesas suficientes\nif (mesasLivres.length >= info.mesasNeeded) {\n  const selected = mesasLivres.slice(0, info.mesasNeeded);\n  mesasAlocadas = selected.map(m => m.json.Mesa_ID).join(\", \");\n  idsToUpdate = selected.map(m => m.json.Mesa_ID);\n} else {\n   // Opcional: Lidar com falta de mesas (por enquanto deixa Indisponível)\n   mesasAlocadas = \"SEM MESAS LIVRES\";\n}\n\nreturn {\n  Reserva_ID: generateID(),\n  Nome_Cliente: info.nome_cliente,\n  WhatsApp: info.whatsapp_id,\n  Qtd_Pessoas: info.pax,\n  Qtd_Adultos: info.adultos,\n  Qtd_Criancas_Meia: info.criancas_6_10,\n  Qtd_Criancas_Free: info.criancas_0_5,\n  Mesas_Alocadas: mesasAlocadas,\n  Observacao: info.observacao,\n  Timestamp: timestamp,\n  Status: \"Website\",\n  whatsapp_original: info.whatsapp_id,\n  idsToUpdate, // Passando lista para atualização\n  sheet_reservas: info.sheet_reservas, // Passando para o próximo node\n  sheet_mesas: info.sheet_mesas, // Passando para o próximo node\n  data_reserva: info.data_reserva // ADICIONADO: Data da reserva para filtro\n};"
+                "jsCode": "const allMesas = $input.all();\nconst info = $node[\"[JS] Calc Mesas\"].json;\n\n// FILTRAGEM MANUAL (Mais Segura)\n// Garante que só pega mesas com Status \"LIVRE\" (Maiúsculo ou Minúsculo)\nconst mesasLivres = allMesas.filter(m => \n   m.json.Status && m.json.Status.toString().trim().toUpperCase() === 'LIVRE'\n);\n\nconst generateID = () => Math.random().toString(36).substr(2, 9).toUpperCase();\nconst timestamp = new Date().toLocaleString('pt-BR');\n\n// Lógica de Alocação\nlet mesasAlocadas = \"Indisponível\";\nlet idsToUpdate = [];\nlet isFull = false;\n\n// Verifica se tem mesas suficientes\nif (mesasLivres.length >= info.mesasNeeded) {\n  const selected = mesasLivres.slice(0, info.mesasNeeded);\n  mesasAlocadas = selected.map(m => m.json.Mesa_ID).join(\", \");\n  idsToUpdate = selected.map(m => m.json.Mesa_ID);\n} else {\n   // LOTADO — vai para fila de espera\n   isFull = true;\n   mesasAlocadas = \"FILA DE ESPERA\";\n}\n\nreturn {\n  Reserva_ID: generateID(),\n  Nome_Cliente: info.nome_cliente,\n  WhatsApp: info.whatsapp_id,\n  Qtd_Pessoas: info.pax,\n  Qtd_Adultos: info.adultos,\n  Qtd_Criancas_Meia: info.criancas_6_10,\n  Qtd_Criancas_Free: info.criancas_0_5,\n  Mesas_Alocadas: mesasAlocadas,\n  Observacao: info.observacao,\n  Timestamp: timestamp,\n  Status: isFull ? \"Na Fila\" : \"Pendente\",\n  _meta: {\n    whatsapp_original: info.whatsapp_id,\n    idsToUpdate, \n    sheet_reservas: isFull ? 'Fila_Espera' : info.sheet_reservas,\n    sheet_mesas: info.sheet_mesas,\n    data_reserva: info.data_reserva,\n    isFull: isFull\n  }\n};"
             },
             "id": "node-logic-aloca",
             "name": "[JS] Gerar Objeto Reserva",
@@ -109,11 +109,23 @@
                 "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
                 "sheetName": {
                     "mode": "name",
-                    "value": "={{ $json.sheet_reservas }}"
+                    "value": "={{ $json._meta.sheet_reservas }}"
                 },
                 "columns": {
-                    "mappingMode": "autoMapInputData",
-                    "value": {}
+                    "mappingMode": "defineBelow",
+                    "value": {
+                        "Reserva_ID": "={{ $json.Reserva_ID }}",
+                        "Nome_Cliente": "={{ $json.Nome_Cliente }}",
+                        "WhatsApp": "={{ $json.WhatsApp }}",
+                        "Qtd_Pessoas": "={{ $json.Qtd_Pessoas }}",
+                        "Qtd_Adultos": "={{ $json.Qtd_Adultos }}",
+                        "Qtd_Criancas_Meia": "={{ $json.Qtd_Criancas_Meia }}",
+                        "Qtd_Criancas_Free": "={{ $json.Qtd_Criancas_Free }}",
+                        "Mesas_Alocadas": "={{ $json.Mesas_Alocadas }}",
+                        "Observacao": "={{ $json.Observacao }}",
+                        "Timestamp": "={{ $json.Timestamp }}",
+                        "Status": "={{ $json.Status }}"
+                    }
                 }
             },
             "id": "node-sheet-append",
@@ -223,7 +235,7 @@
         },
         {
             "parameters": {
-                "jsCode": "const ids = $input.first().json.idsToUpdate || [];\nreturn ids.map(id => ({\n  json: {\n    Mesa_ID: id,\n    Status: \"OCUPADA\"\n  }\n}));"
+                "jsCode": "const meta = $input.first().json._meta || {};\nconst ids = meta.idsToUpdate || [];\nconst sheetMesas = meta.sheet_mesas || 'Mesas_Terca';\nreturn ids.map(id => ({\n  json: {\n    Mesa_ID: isNaN(parseInt(id, 10)) ? id : parseInt(id, 10),\n    Status: \"RESERVADO\",\n    sheet_mesas: sheetMesas\n  }\n}));"
             },
             "id": "node-js-split",
             "name": "[JS] Separar Mesas",
@@ -240,15 +252,18 @@
                 "documentId": "1LyDrtgOdh9hfEEcZso3r-Bzg5J8XtL1306fsURMK4hk",
                 "sheetName": {
                     "mode": "name",
-                    "value": "={{ $node[\"[JS] Gerar Objeto Reserva\"].json.sheet_mesas }}"
+                    "value": "={{ $json.sheet_mesas }}"
                 },
                 "columns": {
-                    "mappingMode": "autoMapInputData",
-                    "value": {},
+                    "mappingMode": "defineBelow",
+                    "value": {
+                        "Status": "={{ $json.Status }}"
+                    },
                     "matchingColumns": [
                         "Mesa_ID"
                     ]
-                }
+                },
+                "options": {}
             },
             "id": "node-sheet-update",
             "name": "[GSheets] Atualizar Status",
@@ -258,7 +273,53 @@
                 1400,
                 600
             ],
-            "continueOnFail": false
+            "continueOnFail": true
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{ $json._meta.isFull }}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "id": "node-is-full",
+            "name": "É Lotado?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                1100,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const reserva = $node[\"[JS] Gerar Objeto Reserva\"].json;\nreturn {\n  output: \"Estamos lotados! \" + reserva.Nome_Cliente + \" entrou na fila de espera. Avisaremos quando abrir uma vaga. 🍕\",\n  status: \"Na Fila\",\n  isFull: true\n};"
+            },
+            "id": "node-resposta-fila",
+            "name": "Resposta Fila",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                1600,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const newItems = $input.all().map(item => {\n  return {\n    json: {\n      Reserva_ID: item.json.Reserva_ID,\n      Nome_Cliente: item.json.Nome_Cliente,\n      WhatsApp: item.json.WhatsApp,\n      Qtd_Pessoas: item.json.Qtd_Pessoas,\n      Qtd_Adultos: item.json.Qtd_Adultos,\n      Qtd_Criancas_Meia: item.json.Qtd_Criancas_Meia,\n      Qtd_Criancas_Free: item.json.Qtd_Criancas_Free,\n      Mesas_Alocadas: item.json.Mesas_Alocadas,\n      Observacao: item.json.Observacao,\n      Timestamp: item.json.Timestamp,\n      Status: item.json.Status,\n      _meta: item.json._meta\n    }\n  };\n});\nreturn newItems;"
+            },
+            "id": "node-filter-planilha",
+            "name": "[Set] Filtro Planilha",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 1,
+            "position": [
+                1150,
+                300
+            ]
         }
     ],
     "connections": {
@@ -306,7 +367,7 @@
             "main": [
                 [
                     {
-                        "node": "[GSheets] Registrar Reserva",
+                        "node": "[Set] Filtro Planilha",
                         "type": "main",
                         "index": 0
                     }
@@ -328,12 +389,41 @@
             "main": [
                 [
                     {
-                        "node": "[GSheets] Registrar Reserva",
+                        "node": "É Lotado?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "É Lotado?": {
+            "main": [
+                [
+                    {
+                        "node": "[Set] Filtro Planilha",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "[Set] Filtro Planilha",
                         "type": "main",
                         "index": 0
                     },
                     {
                         "node": "[JS] Separar Mesas",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "[Set] Filtro Planilha": {
+            "main": [
+                [
+                    {
+                        "node": "[GSheets] Registrar Reserva",
                         "type": "main",
                         "index": 0
                     }
@@ -352,6 +442,11 @@
                         "node": "[Meta] Confirmação Automática",
                         "type": "main",
                         "index": 0
+                    },
+                    {
+                        "node": "Resposta Fila",
+                        "type": "main",
+                        "index": 0
                     }
                 ]
             ]
@@ -368,6 +463,17 @@
             ]
         },
         "[Meta] Confirmação Automática": {
+            "main": [
+                [
+                    {
+                        "node": "Resposta Final",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Resposta Fila": {
             "main": [
                 [
                     {

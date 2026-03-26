@@ -1,0 +1,122 @@
+{
+    "name": "WAAS_CATCH_WEBSITE_AI",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "waas-chatbot",
+                "responseMode": "lastNode",
+                "options": {}
+            },
+            "id": "e1",
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                240
+            ],
+            "webhookId": "waas-chatbot-ai"
+        },
+        {
+            "parameters": {
+                "promptType": "define",
+                "text": "={{ $json.body.message }}",
+                "hasOutputParser": false,
+                "options": {
+                    "systemMessage": "Você é o assistente virtual exclusivo da barbearia \"Barba & Navalha\". \n\nSeu único objetivo é ser educado, direto e ajudar o cliente a escolher um serviço e dizer que horas ele quer agendar. \n\nNossos serviços são:\n- Corte Clássico (R$ 45)\n- Barba Terapia (R$ 35)\n- Combo Cabelo e Barba (R$ 75)\n\nNoso horário de funcionamento é de Terça a Sexta das 9h às 20h e Sábado das 8h às 18h.\n\nSeja curto, converse de forma natural. Somente responda como a barbearia, nunca saia do personagem. Pergunte gentilmente o que ele deseja agendar e para qual horário."
+                }
+            },
+            "id": "e2",
+            "name": "Basic LLM Chain",
+            "type": "@n8n/n8n-nodes-langchain.chainLlm",
+            "typeVersion": 1.4,
+            "position": [
+                460,
+                240
+            ]
+        },
+        {
+            "parameters": {
+                "modelName": "models/gemini-1.5-flash",
+                "options": {
+                    "temperature": 0.7
+                }
+            },
+            "id": "e3",
+            "name": "Google Gemini Chat Model",
+            "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+            "typeVersion": 1,
+            "position": [
+                460,
+                420
+            ],
+            "credentials": {
+                "googleApi": {
+                    "id": "dummy",
+                    "name": "Google Gemini account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "keepOnlySet": true,
+                "values": {
+                    "string": [
+                        {
+                            "name": "reply",
+                            "value": "={{ $json.text }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "e4",
+            "name": "Format Output",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3,
+            "position": [
+                860,
+                240
+            ]
+        }
+    ],
+    "pinData": {},
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Basic LLM Chain",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Basic LLM Chain": {
+            "main": [
+                [
+                    {
+                        "node": "Format Output",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Google Gemini Chat Model": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "Basic LLM Chain",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {}
+}

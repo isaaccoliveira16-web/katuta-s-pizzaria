@@ -19,7 +19,7 @@
         },
         {
             "parameters": {
-                "jsCode": "// Adaptador Meta -> Formato do Cérebro\n// Meta envia: entry[0].changes[0].value.messages[0]\nconst entry = $input.item.json.body?.entry || $input.item.json.entry || [];\nlet message = \"\";\nlet whatsapp_id = \"\";\n\nif (entry.length > 0) {\n  const changes = entry[0].changes || [];\n  if (changes.length > 0) {\n    const value = changes[0].value || {};\n    const messages = value.messages || [];\n    if (messages.length > 0) {\n      message = messages[0].text?.body || \"\";\n      whatsapp_id = messages[0].from || \"\";\n    }\n  }\n}\n\nreturn {\n  whatsapp_id: whatsapp_id,\n  message: message\n};"
+                "jsCode": "// Adaptador Meta -> Formato do Cérebro\n// Meta envia: entry[0].changes[0].value.messages[0]\nconst entry = $input.item.json.body?.entry || $input.item.json.entry || [];\nlet message = \"\";\nlet whatsapp_id = \"\";\n\nif (entry.length > 0) {\n  const changes = entry[0].changes || [];\n  if (changes.length > 0) {\n    const value = changes[0].value || {};\n    const messages = value.messages || [];\n    if (messages.length > 0) {\n      const msg = messages[0];\n      whatsapp_id = msg.from || \"\";\n      \n      // Lógica para extrair texto de vários tipos (Texto, Botão, Resposta Rápida)\n      if (msg.type === 'text') {\n        message = msg.text?.body || \"\";\n      } else if (msg.type === 'button') {\n        message = msg.button?.text || \"\";\n      } else if (msg.type === 'interactive') {\n        // Botões de Template ou Listas\n        message = msg.interactive?.button_reply?.title || msg.interactive?.list_reply?.title || \"\";\n      }\n    }\n  }\n}\n\n// SE NÃO TIVER MENSAGEM (Ex: Status de 'Lido', 'Entregue'), PARE AQUI.\nif (!message || !whatsapp_id) {\n  return [];\n}\n\nreturn {\n  whatsapp_id: whatsapp_id,\n  sessionId: whatsapp_id,\n  chatInput: message\n};"
             },
             "id": "node-adapter-meta",
             "name": "[JS] Adaptador Meta",
@@ -48,31 +48,13 @@
         {
             "parameters": {
                 "method": "POST",
-                "url": "https://graph.facebook.com/v21.0/SEU_PHONE_NUMBER_ID/messages",
+                "url": "https://graph.facebook.com/v21.0/901240869748858/messages",
                 "authentication": "genericCredentialType",
                 "genericAuthType": "httpHeaderAuth",
                 "sendBody": true,
                 "contentType": "json",
-                "bodyParameters": {
-                    "parameters": [
-                        {
-                            "name": "messaging_product",
-                            "value": "whatsapp"
-                        },
-                        {
-                            "name": "to",
-                            "value": "={{ $json.whatsapp_id }}"
-                        },
-                        {
-                            "name": "type",
-                            "value": "text"
-                        },
-                        {
-                            "name": "text",
-                            "value": "={{ JSON.stringify({body: $json.output}) }}"
-                        }
-                    ]
-                },
+                "specifyBody": "json",
+                "jsonBody": "={{ JSON.stringify({ messaging_product: \"whatsapp\", to: $('[JS] Adaptador Meta').item.json.whatsapp_id, type: \"text\", text: { body: (typeof $json.output === 'object' ? $json.output.output : $json.output) || \"Olá!\" } }) }}",
                 "options": {}
             },
             "id": "node-send-meta",
@@ -85,6 +67,37 @@
             ],
             "continueOnFail": true,
             "notes": "⚠️ PLACEHOLDER: Substitua SEU_PHONE_NUMBER_ID pela sua Phone Number ID da Meta e configure as credenciais HTTP Header Auth com o Access Token."
+        },
+        {
+            "parameters": {
+                "httpMethod": "GET",
+                "path": "katuta-chat-flow",
+                "responseMode": "responseNode",
+                "options": {}
+            },
+            "id": "node-webhook-verify",
+            "name": "Webhook Meta (Verify)",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                500
+            ]
+        },
+        {
+            "parameters": {
+                "respondWith": "text",
+                "responseBody": "={{ $json.query['hub.challenge'] }}",
+                "options": {}
+            },
+            "id": "node-respond-verify",
+            "name": "Responder Verificação",
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1,
+            "position": [
+                450,
+                500
+            ]
         }
     ],
     "connections": {
@@ -93,6 +106,17 @@
                 [
                     {
                         "node": "[JS] Adaptador Meta",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook Meta (Verify)": {
+            "main": [
+                [
+                    {
+                        "node": "Responder Verificação",
                         "type": "main",
                         "index": 0
                     }

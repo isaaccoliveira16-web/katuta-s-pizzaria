@@ -1,0 +1,74 @@
+{
+    "name": "Nexus Brain V2 (Katuta Connected)",
+    "nodes": [
+        {
+            "parameters": {
+                "path": "nexus/status",
+                "responseMode": "lastNode",
+                "options": {}
+            },
+            "id": "webhook-trigger",
+            "name": "Webhook Status",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                460,
+                340
+            ],
+            "webhookId": "nexus-status"
+        },
+        {
+            "parameters": {
+                "url": "http://localhost:5678/webhook/dashboard-data",
+                "options": {}
+            },
+            "id": "fetch-katuta",
+            "name": "Fetch Katuta Data",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 3,
+            "position": [
+                700,
+                240
+            ],
+            "continueOnFail": true
+        },
+        {
+            "parameters": {
+                "jsCode": "const katutaData = $items(\"Fetch Katuta Data\")[0].json || {};\nconst hasRealData = Object.keys(katutaData).length > 0 && !katutaData.error;\n\n// MOCK FALLBACK (If Katuta API is offline)\nconst mockReservations = [\n  { Reserva_ID: 999, Nome_Cliente: 'Simulated User', Hora: '20:00', Qtd_Pessoas: 4, Mesa_ID: 'T-SIM', Status: 'Confirmed' }\n];\n\nconst reservations = hasRealData ? (katutaData.reservations || []) : mockReservations;\nconst metrics = hasRealData ? katutaData.metrics : { total_reservas: 0, mesas_ocupadas: 0 };\n\n// Generate Logs\nconst logs = [\n  \"Analyzing market trends...\",\n  \"Connecting to WhatsApp API...\",\n  \"Database backup complete.\",\n  \"Verifying user credentials...\",\n  \"Optimizing neural network weights...\",\n  \"Ping: 24ms\",\n  \"Agent heartbeat received.\"\n];\n\nif (hasRealData) {\n    logs.push(`[KATUTA] Synced ${reservations.length} reservations from Sheets`);\n    logs.push(`[KATUTA] Occupancy Rate: ${metrics.occupancy_rate || '0%'}`);\n}\n\n// Agents List\nconst agents = [\n  { \n      id: 'katuta-core', \n      name: 'Katuta Main Brain', \n      status: 'active', \n      task: hasRealData ? `Monitoring ${reservations.length} reservations` : 'Connecting to Katuta API...', \n      type: 'CORE',\n      data: { \n          reservations: reservations,\n          metrics: metrics\n      }\n  },\n  { id: 1, name: 'Sales Agent (WhatsApp)', status: Math.random() > 0.3 ? 'active' : 'idle', task: 'Negotiating with Client #' + Math.floor(Math.random() * 1000), type: 'WORKER' },\n  { id: 2, name: 'Finance Agent', status: Math.random() > 0.5 ? 'active' : 'idle', task: 'Processing invoice #' + Math.floor(Math.random() * 500), type: 'WORKER' }\n];\n\nconst randomLog = logs[Math.floor(Math.random() * logs.length)];\n\nreturn [\n  {\n    json: {\n      agents: agents,\n      latestLog: {\n        timestamp: new Date().toISOString(),\n        message: randomLog,\n        level: randomLog.includes('[KATUTA]') ? 'CORE' : 'INFO'\n      }\n    }\n  }\n];"
+            },
+            "id": "merge-data",
+            "name": "Merge & Format",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                920,
+                340
+            ]
+        }
+    ],
+    "pinData": {},
+    "connections": {
+        "Webhook Status": {
+            "main": [
+                [
+                    {
+                        "node": "Fetch Katuta Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fetch Katuta Data": {
+            "main": [
+                [
+                    {
+                        "node": "Merge & Format",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}

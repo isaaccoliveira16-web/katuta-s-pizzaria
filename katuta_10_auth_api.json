@@ -1,0 +1,194 @@
+{
+    "name": "KATUTA_AUTH_API",
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "katuta-auth",
+                "responseMode": "lastNode",
+                "options": {}
+            },
+            "id": "e1f13880-ff17-48f8-b3f5-7c08a49c66cc",
+            "name": "Webhook Auth",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                200,
+                300
+            ],
+            "webhookId": "katuta-auth-webhook-id-replace-me"
+        },
+        {
+            "parameters": {
+                "operation": "lookup",
+                "documentId": {
+                    "__rl": true,
+                    "value": "ENTER_YOUR_SHEET_ID_HERE",
+                    "mode": "id"
+                },
+                "sheetName": {
+                    "__rl": true,
+                    "value": "Usuarios_Admin",
+                    "mode": "name"
+                },
+                "lookupColumn": "Username",
+                "lookupValue": "={{ $json.body.username }}"
+            },
+            "id": "4da659de-1f29-42b7-a3f1-dcd16bcf6b96",
+            "name": "Busca Usuario (Sheets)",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 3,
+            "position": [
+                400,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "string": [
+                        {
+                            "value1": "={{ $json.Password }}",
+                            "value2": "={{ $('Webhook Auth').item.json.body.password }}"
+                        }
+                    ]
+                }
+            },
+            "id": "6c36199b-f8fe-4e5c-9c76-590d0b0b8c65",
+            "name": "Valida Senha",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                600,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Access-Control-Allow-Origin",
+                                "value": "*"
+                            }
+                        ]
+                    }
+                }
+            },
+            "id": "2db4df44-2451-40be-aaa8-52c789196b05",
+            "name": "Sucesso",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 2,
+            "position": [
+                800,
+                200
+            ],
+            "parameters_from_ui": {
+                "keepOnlySet": true,
+                "values": {
+                    "boolean": [
+                        {
+                            "name": "success",
+                            "value": true
+                        }
+                    ],
+                    "string": [
+                        {
+                            "name": "role",
+                            "value": "={{ $json.Role }}"
+                        },
+                        {
+                            "name": "name",
+                            "value": "={{ $json.Name }}"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "parameters": {
+                "options": {
+                    "responseHeaders": {
+                        "entries": [
+                            {
+                                "name": "Access-Control-Allow-Origin",
+                                "value": "*"
+                            }
+                        ]
+                    }
+                }
+            },
+            "id": "018f7db0-37de-497b-952a-ebb044d0fd06",
+            "name": "Falha Auth",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 2,
+            "position": [
+                800,
+                400
+            ],
+            "parameters_from_ui": {
+                "keepOnlySet": true,
+                "values": {
+                    "boolean": [
+                        {
+                            "name": "success",
+                            "value": false
+                        }
+                    ],
+                    "string": [
+                        {
+                            "name": "message",
+                            "value": "Usuário ou senha inválidos."
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "pinData": {},
+    "connections": {
+        "Webhook Auth": {
+            "main": [
+                [
+                    {
+                        "node": "Busca Usuario (Sheets)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Busca Usuario (Sheets)": {
+            "main": [
+                [
+                    {
+                        "node": "Valida Senha",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Valida Senha": {
+            "main": [
+                [
+                    {
+                        "node": "Sucesso",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Falha Auth",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": false,
+    "settings": {}
+}
