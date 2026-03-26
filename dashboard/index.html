@@ -567,7 +567,10 @@
 
     <script>
         // CORE ENGINE CONFIG
-        const API_URL = "http://localhost:5678/webhook/dashboard-data";
+        const N8N_BASE = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') 
+            ? 'http://localhost:5678' 
+            : 'https://disaffectedly-vibrative-rafael.ngrok-free.dev';
+        const API_URL = N8N_BASE + "/webhook/dashboard-data";
 
         let currentUser = null;
         let rawData = null;

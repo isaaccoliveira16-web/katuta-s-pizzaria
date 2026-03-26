@@ -1,8 +1,12 @@
 // AUTENTICAÇÃO REAL (Integração n8n + Google Sheets)
 // Este módulo agora verifica o usuário contra a base de dados em tempo real.
 
-const AUTH_API_URL = "http://localhost:5678/webhook/katuta-auth";
-const CREATE_USER_API_URL = "http://localhost:5678/webhook/katuta-create-user";
+const N8N_BASE = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') 
+    ? 'http://localhost:5678' 
+    : 'https://disaffectedly-vibrative-rafael.ngrok-free.dev';
+
+const AUTH_API_URL = N8N_BASE + "/webhook/katuta-auth";
+const CREATE_USER_API_URL = N8N_BASE + "/webhook/katuta-create-user";
 const SESSION_KEY = 'katuta_auth_user';
 
 const Auth = {
