@@ -1,96 +1,37 @@
-// AUTENTICAÇÃO REAL (Integração n8n + Google Sheets)
-// Este módulo agora verifica o usuário contra a base de dados em tempo real.
+// AUTENTICAÇÃO SIMPLES (Client-Side)
+// Como não temos banco de dados no frontend estático, usamos isso.
+// Em produção real, isso deveria ser via API. Para o MVP, serve.
 
-const N8N_BASE = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') 
-    ? 'http://localhost:5678' 
-    : 'https://disaffectedly-vibrative-rafael.ngrok-free.dev';
+const USERS = {
+    'admin': { pass: 'katuta2024!', role: 'admin', name: 'Externo' },
+    'maicon': { pass: 'pizza123', role: 'admin', name: 'Maicon (Gerente)' },
+    'colab1': { pass: 'colab003', role: 'viewer', name: 'Colaboradora 1' },
+    'colab2': { pass: 'colab008', role: 'viewer', name: 'Colaboradora 2' },
+    'kaue': { pass: 'kaue123', role: 'viewer', name: 'Kauê' }
+};
 
-const AUTH_API_URL = N8N_BASE + "/webhook/katuta-auth";
-const CREATE_USER_API_URL = N8N_BASE + "/webhook/katuta-create-user";
 const SESSION_KEY = 'katuta_auth_user';
 
 const Auth = {
-    /**
-     * Faz login chamando a API do n8n (Google Sheets)
-     */
-    login: async (username, password) => {
-        try {
-            const response = await fetch(AUTH_API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-
-            if (!response.ok) {
-                return { success: false, message: 'Erro ao se conectar com o servidor.' };
-            }
-
-            const data = await response.json();
-
-            // O n8n deve retornar um array ou o primeiro item
-            const result = Array.isArray(data) ? data[0] : data;
-
-            if (result && result.success) {
-                const sessionData = {
-                    username: username,
-                    role: result.role,
-                    name: result.name,
-                    loginTime: new Date().getTime()
-                };
-                sessionStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
-                return { success: true };
-            }
-
-            return { success: false, message: result?.message || 'Usuário ou senha inválidos' };
-
-        } catch (error) {
-            console.error("Erro na autenticação:", error);
-            // FALLBACK DE SEGURANÇA LOCAL (apenas caso o n8n esteja fora do ar e precise entrar de emergência)
-            if (username === 'admin' && password === 'katuta2025!') {
-                sessionStorage.setItem(SESSION_KEY, JSON.stringify({ username: 'admin', role: 'admin', name: 'Master' }));
-                return { success: true, message: 'Fallback local ativado (n8n offline).' };
-            }
-            return { success: false, message: 'Erro de conexão HTTP.' };
+    login: (username, password) => {
+        const user = USERS[username.toLowerCase()];
+        if (user && user.pass === password) {
+            // Salva apenas dados não sensíveis na sessão
+            const sessionData = {
+                username: username,
+                role: user.role,
+                name: user.name,
+                loginTime: new Date().getTime()
+            };
+            sessionStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+            return { success: true };
         }
-    },
-
-    /**
-     * Cria um novo usuário na planilha (Somente Admins)
-     */
-    createUser: async (newUsername, newPassword, newName, newRole) => {
-        if (!Auth.canEdit()) {
-            return { success: false, message: 'Permissão negada. Apenas Admins podem criar usuários.' };
-        }
-
-        try {
-            const response = await fetch(CREATE_USER_API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: newUsername,
-                    password: newPassword,
-                    name: newName,
-                    role: newRole,
-                    adminUser: Auth.getUser().username // Registro de quem criou
-                })
-            });
-
-            if (!response.ok) throw new Error('Falha na requisição');
-
-            const data = await response.json();
-            const result = Array.isArray(data) ? data[0] : data;
-
-            return { success: true, message: result?.message || 'Usuário criado com sucesso!' };
-
-        } catch (error) {
-            console.error("Erro ao criar usuário:", error);
-            return { success: false, message: 'Erro de conexão com a API de usuários.' };
-        }
+        return { success: false, message: 'Usuário ou senha incorretos' };
     },
 
     logout: () => {
         sessionStorage.removeItem(SESSION_KEY);
-        window.location.href = '/dashboard/login.html';
+        window.location.href = 'login.html';
     },
 
     checkAuth: () => {
@@ -107,6 +48,7 @@ const Auth = {
         return session ? JSON.parse(session) : null;
     },
 
+    // Permissões
     canEdit: () => {
         const user = Auth.getUser();
         return user && user.role === 'admin';

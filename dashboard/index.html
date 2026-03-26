@@ -4,39 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vértice | Painel de Controle (WaaS)</title>
-    <!-- Fontes Oficiais Vértice -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&display=swap"
-        rel="stylesheet">
-    <!-- Ícones -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <title>Katuta's Admin</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #CCFF00;
-            --primary-dark: #a3cc00;
-            --bg-dark: #050505;
-            --bg-card: #111111;
-            --bg-hover: #1a1a1a;
-            --text-main: #FFFFFF;
-            --text-muted: #AAAAAA;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --danger: #ff3333;
-            --success: #CCFF00;
-            /* Reusing Lime for Success to keep aesthetic */
-
-            --font-heading: 'Space Grotesk', sans-serif;
-            --font-body: 'Inter', sans-serif;
+            --bg-dark: #0a0a0a;
+            --surface: #141414;
+            --surface-hover: #1e1e1e;
+            --primary: #d4af37;
+            /* Dourado Premium */
+            --primary-hover: #b5952f;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --success: #2ecc71;
+            --warning: #f1c40f;
+            --danger: #e74c3c;
+            --border: #333;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: var(--font-body);
+            font-family: 'Outfit', sans-serif;
         }
 
         body {
@@ -49,9 +40,9 @@
 
         /* HEADER */
         header {
-            background: rgba(5, 5, 5, 0.95);
+            background: rgba(20, 20, 20, 0.95);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -65,54 +56,31 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            font-family: var(--font-heading);
-            font-weight: 700;
-            font-size: 24px;
         }
 
-        .logo-area .brand-name {
-            letter-spacing: -0.5px;
-        }
-
-        .logo-area span.arrow {
-            color: var(--primary);
-        }
-
-        .logo-client {
-            font-size: 13px;
-            color: var(--text-muted);
-            border-left: 1px solid var(--border-color);
-            padding-left: 12px;
-            margin-left: 12px;
-            font-weight: 400;
-            font-family: var(--font-body);
-        }
-
-        .user-actions {
+        .logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #8e7018);
             display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 1.5rem;
+            font-weight: bold;
+            color: #000;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
         }
 
         .date-display {
             color: var(--text-muted);
             font-size: 0.9rem;
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-outline:hover {
-            border-color: var(--text-main);
-            color: var(--text-main);
         }
 
         /* MAIN CONTENT */
@@ -133,16 +101,17 @@
         }
 
         .metric-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             padding: 1.5rem;
-            transition: transform 0.2s, border-color 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .metric-card:hover {
             transform: translateY(-2px);
-            border-color: rgba(204, 255, 0, 0.4);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary);
         }
 
         .metric-header {
@@ -166,8 +135,7 @@
         }
 
         .metric-value {
-            font-family: var(--font-heading);
-            font-size: 32px;
+            font-size: 2.5rem;
             font-weight: 700;
             color: var(--text-main);
             line-height: 1;
@@ -176,7 +144,8 @@
         .metric-sub {
             font-size: 0.85rem;
             margin-top: 0.5rem;
-            color: var(--text-muted);
+            color: var(--success);
+            /* Default to green */
         }
 
         /* ACTIONS BAR */
@@ -190,8 +159,7 @@
         }
 
         .section-title {
-            font-family: var(--font-heading);
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             font-weight: 600;
         }
 
@@ -201,84 +169,42 @@
             flex-wrap: wrap;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: var(--bg-dark);
-            border: none;
+        button {
+            background: var(--surface);
+            color: var(--text-main);
+            border: 1px solid var(--border);
             padding: 0.6rem 1.2rem;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 500;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-family: var(--font-heading);
         }
 
-        .btn-primary:hover {
-            background: var(--primary-dark);
+        button:hover {
+            background: var(--surface-hover);
+            border-color: var(--text-muted);
         }
 
-        /* TOOLBAR */
-        .toolbar {
-            display: flex;
-            gap: 15px;
-            background: var(--bg-card);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+        button.primary {
+            background: var(--primary);
+            color: #000;
+            border: none;
         }
 
-        .search-container {
-            position: relative;
-            flex: 1;
-            max-width: 400px;
-            min-width: 200px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 10px 10px 10px 35px;
-            background: var(--bg-dark);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            color: white;
-            outline: none;
-            transition: border-color 0.2s;
-            font-size: 14px;
-        }
-
-        .search-input:focus {
-            border-color: rgba(204, 255, 0, 0.5);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            pointer-events: none;
-        }
-
-        input[type="date"] {
-            background: var(--bg-dark);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 10px;
-            border-radius: 4px;
-            color-scheme: dark;
+        button.primary:hover {
+            background: var(--primary-hover);
         }
 
         /* DATA TABLE */
         .table-container {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             overflow: hidden;
+            /* Arredonda cantos da tabela */
         }
 
         table {
@@ -288,8 +214,7 @@
         }
 
         thead {
-            background: rgba(255, 255, 255, 0.02);
-            border-bottom: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.03);
         }
 
         th {
@@ -303,52 +228,106 @@
 
         td {
             padding: 1rem 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid var(--border);
             font-size: 0.95rem;
         }
 
         tr:hover td {
-            background: rgba(204, 255, 0, 0.02);
+            background: rgba(255, 255, 255, 0.02);
         }
 
         /* STATUS BADGES */
         .status-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .status-confirmada {
-            background: rgba(204, 255, 0, 0.1);
-            color: var(--primary);
-            border: 1px solid rgba(204, 255, 0, 0.2);
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
         }
 
         .status-pendente {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
+            background: rgba(241, 196, 15, 0.15);
+            color: #f1c40f;
         }
 
         .status-cancelada {
-            background: rgba(255, 51, 51, 0.1);
-            color: var(--danger);
-            border: 1px solid rgba(255, 51, 51, 0.2);
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
         }
 
         .status-finalizada {
-            background: rgba(52, 152, 219, 0.1);
-            color: #3498DB;
-            border: 1px solid rgba(52, 152, 219, 0.2);
+            background: rgba(52, 152, 219, 0.15);
+            color: #3498db;
         }
 
         .status-fila {
-            background: rgba(230, 126, 34, 0.1);
+            background: rgba(230, 126, 34, 0.15);
             color: #e67e22;
-            border: 1px solid rgba(230, 126, 34, 0.2);
+        }
+
+        /* SEARCH INPUT */
+        .search-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+            min-width: 200px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            /* Space for icon */
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .controls {
+                justify-content: space-between;
+                margin-top: 10px;
+            }
+
+            /* Scroll horizontal na tabela para mobile */
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 600px;
+                /* Força largura mínima para scroll */
+            }
         }
 
         /* LOADING OVERLAY */
@@ -364,61 +343,48 @@
             display: none;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
         }
 
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border-color);
-            border-top: 3px solid var(--primary);
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-        }
-
-        /* MODAL DE USUÁRIOS */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 30px;
-            border-radius: 8px;
-            width: 400px;
-            max-width: 90%;
-        }
-
-        .modal-title {
-            font-family: var(--font-heading);
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-        }
-
-        .modal-input {
-            width: 100%;
-            padding: 10px;
-            background: var(--bg-dark);
-            border: 1px solid var(--border-color);
-            color: white;
-            border-radius: 4px;
-            margin-bottom: 15px;
         }
 
         @keyframes spin {
             100% {
                 transform: rotate(360deg);
             }
+        }
+
+        /* TOOLBAR STYLES */
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            background: var(--surface);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="date"] {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px;
+            border-radius: 6px;
+            color-scheme: dark;
         }
     </style>
 </head>
@@ -430,21 +396,16 @@
         <div class="spinner"></div>
     </div>
 
-    <!-- HEADER VERTICE -->
     <header>
         <div class="logo-area">
-            <div class="brand-name">VERTICE<span class="arrow">↗</span></div>
-            <div class="logo-client">Katuta's Ocupação (WaaS)</div>
+            <div class="logo-circle">K</div>
+            <span class="logo-text">Katuta's Admin</span>
         </div>
-        <div class="user-actions">
-            <div class="date-display" id="currentDate">Sincronizando...</div>
-            <div id="userInfo" style="font-size: 0.85rem; color: var(--primary); font-weight: 500;"></div>
-
-            <button id="btnCreateUser" onclick="openUserModal()" class="btn-outline"
-                style="display: none; border-color: var(--primary); color: var(--primary);">
-                <i class="fa-solid fa-user-plus"></i> Novo Acesso
-            </button>
-            <button onclick="Auth.logout()" class="btn-outline">Disconnect</button>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="date-display" id="currentDate">Carregando...</div>
+            <div id="userInfo" style="font-size: 0.9rem; color: var(--primary); font-weight: 600;"></div>
+            <button onclick="Auth.logout()"
+                style="padding: 5px 10px; font-size: 0.8rem; background: rgba(255,255,255,0.1); border: 1px solid var(--border);">Sair</button>
         </div>
     </header>
 
@@ -453,50 +414,51 @@
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-header">
-                    <span class="metric-title">Reservas Registradas</span>
-                    <i class="fa-solid fa-calendar-check metric-icon"></i>
+                    <span class="metric-title">Reservas Hoje</span>
+                    <span class="metric-icon">📅</span>
                 </div>
                 <div class="metric-value" id="totalReservas">-</div>
-                <div class="metric-sub" style="color: var(--primary);">Tickets processados</div>
+                <div class="metric-sub">Confirmadas</div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-header">
-                    <span class="metric-title">Volume (Pessoas)</span>
-                    <i class="fa-solid fa-users metric-icon"></i>
+                    <span class="metric-title">Total Pessoas (Pax)</span>
+                    <span class="metric-icon">👥</span>
                 </div>
                 <div class="metric-value" id="totalPax">-</div>
-                <div class="metric-sub">Capacidade necessária</div>
+                <div class="metric-sub">Clientes esperados</div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-header">
-                    <span class="metric-title">Estado da Operação</span>
-                    <i class="fa-solid fa-satellite-dish metric-icon"></i>
+                    <span class="metric-title">Ocupação Mesas</span>
+                    <span class="metric-icon">🍕</span>
                 </div>
-                <div class="metric-value" id="occupancyRate" style="font-size: 24px; margin-bottom: 5px;">-</div>
-                <div class="metric-sub" id="mesasLivresText" style="color: var(--primary)">Sincronizando Engine</div>
+                <div class="metric-value" id="occupancyRate">-</div>
+                <div class="metric-sub" id="mesasLivresText" style="color: var(--success)">- mesas livres</div>
             </div>
         </div>
 
-        <!-- ACTIONS & TOOLBAR -->
+        <!-- ACTIONS & FILTERS -->
         <div class="actions-bar">
-            <h2 class="section-title">Log de Operações <span
-                    style="color:var(--text-muted); font-weight:400; font-size:14px;">(Datatable)</span></h2>
+            <h2 class="section-title">Reservas</h2>
+
             <div class="controls">
-                <button class="btn-outline" onclick="fetchData()"><i class="fa-solid fa-rotate"></i> Sync Data</button>
+                <button onclick="fetchData()">Atualizar ↻</button>
             </div>
         </div>
 
-        <div class="toolbar">
+        <!-- TOOLBAR (New) -->
+        <div class="toolbar" style="margin-bottom: 20px;">
             <div class="search-container">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" id="searchInput" class="search-input" placeholder="Query por Nome ou WhatsApp...">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input" placeholder="Buscar por Nome ou WhatsApp...">
             </div>
 
-            <div style="display: flex; gap: 8px;">
+            <div class="filter-group">
                 <input type="date" id="datePicker">
-                <button class="btn-outline" id="btnWeek" onclick="handleWeekView()">Agregação Semanal</button>
+                <button class="primary" id="btnWeek" onclick="handleWeekView()">Ver Semana</button>
             </div>
         </div>
 
@@ -505,19 +467,19 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="25%">Host (Cliente)</th>
-                        <th width="20%">Contato</th>
-                        <th width="10%">Headcount</th>
-                        <th width="15%">State</th>
-                        <th width="10%">Alocação</th>
-                        <th width="15%">Logs</th>
-                        <th width="15%" id="actionsHeader">Admin Overrides</th>
+                        <th width="25%">Nome Cliente</th>
+                        <th width="20%">WhatsApp</th>
+                        <th width="10%">Total Pessoas</th>
+                        <th width="15%">Status</th>
+                        <th width="10%">Mesas</th>
+                        <th width="15%">Obs</th>
+                        <th width="15%" id="actionsHeader">Ações</th>
                     </tr>
                 </thead>
                 <tbody id="reservationsBody">
                     <tr>
-                        <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">
-                            Carregando nodes...
+                        <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                            Carregando dados...
                         </td>
                     </tr>
                 </tbody>
@@ -525,134 +487,41 @@
         </div>
     </main>
 
-    <!-- CREATE USER MODAL -->
-    <div id="userModal" class="modal">
-        <div class="modal-content">
-            <h3 class="modal-title">Provisionar Administrativo</h3>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
-                Adiciona um novo registro na base de dados (n8n > Google Sheets).
-            </p>
-
-            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 5px; display: block;">Nome do
-                Colaborador</label>
-            <input type="text" id="newu_name" class="modal-input" placeholder="Ex: João Silva">
-
-            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 5px; display: block;">Usuário de
-                Acesso (Username)</label>
-            <input type="text" id="newu_login" class="modal-input" placeholder="Ex: joao.silva">
-
-            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 5px; display: block;">Senha
-                Inicial</label>
-            <input type="password" id="newu_pass" class="modal-input" placeholder="••••••••">
-
-            <label style="font-size: 11px; color: var(--text-muted); margin-bottom: 5px; display: block;">Nível de
-                Acesso (Role)</label>
-            <select id="newu_role" class="modal-input">
-                <option value="admin">Administrador Total</option>
-                <option value="viewer">Apenas Leitura</option>
-            </select>
-
-            <div id="userModalMsg" style="font-size: 12px; margin-bottom: 10px; text-align: center;"></div>
-
-            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
-                <button onclick="closeUserModal()" class="btn-outline">Cancelar</button>
-                <button onclick="submitNewUser()" class="btn-primary" id="btnSubmitUser">Executar
-                    Provisionamento</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Import Auth Engine -->
-    <script src="auth.js"></script>
-
+    </main>
+    <footer style="text-align: center; color: #444; padding: 10px; font-size: 0.8rem;">
+        Katuta's Admin v2.5 - UI Updated
+    </footer>
+    </main>
+    <!-- Use absolute path for Vercel routing -->
+    <script src="/katutas-dashboard/auth.js"></script>
     <script>
-        // CORE ENGINE CONFIG
-        const N8N_BASE = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') 
-            ? 'http://localhost:5678' 
-            : 'https://disaffectedly-vibrative-rafael.ngrok-free.dev';
-        const API_URL = N8N_BASE + "/webhook/dashboard-data";
+        // CONFIG - Defined FIRST to avoid initialization errors
+        const API_URL = "http://localhost:5678/webhook/dashboard-data";
 
+        // AUTH CHECK
         let currentUser = null;
-        let rawData = null;
+        if (typeof Auth !== 'undefined') {
+            currentUser = Auth.checkAuth();
+            if (currentUser) {
+                document.getElementById('userInfo').textContent = `Ola, ${currentUser.name}`;
+                // Hide Actions Header if not admin
+                if (!Auth.canEdit()) {
+                    const actHeader = document.getElementById('actionsHeader');
+                    if (actHeader) actHeader.style.display = 'none';
+                }
+            }
+        } else {
+            console.error("Auth module failed to load.");
+            document.getElementById('userInfo').textContent = "Erro de Autenticação";
+        }
+        // CONFIG
+
+
+        // STATE
+        let rawData = null; // Store fetched data for filtering
         let isWeeklyView = false;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // AUTH CHECK
-            if (typeof Auth !== 'undefined') {
-                currentUser = Auth.checkAuth();
-                if (currentUser) {
-                    document.getElementById('userInfo').textContent = `[ID: ${currentUser.username}]`;
-                    if (Auth.canEdit()) {
-                        document.getElementById('btnCreateUser').style.display = 'inline-flex';
-                    } else {
-                        const actHeader = document.getElementById('actionsHeader');
-                        if (actHeader) actHeader.style.display = 'none';
-                    }
-                }
-            } else {
-                window.location.href = '/dashboard/login.html';
-            }
-
-            // INIT CALENDAR
-            document.getElementById('datePicker').value = new Date().toISOString().split('T')[0];
-            fetchData();
-
-            // EVENT LISTENERS
-            document.getElementById('searchInput').addEventListener('input', (e) => filterTable(e.target.value));
-            document.getElementById('datePicker').addEventListener('change', () => { isWeeklyView = false; fetchData(); });
-        });
-
-        // ----------------------------------------------------
-        // FUNÇÕES DE USER MANAGEMENT
-        // ----------------------------------------------------
-        function openUserModal() {
-            document.getElementById('userModal').style.display = 'flex';
-            document.getElementById('userModalMsg').innerHTML = '';
-        }
-
-        function closeUserModal() {
-            document.getElementById('userModal').style.display = 'none';
-        }
-
-        async function submitNewUser() {
-            const btn = document.getElementById('btnSubmitUser');
-            const msg = document.getElementById('userModalMsg');
-
-            const name = document.getElementById('newu_name').value.trim();
-            const login = document.getElementById('newu_login').value.trim();
-            const pass = document.getElementById('newu_pass').value.trim();
-            const role = document.getElementById('newu_role').value;
-
-            if (!name || !login || !pass) {
-                msg.innerHTML = '<span style="color: var(--danger)">Preencha todos os campos corretamente.</span>';
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerText = 'Processando (n8n)...';
-            msg.innerHTML = '<span style="color: var(--text-muted)">Conectando ao banco Vértice...</span>';
-
-            const result = await Auth.createUser(login, pass, name, role);
-
-            btn.disabled = false;
-            btn.innerText = 'Executar Provisionamento';
-
-            if (result.success) {
-                msg.innerHTML = `<span style="color: var(--primary)">${result.message}</span>`;
-                setTimeout(() => {
-                    closeUserModal();
-                    document.getElementById('newu_name').value = '';
-                    document.getElementById('newu_login').value = '';
-                    document.getElementById('newu_pass').value = '';
-                }, 2000);
-            } else {
-                msg.innerHTML = `<span style="color: var(--danger)">${result.message}</span>`;
-            }
-        }
-
-        // ----------------------------------------------------
-        // FUNÇÕES DE DADOS E TABELA (Mantidas do original, mas refinadas)
-        // ----------------------------------------------------
+        // UTILS
         const formatPhone = (phone) => {
             if (!phone) return '-';
             phone = phone.toString().replace(/\D/g, '');
@@ -661,32 +530,51 @@
             return phone;
         };
 
-        const showLoading = (show, msg = "") => {
-            document.getElementById('loading').style.display = show ? 'flex' : 'none';
-        };
+        const getTodayDate = () => new Date().toISOString().split('T')[0];
 
-        async function fetchFromApi(url) {
-            const res = await fetch(url, { headers: { 'ngrok-skip-browser-warning': 'true', 'Content-Type': 'application/json' } });
-            if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-            return await res.json();
-        }
+        // INIT
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set DatePicker to Today
+            const today = getTodayDate();
+            document.getElementById('datePicker').value = today;
+
+            // Initial Fetch
+            fetchData();
+
+            // Search Filter Listener
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                filterTable(e.target.value);
+            });
+
+            // Date Picker Listener
+            document.getElementById('datePicker').addEventListener('change', () => {
+                isWeeklyView = false;
+                fetchData();
+            });
+        });
 
         async function fetchData() {
-            showLoading(true);
+            showLoading(true, "Buscando dados...");
             try {
                 const selectedDate = document.getElementById('datePicker').value;
                 const url = new URL(API_URL);
                 url.searchParams.append('date', selectedDate);
-                url.searchParams.append('_', new Date().getTime());
+                url.searchParams.append('_', new Date().getTime()); // Cache Buster
 
                 const data = await fetchFromApi(url);
+
                 rawData = data;
                 isWeeklyView = false;
                 renderDashboard(data);
+
+                // Update specific elements directly
                 document.getElementById('currentDate').textContent = data.meta ? `${data.meta.day} - ${data.meta.date}` : selectedDate;
+
             } catch (error) {
                 console.error("Erro ao buscar dados:", error);
-                document.getElementById('reservationsBody').innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--danger);">Connection Error: Verifica o Engine Local (n8n).</td></tr>`;
+                // SHOW REAL ERROR
+                alert(`Erro técnico: ${error.message}\nVerifique o console (F12) para mais detalhes.`);
+                document.getElementById('reservationsBody').innerHTML = `<tr><td colspan="6" style="text-align:center; color: #e74c3c;">Erro: ${error.message}</td></tr>`;
             } finally {
                 showLoading(false);
             }
@@ -698,12 +586,29 @@
         }
 
         function getWeekDates(currentDate) {
+            // Logic: Get TUESDAY (Start of business week) to SUNDAY
+            // If Monday, go to next Tuesday? Or show past week? Assuming current week.
+            // Simplified: Get current week's Tuesday to Sunday.
+
             const d = new Date(currentDate);
-            const day = d.getDay();
-            const diff = d.getDate() - day + (day == 0 ? -6 : 1);
+            const day = d.getDay(); // 0-6
+            const diff = d.getDate() - day + (day == 0 ? -6 : 1); // Adjust when day is Sunday
+            // Start is Monday, but business starts Tuesday (index 2)
+            // Let's grab Tuesday to Sunday specifically
+
+            /* 
+              Strategy: 
+              Find the "Monday" of this week as anchor.
+              Then iterate Day +1 (Tue) to Day +6 (Sun).
+            */
             const monday = new Date(d.setDate(diff));
+
             const dates = [];
-            for (let i = 1; i <= 6; i++) {
+            for (let i = 1; i <= 6; i++) { // Tue(1 after mon) to Sun(6 after mon)? No.
+                // Monday is base.
+                // Tue = Mon + 1
+                // Wed = Mon + 2 ...
+                // Sun = Mon + 6
                 const nextDay = new Date(monday);
                 nextDay.setDate(monday.getDate() + i);
                 dates.push(nextDay);
@@ -711,24 +616,61 @@
             return dates;
         }
 
+        async function confirmReservation(id) {
+            if (!confirm('Confirmar esta reserva?')) return;
+
+            await updateReservationStatus(id, 'CONFIRMADO');
+        }
+
+        async function cancelReservation(id) {
+            if (!confirm('Cancelar esta reserva? Isso liberará as mesas associadas.')) return;
+
+            await updateReservationStatus(id, 'CANCELADO');
+        }
+        // Shared fetcher
+        async function fetchFromApi(url) {
+            const res = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'ngrok-skip-browser-warning': 'true',
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+            return await res.json();
+        }
+
         async function fetchWeeklyData() {
-            showLoading(true);
+            showLoading(true, "Carregando semana... (Isso pode demorar um pouco)");
             try {
                 const anchorDate = new Date(document.getElementById('datePicker').value + 'T12:00:00');
                 const datesToFetch = getWeekDates(anchorDate);
+
+                // SERIAL FETCH to avoid choking local n8n database
                 const results = [];
                 for (const d of datesToFetch) {
                     const url = new URL(API_URL);
                     url.searchParams.append('date', d.toISOString().split('T')[0]);
-                    try { results.push(await fetchFromApi(url)); } catch (e) { }
+                    try {
+                        const res = await fetchFromApi(url);
+                        results.push(res);
+                    } catch (e) {
+                        // Improved Error Handling: Warn instead of fail
+                        console.warn(`Falha ao buscar dia ${d}:`, e);
+                        // Push null or skip? Pushing null helps us know a day failed
+                        // results.push(null); 
+                    }
                 }
 
                 if (results.length === 0) {
-                    showLoading(false); return;
+                    alert("Não foi possível carregar dados de nenhum dia da semana. Verifique a conexão.");
+                    showLoading(false);
+                    return;
                 }
 
+                // AGGREGATE RESULTS
                 const aggregated = {
-                    meta: { date: 'Batch Semanal', day: 'Aggregate' },
+                    meta: { date: 'Resumo Semanal', day: 'Semana Completa' },
                     metrics: { total_reservas: 0, total_pax: 0, occupancy_rate: '-', mesas_livres: '-' },
                     reservations: []
                 };
@@ -737,46 +679,43 @@
                     if (!r || !r.metrics) return;
                     aggregated.metrics.total_reservas += (parseInt(r.metrics.total_reservas) || 0);
                     aggregated.metrics.total_pax += (parseInt(r.metrics.total_pax) || 0);
-                    if (r.reservations) {
-                        const enhancedReservations = r.reservations.map(res => ({ ...res, _displayDate: r.meta?.date || '' }));
+
+                    if (r.reservations && Array.isArray(r.reservations)) {
+                        // Add Date field to reservation object for display
+                        const enhancedReservations = r.reservations.map(res => ({
+                            ...res,
+                            _displayDate: r.meta?.date || ''
+                        }));
                         aggregated.reservations.push(...enhancedReservations);
                     }
                 });
 
                 rawData = aggregated;
                 renderDashboard(aggregated);
-                document.getElementById('currentDate').textContent = "Visualização Semanal Ativa";
+                document.getElementById('currentDate').textContent = "Visualização Semanal";
+
             } catch (e) {
-                console.error(e);
+                console.error("Erro crítico na visão semanal:", e);
+                // alert('Erro ao carregar visualização semanal.'); // Suppress intrusive alert
             } finally {
                 showLoading(false);
             }
         }
 
-        function filterTable(query) {
-            if (!rawData) return;
-            const term = query.toLowerCase();
-            const filtered = {
-                ...rawData,
-                reservations: rawData.reservations.filter(r =>
-                    (r.Nome_Cliente && r.Nome_Cliente.toLowerCase().includes(term)) ||
-                    (r.WhatsApp && r.WhatsApp.toString().toLowerCase().includes(term))
-                )
-            };
-            renderDashboard(filtered, true);
-        }
-
-        function renderDashboard(data, isFilterMode = false) {
-            if (!isFilterMode && data.metrics) {
+        function renderDashboard(data) {
+            // Metrics
+            if (data.metrics) {
                 document.getElementById('totalReservas').textContent = data.metrics.total_reservas || 0;
                 document.getElementById('totalPax').textContent = data.metrics.total_pax || 0;
-                document.getElementById('occupancyRate').innerHTML = `<span style="color:var(--primary)">${data.metrics.occupancy_rate || '-'}</span>`;
-                document.getElementById('mesasLivresText').textContent = isWeeklyView ? 'Sincronizado' : `${data.metrics.mesas_livres || 0} Slots Available`;
+                document.getElementById('occupancyRate').textContent = data.metrics.occupancy_rate || '-';
+                document.getElementById('mesasLivresText').textContent = isWeeklyView ? '-' : `${data.metrics.mesas_livres || 0} mesas livres`;
             }
 
+            // Table
             const tbody = document.getElementById('reservationsBody');
             tbody.innerHTML = '';
 
+            // Filter invalid rows AND hide CANCELADA reservations
             const list = (data.reservations || []).filter(r => {
                 if (!r.Nome_Cliente && !r.WhatsApp) return false;
                 const st = (r.Status || '').toUpperCase();
@@ -785,46 +724,255 @@
             });
 
             if (list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 2rem; color: #666;">Data stream is empty.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #666;">Nenhuma reserva encontrada.</td></tr>';
                 return;
             }
 
             list.forEach(res => {
                 const row = document.createElement('tr');
+
+                // Lógica de Status: Prioriza mostrar CONFIRMADA se houver qualquer sinal de confirmação
+                // Isso resolve o problema de colunas duplicadas no Google Sheets (Col W 'Website' vs Col G 'CONFIRMADA')
                 let statusUpper = (res.Status || '').toUpperCase();
+
+                // Se o objeto tiver múltiplos campos e um deles for CONFIRMADA, priorizamos
                 const allValues = Object.values(res).map(v => (v || '').toString().toUpperCase());
-                if (allValues.includes('CONFIRMADA') || allValues.includes('CONFIRMADO')) statusUpper = 'CONFIRMADA';
-
-                let statusClass = 'status-pendente';
-                if (statusUpper.includes('CONFIRMAD')) statusClass = 'status-confirmada';
-                else if (statusUpper.includes('CANCELAD')) statusClass = 'status-cancelada';
-                else if (statusUpper.includes('FINALIZAD')) statusClass = 'status-finalizada';
-                else if (statusUpper.includes('FILA')) statusClass = 'status-fila';
-
-                let actionsHtml = '';
-                if (Auth.canEdit()) {
-                    actionsHtml = `
-                    <td>
-                        <div style="display: flex; gap: 5px;">
-                            <button onclick="alert('Funcionalidade de update preservada na Engine Principal.')" class="btn-outline" style="padding: 4px 8px;" title="Confirmar/Dar Baixa">⚡</button>
-                        </div>
-                    </td>`;
+                if (allValues.includes('CONFIRMADA') || allValues.includes('CONFIRMADO')) {
+                    statusUpper = 'CONFIRMADA';
                 }
 
+                let statusClass = 'status-pendente';
+                if (statusUpper.includes('CONFIRMAD')) {
+                    statusClass = 'status-confirmada';
+                } else if (statusUpper.includes('CANCELAD')) {
+                    statusClass = 'status-cancelada';
+                } else if (statusUpper.includes('FINALIZAD')) {
+                    statusClass = 'status-finalizada';
+                } else if (statusUpper.includes('FILA')) {
+                    statusClass = 'status-fila';
+                } else if (statusUpper.includes('WEBSITE') || statusUpper.includes('PENDENTE')) {
+                    statusClass = 'status-pendente';
+                }
+
+                // Se for Admin, mostra a coluna de Ações (botões)
+                let actionsHtml = '';
+                if (Auth.canEdit()) {
+                    const isConfirmed = statusUpper.includes('CONFIRMAD');
+                    const isCanceled = statusUpper.includes('CANCELAD');
+                    const isFinalized = statusUpper.includes('FINALIZAD');
+
+                    if (isFinalized || isCanceled) {
+                        actionsHtml = `<td><span style="color:#aaa; font-size:0.8rem;">-</span></td>`;
+                    } else if (isConfirmed) {
+                        // Confirmado — mostrar botão Dar Baixa
+                        actionsHtml = `
+                        <td>
+                            <div style="display: flex; gap: 5px;">
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'FINALIZADO', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: #3498db; color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Dar Baixa (Cliente saiu)">🔓</button>
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Cancelar">✖</button>
+                            </div>
+                        </td>`;
+                    } else {
+                        // Pendente (Incluso Website e Fila) — confirmar ou cancelar
+                        actionsHtml = `
+                        <td>
+                            <div style="display: flex; gap: 5px;">
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'CONFIRMADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: var(--success); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Confirmar">✔</button>
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Cancelar">✖</button>
+                            </div>
+                        </td>`;
+                    }
+                }
+                // Se não for admin, e criamos o header, precisamos de uma TD vazia ou simplesmente não criar se o header for oculto.
+                // Como ocultamos o header via JS no inicio, aqui não precisa de TD extra se a tabela alinhar.
+                // MAS, se o header 'Ações' existir no HTML base, precisamos ocultar a coluna inteira ou o header.
+                // A melhor abordagem foi ocultar o header 'actionsHeader' no inicio.
+                // E aqui, só adicionamos a TD se for admin.
+
+
+                // If Weekly View, show date in Obs or Name?
                 const obsDisplay = res._displayDate ? `[${res._displayDate}] ${res.Observacao || ''}` : (res.Observacao || '');
 
                 row.innerHTML = `
-                    <td><strong style="color: var(--text-main);">${res.Nome_Cliente || '-'}</strong></td>
-                    <td style="font-family: monospace; color: var(--text-muted);">${formatPhone(res.WhatsApp)}</td>
+                    <td><strong>${res.Nome_Cliente || '-'}</strong></td>
+                    <td>${formatPhone(res.WhatsApp)}</td>
                     <td>${res.Qtd_Pessoas || '0'}</td>
-                    <td><span class="status-badge ${statusClass}">${statusUpper || 'PENDENTE'}</span></td>
-                    <td><strong style="color: var(--text-muted);">${res.Mesas_Alocadas || '-'}</strong></td>
-                    <td style="font-size: 11px; color: var(--text-muted);">${obsDisplay}</td>
-                    ${Auth.canEdit() ? actionsHtml : ''}
+                    <td><span class="status-badge ${statusClass}">${res.Status || 'Pendente'}</span></td>
+                    <td>${res.Mesas_Alocadas || '-'}</td>
+                    <td style="color: #888; font-size: 0.85rem;">${obsDisplay}</td>
+                    ${actionsHtml}
                 `;
                 tbody.appendChild(row);
             });
         }
+
+        function filterTable(searchTerm) {
+            if (!rawData) return;
+
+            const term = searchTerm.toLowerCase();
+            const filteredList = (rawData.reservations || []).filter(r => {
+                // Must be valid row
+                if (!r.Nome_Cliente && !r.WhatsApp) return false;
+                // Hide canceled
+                const st = (r.Status || '').toUpperCase();
+                if (st.includes('CANCELADA')) return false;
+
+                const nameContent = (r.Nome_Cliente || '').toLowerCase();
+                const phoneContent = (r.WhatsApp || '').toLowerCase();
+
+                return nameContent.includes(term) || phoneContent.includes(term);
+            });
+
+            // Re-render table only (simplified render func would be better, but we inline logic here for now)
+            const tbody = document.getElementById('reservationsBody');
+            tbody.innerHTML = '';
+
+            if (filteredList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #666;">Nenhum resultado para a busca.</td></tr>';
+                return;
+            }
+
+            filteredList.forEach(res => {
+                const row = document.createElement('tr');
+
+                // Lógica de Status Resiliente (Mesma do renderDashboard)
+                let statusUpper = (res.Status || '').toUpperCase();
+                const allValues = Object.values(res).map(v => (v || '').toString().toUpperCase());
+                if (allValues.includes('CONFIRMADA') || allValues.includes('CONFIRMADO')) {
+                    statusUpper = 'CONFIRMADA';
+                }
+
+                let statusClass = 'status-pendente';
+                if (statusUpper.includes('CONFIRMAD')) {
+                    statusClass = 'status-confirmada';
+                } else if (statusUpper.includes('CANCELAD')) {
+                    statusClass = 'status-cancelada';
+                } else if (statusUpper.includes('FINALIZAD')) {
+                    statusClass = 'status-finalizada';
+                } else if (statusUpper.includes('FILA')) {
+                    statusClass = 'status-fila';
+                } else if (statusUpper.includes('WEBSITE') || statusUpper.includes('PENDENTE')) {
+                    statusClass = 'status-pendente';
+                }
+
+                const obsDisplay = res._displayDate ? `[${res._displayDate}] ${res.Observacao || ''}` : (res.Observacao || '');
+
+                let actionsHtml = '';
+                if (Auth.canEdit()) {
+                    const isConfirmed = statusUpper.includes('CONFIRMAD');
+                    const isCanceled = statusUpper.includes('CANCELAD');
+                    const isFinalized = statusUpper.includes('FINALIZAD');
+
+                    if (isFinalized || isCanceled) {
+                        actionsHtml = `<td><span style="color:#aaa; font-size:0.8rem;">-</span></td>`;
+                    } else if (isConfirmed) {
+                        actionsHtml = `
+                        <td>
+                            <div style="display: flex; gap: 5px;">
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'FINALIZADO', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: #3498db; color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Dar Baixa (Cliente saiu)">🔓</button>
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Cancelar">✖</button>
+                            </div>
+                        </td>`;
+                    } else {
+                        actionsHtml = `
+                        <td>
+                            <div style="display: flex; gap: 5px;">
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'CONFIRMADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: var(--success); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Confirmar">✔</button>
+                                <button onclick="updateStatus('${res.Reserva_ID}', 'CANCELADA', '${res.sheet_reservas || ''}', '${res.sheet_mesas || ''}', '${res.Mesas_Alocadas || ''}')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Cancelar">✖</button>
+                            </div>
+                        </td>`;
+                    }
+                }
+
+                row.innerHTML = `
+                    <td><strong>${res.Nome_Cliente || '-'}</strong></td>
+                    <td>${formatPhone(res.WhatsApp)}</td>
+                    <td>${res.Qtd_Pessoas || '0'}</td>
+                    <td><span class="status-badge ${statusClass}">${res.Status || 'Pendente'}</span></td>
+                    <td>${res.Mesas_Alocadas || '-'}</td>
+                    <td style="color: #888; font-size: 0.85rem;">${obsDisplay}</td>
+                    ${actionsHtml}
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function updateStatus(id, newStatus, sheetRes, sheetMesas, mesas) {
+            if (!confirm(`Tem certeza que deseja marcar como ${newStatus}?`)) return;
+
+            const btn = event.target; // Simple way to target button
+            const originalText = btn.innerText;
+            btn.innerText = '...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+                    body: JSON.stringify({ action: 'update_status', id: id, status: newStatus, date: document.getElementById('datePicker').value, sheet_reservas: sheetRes, sheet_mesas: sheetMesas, mesas: mesas })
+                });
+
+                if (response.ok) {
+                    const row = btn.closest('tr');
+                    if (newStatus === 'CANCELADA') {
+                        // Animação de remoção
+                        if (row) {
+                            row.style.transition = 'opacity 0.4s, transform 0.4s';
+                            row.style.opacity = '0';
+                            row.style.transform = 'translateX(30px)';
+                            setTimeout(() => row.remove(), 400);
+                        }
+                    } else if (newStatus === 'FINALIZADO') {
+                        // Dar Baixa — atualizar badge e remover botões
+                        if (row) {
+                            const badge = row.querySelector('.status-badge');
+                            if (badge) {
+                                badge.textContent = 'FINALIZADO';
+                                badge.className = 'status-badge status-finalizada';
+                            }
+                            const actionsCell = row.querySelector('td:last-child');
+                            if (actionsCell && actionsCell.innerHTML.includes('updateStatus')) {
+                                actionsCell.innerHTML = '<span style="color:#aaa; font-size:0.8rem;">-</span>';
+                            }
+                        }
+                    } else if (row) {
+                        // Atualizar Badge para CONFIRMADA
+                        const badge = row.querySelector('.status-badge');
+                        if (badge) {
+                            badge.textContent = newStatus;
+                            badge.className = 'status-badge status-confirmada';
+                        }
+                        // Trocar botões para Dar Baixa
+                        const actionsCell = row.querySelector('td:last-child');
+                        if (actionsCell && actionsCell.innerHTML.includes('updateStatus')) {
+                            actionsCell.innerHTML = `
+                                <div style="display: flex; gap: 5px;">
+                                    <button onclick="updateStatus('${id}', 'FINALIZADO', '${sheetRes}', '${sheetMesas}', '${mesas}')" style="background: #3498db; color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Dar Baixa">🔓</button>
+                                    <button onclick="updateStatus('${id}', 'CANCELADA', '${sheetRes}', '${sheetMesas}', '${mesas}')" style="background: var(--danger); color: #fff; border:none; padding: 4px 8px; font-size: 0.7rem; cursor:pointer;" title="Cancelar">✖</button>
+                                </div>`;
+                        }
+                    }
+                } else {
+                    alert('Erro ao atualizar status. Verifique se você é admin.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Erro de conexão ao atualizar status.');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function showLoading(show, message = "Carregando...") {
+            const el = document.getElementById('loading');
+            el.style.display = show ? 'flex' : 'none';
+            if (show) {
+                el.innerHTML = `<div class="spinner"></div><div style="color:white; margin-top:20px; font-weight:600;">${message}</div>`;
+                el.style.flexDirection = 'column';
+            }
+        }
+
     </script>
 </body>
 
