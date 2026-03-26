@@ -86,7 +86,7 @@ const Auth = {
 
     logout: () => {
         sessionStorage.removeItem(SESSION_KEY);
-        window.location.href = 'login.html';
+        window.location.href = '/dashboard/login.html';
     },
 
     checkAuth: () => {
