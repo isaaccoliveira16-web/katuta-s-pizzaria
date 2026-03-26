@@ -136,9 +136,12 @@ document.getElementById('reserva-form').addEventListener('submit', async (e) => 
     status.innerHTML = '<p style="color: var(--secondary)">Enviando seu pedido ao nosso assistente...</p>';
 
     try {
-        // PRODUÇÃO: Webhook via Túnel Público (ngrok/localtunnel)
-        // ⚠️ IMPORTANTE: Estamos usando Localtunnel porque o FortiGuard bloqueou o Ngrok.
-        const N8N_BASE = 'https://fair-mammals-brush.loca.lt';
+        // URLs DINÂMICAS (Ambiente Inteligente)
+        // Se estiver testando no PC (localhost), usa a rota local para evitar o FortiGuard
+        // Se estiver na Vercel, usa o seu Ngrok automaticamente!
+        const N8N_BASE = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') 
+            ? 'http://localhost:5678' 
+            : 'https://disaffectedly-vibrative-rafael.ngrok-free.dev';
 
         let response = await fetch(N8N_BASE + '/webhook/reserva-motor-webhook', {
             method: 'POST',
